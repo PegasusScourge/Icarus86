@@ -12,6 +12,10 @@ Memory Management Unit implementation
 
 namespace im = icarus::memory;
 
+/***********************************/
+// class MMU : public
+/***********************************/
+
 void im::MMU::addMemoryBlock(size_t startAddress, size_t size) {
 	memoryBlocks.push_back(im::MemoryBlock(startAddress, size));
 }

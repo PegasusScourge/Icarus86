@@ -32,7 +32,7 @@ namespace icarus {
 			void addMemoryBlock(size_t startAddress, size_t size);
 
 			/*
-			void writeByte(uint8_t value)
+			void writeByte(icarus::bus::Bus<D_BUS_TYPE>& dBus, icarus::bus::Bus<A_BUS_TYPE>& aBus)
 			Writes a byte to the address
 			*/
 			template <class D_BUS_TYPE, class A_BUS_TYPE>
@@ -42,7 +42,7 @@ namespace icarus {
 				}
 			}
 			/*
-			uint8_t readByte()
+			void readByte(icarus::bus::Bus<D_BUS_TYPE>& dBus, icarus::bus::Bus<A_BUS_TYPE>& aBus)
 			Reads a byte from address. Returns 0 in the event of a failure (undetectable failure, use tryReadByte if failure needs to be detected)
 			*/
 			template <class D_BUS_TYPE, class A_BUS_TYPE>
@@ -56,7 +56,7 @@ namespace icarus {
 				}
 			}
 			/*
-			bool tryReadByte()
+			bool tryReadByte(icarus::bus::Bus<D_BUS_TYPE>& dBus, icarus::bus::Bus<A_BUS_TYPE>& aBus)
 			Returns true if a byte was read from the address into dest
 			*/
 			template <class D_BUS_TYPE, class A_BUS_TYPE>
@@ -67,6 +67,7 @@ namespace icarus {
 					if (block.tryByteRead(aBus.readData(), &v)) {
 						dBus.putData(v);
 						readSuccess = true;
+						break;
 					}
 				}
 				return readSuccess;

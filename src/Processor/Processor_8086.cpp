@@ -14,9 +14,13 @@ Implementation of the 8086 processor
 
 namespace ip = icarus::processor;
 
+/***********************************/
+// class Processor_8086 : public
+/***********************************/
+
 std::string ip::Processor_8086::REGISTER_NAMES[14] = { "AX", "BX", "CX", "DX", "SI", "DI", "BP", "SP", "IP", "FS", "CS", "DS", "ES", "SS" };
 
-ip::Processor_8086::Processor_8086(icarus::bus::Bus16& dataBus, icarus::bus::Bus32& addressBus) : m_dataBus(dataBus), m_addressBus(addressBus) {
+ip::Processor_8086::Processor_8086(icarus::memory::MMU& mmu, icarus::bus::Bus16& dataBus, icarus::bus::Bus32& addressBus) : m_mmu(mmu), m_dataBus(dataBus), m_addressBus(addressBus) {
 	setName("Intel 8086");
 
 	// Create the registers
@@ -45,10 +49,6 @@ void ip::Processor_8086::execute() {
 
 }
 
-uint32_t ip::Processor_8086::resolveAddress(uint16_t segment, uint16_t offset) {
-	return (segment * 0x10) + offset;
-}
-
 std::vector<uint64_t> ip::Processor_8086::getRegisterValues() {
 	std::vector<uint64_t> regs;
 	for (auto& r : m_registers) {
@@ -67,4 +67,12 @@ std::vector<std::string> ip::Processor_8086::getRegisterValuesAsStr() {
 
 std::string* ip::Processor_8086::getRegisterNames() {
 	return REGISTER_NAMES;
+}
+
+/***********************************/
+// class Processor_8086 : private
+/***********************************/
+
+uint32_t ip::Processor_8086::resolveAddress(uint16_t segment, uint16_t offset) {
+	return (segment * 0x10) + offset;
 }
