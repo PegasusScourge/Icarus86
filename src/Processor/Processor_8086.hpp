@@ -46,7 +46,8 @@ namespace icarus {
 		void fetch() override;
 		unsigned int decode() override;
 		void execute() override;
-		std::vector<uint64_t> getRegisters() override;
+		std::vector<uint64_t> getRegisterValues() override;
+		std::vector<std::string> getRegisterValuesAsStr() override;
 		std::string* getRegisterNames() override;
 	};
 

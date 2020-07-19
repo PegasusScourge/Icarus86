@@ -11,6 +11,8 @@ Console Output System. Handles formating and displaying information to the conso
  **************************************************************************/
 
 #include <string>
+#include <iomanip>
+#include <sstream>
 
 namespace icarus {
 
@@ -59,6 +61,21 @@ namespace icarus {
 		Prints a string to the console with the appropriate warning level, without a new line
 		*/
 		static void Print(std::string s, int level = LEVEL_NONE);
+
+		/*
+		std::string ToHexStr(T v)
+		Returns a string with a number formatted into HEX
+		*/
+		template <class T>
+		static std::string ToHexStr(T v, bool pad = false, bool prefix = false) {
+			std::stringstream stream;
+			if (prefix)
+				stream << "0x";
+			if (pad)
+				stream << std::setw(sizeof(T) * 2) << std::setfill('0');
+			stream << std::hex << v;
+			return stream.str();
+		}
 
 	};
 

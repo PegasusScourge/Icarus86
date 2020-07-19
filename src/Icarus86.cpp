@@ -85,7 +85,7 @@ void i::Icarus86::run() {
 	i::COutSys::Println("Icarus86 running", i::COutSys::LEVEL_INFO);
 
 	// Timing
-	microsPerClock = (sf::Int64)(1000000.0f / (m_processor->getClockRateMHz() * 1000000.0f));
+	m_microsPerClock = (sf::Int64)(1000000.0f / (m_processor->getClockRateMHz() * 1000000.0f));
 
 	// Display
 	sf::RenderWindow window(sf::VideoMode(800, 600), "Icarus86");
@@ -101,10 +101,12 @@ void i::Icarus86::run() {
 			}
 		}
 
-		processorAccumulator += processorClock.getElapsedTime().asMicroseconds();
-		processorClock.restart();
-		while (processorAccumulator >= microsPerClock) {
-			processorAccumulator -= microsPerClock;
+		m_processorAccumulator += m_processorClock.getElapsedTime().asMicroseconds();
+		m_processorClock.restart();
+		if (m_processorAccumulator >= m_microsPerClock)
+			m_cyclesPerTick = 0;
+		while (m_processorAccumulator >= m_microsPerClock) {
+			m_processorAccumulator -= m_microsPerClock;
 			if (cyclesToWait > 0) {
 				cyclesToWait--;
 			}
@@ -113,10 +115,11 @@ void i::Icarus86::run() {
 				cyclesToWait = m_processor->decode();
 				m_processor->execute();
 			}
+			m_cyclesPerTick++;
 		}
 		
-		if (renderClock.getElapsedTime().asMilliseconds() >= 10) {
-			renderClock.restart();
+		if (m_renderClock.getElapsedTime().asMilliseconds() >= 10) {
+			m_renderClock.restart();
 
 			window.clear();
 
@@ -199,17 +202,46 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 	sf::Text text;
 	text.setFont(m_font);
 	text.setCharacterSize(12);
-	text.setString("Registers:");
-	text.setPosition(x, y); y += 12;
-	text.setFillColor(sf::Color::White);
+
+	// Draw the CPU information
+	text.setFillColor(sf::Color::Cyan);
+	text.setString("CPU name: " + m_processor->getName());
+	text.setPosition(x, y); y += 14;
+	window.draw(text);
+	text.setString("CPU clock freq (MHz): " + std::to_string(m_processor->getClockRateMHz()));
+	text.setPosition(x, y); y += 14;
+	window.draw(text);
+	text.setString("Cycles per tick: " + std::to_string(m_cyclesPerTick));
+	text.setPosition(x, y); y += 14;
 	window.draw(text);
 
-	std::vector<uint64_t> regValues = m_processor->getRegisters();
-	std::string* regNames = m_processor->getRegisterNames();
+	y += 20;
 
+	// Draw the registers
+	text.setFillColor(sf::Color::Cyan);
+	text.setString("Registers:");
+	text.setPosition(x, y); y += 14;
+	window.draw(text);
+
+	std::vector<std::string> regValues = m_processor->getRegisterValuesAsStr();
+	std::string* regNames = m_processor->getRegisterNames();
+	text.setFillColor(sf::Color::White);
 	for (int i = 0; i < regValues.size(); i++, y += 12) {
-		text.setString("[" + regNames[i] + "]: " + std::to_string(regValues.at(i)));
+		text.setString("[" + regNames[i] + "]: " + regValues.at(i));
 		text.setPosition(x, y);
 		window.draw(text);
 	}
+
+	y += 20;
+
+	// Draw the bus values
+	text.setFillColor(sf::Color::Cyan);
+	text.setString("Data Bus Value:    " + COutSys::ToHexStr(m_dataBus.readData(), true, true));
+	text.setPosition(x, y); y += 14;
+	window.draw(text);
+	text.setString("Address Bus Value: " + COutSys::ToHexStr(m_addressBus.readData(), true, true));
+	text.setPosition(x, y); y += 14;
+	window.draw(text);
+
+	y += 20;
 }

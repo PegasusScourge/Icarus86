@@ -50,10 +50,12 @@ namespace icarus {
 		virtual void execute() = 0;
 
 		/*
-		virtual std::vector<uint64_t> getRegisters()
+		virtual std::vector<uint64_t> getRegisterValues()
+		virtual std::vector<std::string> getRegisterValuesAsStr()
 		Returns the registers of the processor
 		*/
-		virtual std::vector<uint64_t> getRegisters() = 0;
+		virtual std::vector<uint64_t> getRegisterValues() = 0;
+		virtual std::vector<std::string> getRegisterValuesAsStr() = 0;
 
 		/*
 		virtual std::string* getRegisterNames()

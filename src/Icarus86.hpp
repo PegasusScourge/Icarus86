@@ -39,10 +39,12 @@ namespace icarus {
 		enum class ProcessorRequestType { PTypeNONE, PType8086 } m_requestedProcessorType;
 		bool m_createdProcessor = false;
 
-		sf::Clock processorClock;
-		sf::Int64 processorAccumulator = 0;
-		sf::Int64 microsPerClock = 0;
-		sf::Clock renderClock;
+		sf::Clock m_processorClock;
+		sf::Int64 m_processorAccumulator = 0;
+		sf::Int64 m_microsPerClock = 0;
+		sf::Clock m_renderClock;
+
+		unsigned int m_cyclesPerTick = 0;
 
 		// Graphics display information
 		bool m_displayStatistics = true;

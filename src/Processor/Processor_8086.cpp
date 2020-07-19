@@ -10,6 +10,8 @@ Implementation of the 8086 processor
 
 #include "Processor_8086.hpp"
 
+#include "../COutSys.hpp"
+
 namespace i = icarus;
 
 std::string i::Processor_8086::REGISTER_NAMES[14] = { "AX", "BX", "CX", "DX", "SI", "DI", "BP", "SP", "IP", "FS", "CS", "DS", "ES", "SS" };
@@ -47,10 +49,18 @@ uint32_t i::Processor_8086::resolveAddress(uint16_t segment, uint16_t offset) {
 	return (segment * 0x10) + offset;
 }
 
-std::vector<uint64_t> i::Processor_8086::getRegisters() {
+std::vector<uint64_t> i::Processor_8086::getRegisterValues() {
 	std::vector<uint64_t> regs;
 	for (auto& r : m_registers) {
 		regs.push_back(r.read());
+	}
+	return regs;
+}
+
+std::vector<std::string> i::Processor_8086::getRegisterValuesAsStr() {
+	std::vector<std::string> regs;
+	for (auto& r : m_registers) {
+		regs.push_back(COutSys::ToHexStr(r.read(), true, true));
 	}
 	return regs;
 }
