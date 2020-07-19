@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
 	// Initialize the console output system
 	i::COutSys::Initialize(false);
 	i::COutSys::Println("COutSys initialized", i::COutSys::LEVEL_INFO);
-	
+
 	// Start the emulator
 	i::Icarus86 icarus;
 

@@ -22,6 +22,12 @@
     <Filter Include="Header Files\Processor">
       <UniqueIdentifier>{a663587e-9315-4fb5-84a4-1eb42dd1f39c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Memory">
+      <UniqueIdentifier>{e12a38b4-5867-47fa-a4d6-79b1e207e2a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Memory">
+      <UniqueIdentifier>{ca8648c7-0b09-465d-9bc6-3cb0ad0dce92}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Icarus86.cpp">
@@ -32,6 +38,12 @@
     </ClCompile>
     <ClCompile Include="src\Processor\Processor_8086.cpp">
       <Filter>Source Files\Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Memory\MMU.cpp">
+      <Filter>Source Files\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Memory\MemoryBlock.cpp">
+      <Filter>Source Files\Memory</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -58,6 +70,12 @@
     </ClInclude>
     <ClInclude Include="src\Processor\Register.hpp">
       <Filter>Header Files\Processor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Memory\MMU.hpp">
+      <Filter>Header Files\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Memory\MemoryBlock.hpp">
+      <Filter>Header Files\Memory</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

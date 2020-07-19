@@ -16,6 +16,7 @@ Entry point to the emulator
 
 #include "Bus/Bus.hpp"
 #include "Processor/Processor.hpp"
+#include "Memory/MMU.hpp"
 
 #include "SFML/Graphics.hpp"
 #include "SFML/System.hpp"
@@ -45,6 +46,9 @@ namespace icarus {
 		sf::Clock m_renderClock;
 
 		unsigned int m_cyclesPerTick = 0;
+
+		// Memory Management Unit
+		std::unique_ptr<icarus::memory::MMU> m_mmu;
 
 		// Graphics display information
 		bool m_displayStatistics = true;
