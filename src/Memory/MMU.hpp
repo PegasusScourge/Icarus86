@@ -25,6 +25,8 @@ namespace icarus {
 			std::vector<icarus::memory::MemoryBlock> memoryBlocks;
 
 		public:
+			enum class ReadType { BigEndian, LittleEndian };
+
 			/*
 			void addMemoryBlock(size_t startAddress, size_t size)
 			Adds a memory block at the start address with specified size
@@ -71,6 +73,42 @@ namespace icarus {
 					}
 				}
 				return readSuccess;
+			}
+
+			/*
+			void fillBus(icarus::bus::Bus<D_BUS_TYPE>& dBus, icarus::bus::Bus<A_BUS_TYPE>& aBus, ReadType endianness)
+			Fills the dBus with bytes read from memory starting at the address given by aBus.
+			*/
+			template <class D_BUS_TYPE, class A_BUS_TYPE>
+			void fillBus(icarus::bus::Bus<D_BUS_TYPE>& dBus, icarus::bus::Bus<A_BUS_TYPE>& aBus, ReadType endianness) {
+				A_BUS_TYPE address = aBus.readData();
+				D_BUS_TYPE dataToPush = 0;
+
+				size_t dataBusByteWidth = dBus.getBitWidth() / 8;
+				size_t currentShift = 0;
+				
+				if (endianness == ReadType::BigEndian) {
+					// Correct for BigEndian
+					currentShift = dataBusByteWidth - 1;
+					for (; currentShift >= 0; currentShift--, address++) {
+						aBus.putData(address); // Put the new address
+						readByte(dBus, aBus);
+						dataToPush |= (dBus.readData() & 0xFF) << currentShift;
+					}
+				}
+				else if (endianness == ReadType::LittleEndian) {
+					// No correction for LittleEndian
+					for (; currentShift < dataBusByteWidth; currentShift++, address++) {
+						aBus.putData(address); // Put the new address
+						readByte(dBus, aBus);
+						dataToPush |= (dBus.readData() & 0xFF) << currentShift;
+					}
+				}
+				else {
+					// FAIL
+				}
+
+				dBus.putData(dataToPush);
 			}
 
 		};
