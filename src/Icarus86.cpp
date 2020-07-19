@@ -13,6 +13,9 @@ Entry point to the emulator
 #include "COutSys.hpp"
 #include "Processor/Processor_8086.hpp"
 
+#include "SFML/System/Clock.hpp"
+#include "SFML/Graphics.hpp"
+
 #include "SimpleIni/SimpleIni.h"
 
 #include <iostream>
@@ -79,7 +82,22 @@ i::Icarus86::Icarus86() {
 void i::Icarus86::run() {
 	i::COutSys::Println("Icarus86 running", i::COutSys::LEVEL_INFO);
 
+	// Timing
+	sf::Clock timingClock;
+
+	// Display
+	sf::RenderWindow window(sf::VideoMode(800, 600), "Icarus86");
 	
+	while (window.isOpen()) {
+		sf::Event evt;
+		while (window.pollEvent(evt)) {
+			if (evt.type == sf::Event::Closed) {
+				window.close();
+			}
+		}
+
+
+	}
 }
 
 // Setters
