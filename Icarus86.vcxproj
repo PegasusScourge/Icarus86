@@ -139,10 +139,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Bus\Bus.cpp" />
     <ClCompile Include="src\COutSys.cpp" />
     <ClCompile Include="src\Icarus86.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Bus\Bus.hpp" />
     <ClInclude Include="src\Constexprs.hpp" />
     <ClInclude Include="src\COutSys.hpp" />
     <ClInclude Include="src\Icarus86.hpp" />

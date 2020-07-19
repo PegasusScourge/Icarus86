@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Bus">
+      <UniqueIdentifier>{ef15d5dd-6c80-4e7a-9d82-11e64a9e3a18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Bus">
+      <UniqueIdentifier>{3399826a-1e06-40ec-a4f0-4f104e873def}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Icarus86.cpp">
@@ -20,6 +26,9 @@
     </ClCompile>
     <ClCompile Include="src\COutSys.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Bus\Bus.cpp">
+      <Filter>Source Files\Bus</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -34,6 +43,9 @@
     </ClInclude>
     <ClInclude Include="src\COutSys.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Bus\Bus.hpp">
+      <Filter>Header Files\Bus</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
