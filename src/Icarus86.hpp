@@ -65,7 +65,7 @@ namespace icarus {
 		void drawStatistics()
 		Displays the statistics on the screen
 		*/
-		void drawStatistics();
+		void drawStatistics(sf::RenderWindow& window);
 
 	public:
 		Icarus86();

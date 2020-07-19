@@ -118,8 +118,10 @@ void i::Icarus86::run() {
 		if (renderClock.getElapsedTime().asMilliseconds() >= 10) {
 			renderClock.restart();
 
+			window.clear();
+
 			if (m_displayStatistics)
-				drawStatistics();
+				drawStatistics(window);
 
 			window.display();
 		}
@@ -190,6 +192,24 @@ bool i::Icarus86::createProcessor() {
 	return true;
 }
 
-void i::Icarus86::drawStatistics() {
+void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
+	float x = 10;
+	float y = 10;
+	
+	sf::Text text;
+	text.setFont(m_font);
+	text.setCharacterSize(12);
+	text.setString("Registers:");
+	text.setPosition(x, y); y += 12;
+	text.setFillColor(sf::Color::White);
+	window.draw(text);
 
+	std::vector<uint64_t> regValues = m_processor->getRegisters();
+	std::string* regNames = m_processor->getRegisterNames();
+
+	for (int i = 0; i < regValues.size(); i++, y += 12) {
+		text.setString("[" + regNames[i] + "]: " + std::to_string(regValues.at(i)));
+		text.setPosition(x, y);
+		window.draw(text);
+	}
 }

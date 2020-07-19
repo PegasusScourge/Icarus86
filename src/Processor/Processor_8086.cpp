@@ -12,6 +12,8 @@ Implementation of the 8086 processor
 
 namespace i = icarus;
 
+std::string i::Processor_8086::REGISTER_NAMES[14] = { "AX", "BX", "CX", "DX", "SI", "DI", "BP", "SP", "IP", "FS", "CS", "DS", "ES", "SS" };
+
 i::Processor_8086::Processor_8086(icarus::Bus16& dataBus, icarus::Bus32& addressBus) : m_dataBus(dataBus), m_addressBus(addressBus) {
 	setName("Intel 8086");
 
@@ -24,7 +26,7 @@ i::Processor_8086::Processor_8086(icarus::Bus16& dataBus, icarus::Bus32& address
 
 	m_registers.push_back(Register16{ true }); // Create register FLAGS
 
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 4; i++)
 		m_registers.push_back(Register16{ false }); // Create registers CS through SS
 
 }
@@ -51,4 +53,8 @@ std::vector<uint64_t> i::Processor_8086::getRegisters() {
 		regs.push_back(r.read());
 	}
 	return regs;
+}
+
+std::string* i::Processor_8086::getRegisterNames() {
+	return REGISTER_NAMES;
 }

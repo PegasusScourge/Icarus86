@@ -55,6 +55,12 @@ namespace icarus {
 		*/
 		virtual std::vector<uint64_t> getRegisters() = 0;
 
+		/*
+		virtual std::string* getRegisterNames()
+		Returns a string array of the register names
+		*/
+		virtual std::string* getRegisterNames() = 0;
+
 	};
 
 }
