@@ -24,6 +24,8 @@ namespace icarus {
 	public:
 		Bus() {
 			m_dataBitWidth = sizeof(m_data) * 8;
+			m_data = 0;
+			m_mask = 0;
 		}
 		Bus(T bitWidthLimit) { // Enforce a specific bit width limit
 			unsigned long widthTemp = sizeof(m_data) * 8;
@@ -34,6 +36,8 @@ namespace icarus {
 
 			// Set the mask
 			m_mask = (1U << m_dataBitWidth) - 1U;
+
+			m_data = 0;
 		} 
 
 		T readData() {

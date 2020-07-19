@@ -11,6 +11,7 @@ Entry point to the emulator
 #include "Icarus86.hpp"
 #include "Constexprs.hpp"
 #include "COutSys.hpp"
+#include "Processor/Processor_8086.hpp"
 
 #include <iostream>
 
@@ -54,17 +55,22 @@ int main(int argc, char* argv[]) {
 /***********************************/
 
 i::Icarus86::Icarus86() {
-	m_intialized = true;
-	i::COutSys::Println("Icarus86 initialized", i::COutSys::LEVEL_INFO);
-
 	i::COutSys::Println("Data bus width: " + std::to_string(m_dataBus.getBitWidth()), i::COutSys::LEVEL_INFO);
 	i::COutSys::Println("Address bus width: " + std::to_string(m_addressBus.getBitWidth()), i::COutSys::LEVEL_INFO);
+
+	// Create the processor
+	processor = std::unique_ptr<Processor>(new i::Processor_8086(m_dataBus, m_addressBus));
+	i::COutSys::Println("Processor created: name = '" + processor->getName() + "', clock = " + std::to_string(processor->getClockRateMHz()) + " MHz", i::COutSys::LEVEL_INFO);
+
+	// Done!
+	m_intialized = true;
+	i::COutSys::Println("Icarus86 initialized", i::COutSys::LEVEL_INFO);
 }
 
 void i::Icarus86::run() {
 	i::COutSys::Println("Icarus86 running", i::COutSys::LEVEL_INFO);
 
-
+	
 }
 
 // Setters

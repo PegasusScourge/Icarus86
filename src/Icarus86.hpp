@@ -12,8 +12,10 @@ Entry point to the emulator
 
 #include <vector>
 #include <string>
+#include <memory>
 
 #include "Bus/Bus.hpp"
+#include "Processor/Processor.hpp"
 
 namespace icarus {
 
@@ -26,6 +28,8 @@ namespace icarus {
 
 		icarus::Bus16 m_dataBus;
 		icarus::Bus32 m_addressBus{ 20 }; // This is a 32 bit bus, but it is limited to 20 bits
+
+		std::unique_ptr<icarus::Processor> processor;
 
 	public:
 		Icarus86();
