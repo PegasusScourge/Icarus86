@@ -13,6 +13,8 @@ Entry point to the emulator
 #include "COutSys.hpp"
 #include "Processor/Processor_8086.hpp"
 
+#include "SimpleIni/SimpleIni.h"
+
 #include <iostream>
 
 using std::cout;
@@ -55,12 +57,19 @@ int main(int argc, char* argv[]) {
 /***********************************/
 
 i::Icarus86::Icarus86() {
+	m_requestedProcessorType = ProcessorRequestType::PTypeNONE;
+
+	// Load the ini file
+	parseINI();
+
+	if (!createdProcessor) {
+		i::COutSys::Println("Icarus86 failed to create processor", i::COutSys::LEVEL_INFO);
+		return;
+	}
+
+	i::COutSys::Println("Processor created: name = '" + processor->getName() + "', clock = " + std::to_string(processor->getClockRateMHz()) + " MHz", i::COutSys::LEVEL_INFO);
 	i::COutSys::Println("Data bus width: " + std::to_string(m_dataBus.getBitWidth()), i::COutSys::LEVEL_INFO);
 	i::COutSys::Println("Address bus width: " + std::to_string(m_addressBus.getBitWidth()), i::COutSys::LEVEL_INFO);
-
-	// Create the processor
-	processor = std::unique_ptr<Processor>(new i::Processor_8086(m_dataBus, m_addressBus));
-	i::COutSys::Println("Processor created: name = '" + processor->getName() + "', clock = " + std::to_string(processor->getClockRateMHz()) + " MHz", i::COutSys::LEVEL_INFO);
 
 	// Done!
 	m_intialized = true;
@@ -84,4 +93,55 @@ int i::Icarus86::getReturnValue() {
 
 bool i::Icarus86::failure() {
 	return m_hasErrored || !m_intialized;
+}
+
+void i::Icarus86::parseINI() {
+	i::COutSys::Println("[INI] Parsing INI file", i::COutSys::LEVEL_INFO);
+
+	CSimpleIniA ini;
+	ini.SetUnicode();
+	SI_Error e = ini.LoadFile("Icarus.ini");
+	if (e != SI_OK) {
+		// Failed to read iniFile
+		i::COutSys::Println("[INI] Failed to read ini file 'Icarus.ini'", i::COutSys::LEVEL_ERR);
+		return;
+	}
+	i::COutSys::Println("[INI] File loaded", i::COutSys::LEVEL_INFO);
+	
+	const char* value;
+
+	value = ini.GetValue("processor", "type");
+	if (value) {
+		std::string v{ value };
+		if (v.compare("8086") == 0) {
+			i::COutSys::Println("[INI] Requested type of 8086 processor", i::COutSys::LEVEL_INFO);
+			m_requestedProcessorType = ProcessorRequestType::PType8086;
+		}
+	}
+	if (!createProcessor())
+		return;
+
+	value = ini.GetValue("processor", "clockMHz");
+	if (value) {
+		processor->setClockRateMHz(std::stof(value));
+		i::COutSys::Println("[INI] Requested clockMHz of " + std::string(value), i::COutSys::LEVEL_INFO);
+	}
+
+	i::COutSys::Println("[INI] Parsing INI file complete", i::COutSys::LEVEL_INFO);
+}
+
+bool i::Icarus86::createProcessor() {
+	// Create the processor
+	switch (m_requestedProcessorType) {
+	case ProcessorRequestType::PType8086:
+		processor = std::unique_ptr<Processor>(new i::Processor_8086(m_dataBus, m_addressBus));
+		break;
+
+	default:
+		i::COutSys::Println("Unknown processor request type", i::COutSys::LEVEL_ERR);
+		return false;
+		break;
+	}
+	createdProcessor = true;
+	return true;
 }

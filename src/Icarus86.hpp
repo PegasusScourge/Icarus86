@@ -30,6 +30,20 @@ namespace icarus {
 		icarus::Bus32 m_addressBus{ 20 }; // This is a 32 bit bus, but it is limited to 20 bits
 
 		std::unique_ptr<icarus::Processor> processor;
+		enum class ProcessorRequestType { PTypeNONE, PType8086 } m_requestedProcessorType;
+		bool createdProcessor = false;
+
+		/*
+		void parseINI()
+		Parses the INI file
+		*/
+		void parseINI();
+
+		/*
+		bool createProcessor()
+		Creates the processor
+		*/
+		bool createProcessor();
 
 	public:
 		Icarus86();
