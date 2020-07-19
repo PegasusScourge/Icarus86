@@ -13,9 +13,6 @@ Entry point to the emulator
 #include "COutSys.hpp"
 #include "Processor/Processor_8086.hpp"
 
-#include "SFML/System/Clock.hpp"
-#include "SFML/Graphics.hpp"
-
 #include "SimpleIni/SimpleIni.h"
 
 #include <iostream>
@@ -65,12 +62,12 @@ i::Icarus86::Icarus86() {
 	// Load the ini file
 	parseINI();
 
-	if (!createdProcessor) {
+	if (!m_createdProcessor) {
 		i::COutSys::Println("Icarus86 failed to create processor", i::COutSys::LEVEL_INFO);
 		return;
 	}
 
-	i::COutSys::Println("Processor created: name = '" + processor->getName() + "', clock = " + std::to_string(processor->getClockRateMHz()) + " MHz", i::COutSys::LEVEL_INFO);
+	i::COutSys::Println("Processor created: name = '" + m_processor->getName() + "', clock = " + std::to_string(m_processor->getClockRateMHz()) + " MHz", i::COutSys::LEVEL_INFO);
 	i::COutSys::Println("Data bus width: " + std::to_string(m_dataBus.getBitWidth()), i::COutSys::LEVEL_INFO);
 	i::COutSys::Println("Address bus width: " + std::to_string(m_addressBus.getBitWidth()), i::COutSys::LEVEL_INFO);
 
@@ -80,13 +77,21 @@ i::Icarus86::Icarus86() {
 }
 
 void i::Icarus86::run() {
+	if (!m_font.loadFromFile("Consolas.ttf")) {
+		i::COutSys::Println("Icarus86 failed to load Consolas.ttf font", i::COutSys::LEVEL_ERR);
+		return;
+	}
+
 	i::COutSys::Println("Icarus86 running", i::COutSys::LEVEL_INFO);
 
 	// Timing
-	sf::Clock timingClock;
+	microsPerClock = (sf::Int64)(1000000.0f / (m_processor->getClockRateMHz() * 1000000.0f));
 
 	// Display
 	sf::RenderWindow window(sf::VideoMode(800, 600), "Icarus86");
+
+	// Processor
+	unsigned int cyclesToWait = 0;
 	
 	while (window.isOpen()) {
 		sf::Event evt;
@@ -96,7 +101,28 @@ void i::Icarus86::run() {
 			}
 		}
 
+		processorAccumulator += processorClock.getElapsedTime().asMicroseconds();
+		processorClock.restart();
+		while (processorAccumulator >= microsPerClock) {
+			processorAccumulator -= microsPerClock;
+			if (cyclesToWait > 0) {
+				cyclesToWait--;
+			}
+			else {
+				m_processor->fetch();
+				cyclesToWait = m_processor->decode();
+				m_processor->execute();
+			}
+		}
+		
+		if (renderClock.getElapsedTime().asMilliseconds() >= 10) {
+			renderClock.restart();
 
+			if (m_displayStatistics)
+				drawStatistics();
+
+			window.display();
+		}
 	}
 }
 
@@ -141,7 +167,7 @@ void i::Icarus86::parseINI() {
 
 	value = ini.GetValue("processor", "clockMHz");
 	if (value) {
-		processor->setClockRateMHz(std::stof(value));
+		m_processor->setClockRateMHz(std::stof(value));
 		i::COutSys::Println("[INI] Requested clockMHz of " + std::string(value), i::COutSys::LEVEL_INFO);
 	}
 
@@ -152,7 +178,7 @@ bool i::Icarus86::createProcessor() {
 	// Create the processor
 	switch (m_requestedProcessorType) {
 	case ProcessorRequestType::PType8086:
-		processor = std::unique_ptr<Processor>(new i::Processor_8086(m_dataBus, m_addressBus));
+		m_processor = std::unique_ptr<Processor>(new i::Processor_8086(m_dataBus, m_addressBus));
 		break;
 
 	default:
@@ -160,6 +186,10 @@ bool i::Icarus86::createProcessor() {
 		return false;
 		break;
 	}
-	createdProcessor = true;
+	m_createdProcessor = true;
 	return true;
+}
+
+void i::Icarus86::drawStatistics() {
+
 }

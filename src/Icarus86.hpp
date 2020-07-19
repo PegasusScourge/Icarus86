@@ -17,21 +17,37 @@ Entry point to the emulator
 #include "Bus/Bus.hpp"
 #include "Processor/Processor.hpp"
 
+#include "SFML/Graphics.hpp"
+#include "SFML/System.hpp"
+
 namespace icarus {
 
 	class Icarus86 {
 	private:
+		// Icarus status information
 		bool m_intialized = false;
 		bool m_hasErrored = false;
 
 		int m_returnValue = 0;
 
+		// Buses
 		icarus::Bus16 m_dataBus;
 		icarus::Bus32 m_addressBus{ 20 }; // This is a 32 bit bus, but it is limited to 20 bits
 
-		std::unique_ptr<icarus::Processor> processor;
+		// Processor information
+		std::unique_ptr<icarus::Processor> m_processor;
 		enum class ProcessorRequestType { PTypeNONE, PType8086 } m_requestedProcessorType;
-		bool createdProcessor = false;
+		bool m_createdProcessor = false;
+
+		sf::Clock processorClock;
+		sf::Int64 processorAccumulator = 0;
+		sf::Int64 microsPerClock = 0;
+		sf::Clock renderClock;
+
+		// Graphics display information
+		bool m_displayStatistics = true;
+
+		sf::Font m_font;
 
 		/*
 		void parseINI()
@@ -44,6 +60,12 @@ namespace icarus {
 		Creates the processor
 		*/
 		bool createProcessor();
+
+		/*
+		void drawStatistics()
+		Displays the statistics on the screen
+		*/
+		void drawStatistics();
 
 	public:
 		Icarus86();

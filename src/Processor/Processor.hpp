@@ -14,6 +14,7 @@ Abract implementation of a Processor allowing multiple types to be accessed in a
 #include "../Bus/Bus.hpp"
 
 #include <string>
+#include <vector>
 
 namespace icarus {
 
@@ -35,16 +36,24 @@ namespace icarus {
 		Virtual function overridden by the fetch process of the processor. Loads the next instruction
 		*/
 		virtual void fetch() = 0;
+
 		/*
 		virtual int decode()
 		Virtual function overriden by the decode process of the processor. Returns the number of clock cycles the execution of the instruction will take
 		*/
 		virtual unsigned int decode() = 0;
+
 		/*
 		virtual void execute()
 		Virtual function overriden by the execute process of the processor. Will execute the next instruction
 		*/
 		virtual void execute() = 0;
+
+		/*
+		virtual std::vector<uint64_t> getRegisters()
+		Returns the registers of the processor
+		*/
+		virtual std::vector<uint64_t> getRegisters() = 0;
 
 	};
 
