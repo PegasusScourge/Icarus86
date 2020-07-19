@@ -31,11 +31,11 @@ namespace icarus {
 		int m_returnValue = 0;
 
 		// Buses
-		icarus::Bus16 m_dataBus;
-		icarus::Bus32 m_addressBus{ 20 }; // This is a 32 bit bus, but it is limited to 20 bits
+		icarus::bus::Bus16 m_dataBus;
+		icarus::bus::Bus32 m_addressBus{ 20 }; // This is a 32 bit bus, but it is limited to 20 bits
 
 		// Processor information
-		std::unique_ptr<icarus::Processor> m_processor;
+		std::unique_ptr<icarus::processor::Processor> m_processor;
 		enum class ProcessorRequestType { PTypeNONE, PType8086 } m_requestedProcessorType;
 		bool m_createdProcessor = false;
 

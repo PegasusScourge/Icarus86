@@ -183,7 +183,7 @@ bool i::Icarus86::createProcessor() {
 	// Create the processor
 	switch (m_requestedProcessorType) {
 	case ProcessorRequestType::PType8086:
-		m_processor = std::unique_ptr<Processor>(new i::Processor_8086(m_dataBus, m_addressBus));
+		m_processor = std::unique_ptr<i::processor::Processor>(new i::processor::Processor_8086(m_dataBus, m_addressBus));
 		break;
 
 	default:

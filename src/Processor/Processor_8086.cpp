@@ -12,11 +12,11 @@ Implementation of the 8086 processor
 
 #include "../COutSys.hpp"
 
-namespace i = icarus;
+namespace ip = icarus::processor;
 
-std::string i::Processor_8086::REGISTER_NAMES[14] = { "AX", "BX", "CX", "DX", "SI", "DI", "BP", "SP", "IP", "FS", "CS", "DS", "ES", "SS" };
+std::string ip::Processor_8086::REGISTER_NAMES[14] = { "AX", "BX", "CX", "DX", "SI", "DI", "BP", "SP", "IP", "FS", "CS", "DS", "ES", "SS" };
 
-i::Processor_8086::Processor_8086(icarus::Bus16& dataBus, icarus::Bus32& addressBus) : m_dataBus(dataBus), m_addressBus(addressBus) {
+ip::Processor_8086::Processor_8086(icarus::bus::Bus16& dataBus, icarus::bus::Bus32& addressBus) : m_dataBus(dataBus), m_addressBus(addressBus) {
 	setName("Intel 8086");
 
 	// Create the registers
@@ -33,23 +33,23 @@ i::Processor_8086::Processor_8086(icarus::Bus16& dataBus, icarus::Bus32& address
 
 }
 
-void i::Processor_8086::fetch() {
+void ip::Processor_8086::fetch() {
 
 }
 
-unsigned int i::Processor_8086::decode() {
+unsigned int ip::Processor_8086::decode() {
 	return 1;
 }
 
-void i::Processor_8086::execute() {
+void ip::Processor_8086::execute() {
 
 }
 
-uint32_t i::Processor_8086::resolveAddress(uint16_t segment, uint16_t offset) {
+uint32_t ip::Processor_8086::resolveAddress(uint16_t segment, uint16_t offset) {
 	return (segment * 0x10) + offset;
 }
 
-std::vector<uint64_t> i::Processor_8086::getRegisterValues() {
+std::vector<uint64_t> ip::Processor_8086::getRegisterValues() {
 	std::vector<uint64_t> regs;
 	for (auto& r : m_registers) {
 		regs.push_back(r.read());
@@ -57,7 +57,7 @@ std::vector<uint64_t> i::Processor_8086::getRegisterValues() {
 	return regs;
 }
 
-std::vector<std::string> i::Processor_8086::getRegisterValuesAsStr() {
+std::vector<std::string> ip::Processor_8086::getRegisterValuesAsStr() {
 	std::vector<std::string> regs;
 	for (auto& r : m_registers) {
 		regs.push_back(COutSys::ToHexStr(r.read(), true, true));
@@ -65,6 +65,6 @@ std::vector<std::string> i::Processor_8086::getRegisterValuesAsStr() {
 	return regs;
 }
 
-std::string* i::Processor_8086::getRegisterNames() {
+std::string* ip::Processor_8086::getRegisterNames() {
 	return REGISTER_NAMES;
 }
