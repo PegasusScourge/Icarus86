@@ -26,7 +26,7 @@ namespace icarus {
 		// Register declarations
 		Register16 m_AX{ true };
 		Register16 m_BX{ true };
-		Register16 m_{ true };
+		Register16 m_CX{ true };
 		Register16 m_DX{ true };
 		// Pointer and Index Registers
 		Register16 m_SI{ false };
