@@ -18,15 +18,40 @@ namespace icarus {
 	class Bus {
 	private:
 		T m_data;
-		unsigned int m_dataBitWidth;
+		T m_dataBitWidth;
+		T m_mask; // If non-zero, we apply it
 
 	public:
-		Bus();
+		Bus() {
+			m_dataBitWidth = sizeof(m_data) * 8;
+		}
+		Bus(T bitWidthLimit) { // Enforce a specific bit width limit
+			unsigned long widthTemp = sizeof(m_data) * 8;
+			m_dataBitWidth = bitWidthLimit;
+			if (m_dataBitWidth > widthTemp) {
+				m_dataBitWidth = widthTemp;
+			}
 
-		T readData();
-		void putData(T d);
+			// Set the mask
+			m_mask = (1U << m_dataBitWidth) - 1U;
+		} 
 
-		unsigned int getBusBitWidth();
+		T readData() {
+			if (m_mask)
+				return m_data & m_mask;
+			return m_data;
+		}
+
+		void putData(T d) {
+			if (m_mask)
+				m_data = d & m_mask;
+			else
+				m_data = d;
+		}
+
+		T getBitWidth() {
+			return m_dataBitWidth;
+		}
 	};
 
 	typedef Bus<uint16_t> Bus16;

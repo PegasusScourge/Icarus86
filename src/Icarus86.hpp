@@ -13,6 +13,8 @@ Entry point to the emulator
 #include <vector>
 #include <string>
 
+#include "Bus/Bus.hpp"
+
 namespace icarus {
 
 	class Icarus86 {
@@ -21,6 +23,9 @@ namespace icarus {
 		bool m_hasErrored = false;
 
 		int m_returnValue = 0;
+
+		icarus::Bus16 m_dataBus;
+		icarus::Bus32 m_addressBus{ 20 }; // This is a 32 bit bus, but it is limited to 20 bits
 
 	public:
 		Icarus86();

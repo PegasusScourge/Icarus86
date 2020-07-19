@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
 	// Initialize the console output system
 	i::COutSys::Initialize(false);
 	i::COutSys::Println("COutSys initialized", i::COutSys::LEVEL_INFO);
-
+	
 	// Start the emulator
 	i::Icarus86 icarus;
 
@@ -56,6 +56,9 @@ int main(int argc, char* argv[]) {
 i::Icarus86::Icarus86() {
 	m_intialized = true;
 	i::COutSys::Println("Icarus86 initialized", i::COutSys::LEVEL_INFO);
+
+	i::COutSys::Println("Data bus width: " + std::to_string(m_dataBus.getBitWidth()), i::COutSys::LEVEL_INFO);
+	i::COutSys::Println("Address bus width: " + std::to_string(m_addressBus.getBitWidth()), i::COutSys::LEVEL_INFO);
 }
 
 void i::Icarus86::run() {
