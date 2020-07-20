@@ -18,4 +18,9 @@ namespace im = icarus::memory;
 
 void im::MMU::addMemoryBlock(size_t startAddress, size_t size) {
 	memoryBlocks.push_back(im::MemoryBlock(startAddress, size));
+	m_memoryTotal += size;
+}
+
+size_t im::MMU::getTotalMemory() {
+	return m_memoryTotal;
 }

@@ -159,6 +159,7 @@ void i::Icarus86::parseINI() {
 	
 	const char* value;
 
+	// Get the processor specification
 	value = ini.GetValue("processor", "type");
 	if (value) {
 		std::string v{ value };
@@ -176,6 +177,33 @@ void i::Icarus86::parseINI() {
 		i::COutSys::Println("[INI] Requested clockMHz of " + std::string(value), i::COutSys::LEVEL_INFO);
 	}
 
+	// Get memory specification
+	value = ini.GetValue("memory", "blocks");
+	if (value) {
+		int numberOfMemoryBlocks = std::stoi(value);
+		if (numberOfMemoryBlocks > 0) {
+			// We have memory blocks to decode
+			int currentMemoryBlock = 0;
+			std::string blockBase = "memory_block_";
+			const char* startAddress;
+			for (; currentMemoryBlock < numberOfMemoryBlocks; currentMemoryBlock++) {
+				std::string bName = blockBase + std::to_string(currentMemoryBlock);
+				value = ini.GetValue(bName.c_str(), "size"); startAddress = ini.GetValue(bName.c_str(), "startAddress");
+				if (value && startAddress) {
+					m_mmu.addMemoryBlock(std::stoul(startAddress), std::stoul(value));
+					i::COutSys::Println("[INI] Memory block '" + bName + "' created with add=" + std::string{ startAddress } + ", size=" + std::string{ value }, i::COutSys::LEVEL_INFO);
+				
+					if (!memoryTest(std::stoul(startAddress), std::stoul(value))) {
+						i::COutSys::Println("[INI] Memory block '" + bName + "'failed memory test!", i::COutSys::LEVEL_ERR);
+					}
+				}
+				else {
+					i::COutSys::Println("[INI] Memory block '" + bName + "' couldn't be found!", i::COutSys::LEVEL_WARN);
+				}
+			}
+		}
+	}
+
 	i::COutSys::Println("[INI] Parsing INI file complete", i::COutSys::LEVEL_INFO);
 }
 
@@ -183,7 +211,7 @@ bool i::Icarus86::createProcessor() {
 	// Create the processor
 	switch (m_requestedProcessorType) {
 	case ProcessorRequestType::PType8086:
-		m_processor = std::unique_ptr<i::processor::Processor>(new i::processor::Processor_8086(m_dataBus, m_addressBus));
+		m_processor = std::unique_ptr<i::processor::Processor>(new i::processor::Processor_8086(m_mmu, m_dataBus, m_addressBus));
 		break;
 
 	default:
@@ -193,6 +221,23 @@ bool i::Icarus86::createProcessor() {
 	}
 	m_createdProcessor = true;
 	return true;
+}
+
+bool i::Icarus86::memoryTest(size_t startAddress, size_t size) {
+	size_t address = startAddress;
+	bool failure = false;
+	int tried = 0, failedBytes = 0;
+	while (address < startAddress + size) {
+		m_addressBus.putData(address);
+		if (!m_mmu.tryReadByte(m_addressBus, m_dataBus)) {
+			failure = true;
+			failedBytes++;
+		}
+		tried++;
+		address++;
+	}
+	i::COutSys::Println("Memory test from address=" + std::to_string(startAddress) + " size=" + std::to_string(size) + ", bytesTried=" + std::to_string(tried) + " failedBytes=" + std::to_string(failedBytes), i::COutSys::LEVEL_INFO);
+	return !failure;
 }
 
 void i::Icarus86::drawStatistics(sf::RenderWindow& window) {

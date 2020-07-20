@@ -23,6 +23,8 @@ namespace icarus {
 		private:
 			std::vector<icarus::memory::MemoryBlock> memoryBlocks;
 
+			size_t m_memoryTotal = 0;
+
 		public:
 			enum class ReadType { BigEndian, LittleEndian };
 
@@ -31,6 +33,12 @@ namespace icarus {
 			Adds a memory block at the start address with specified size
 			*/
 			void addMemoryBlock(size_t startAddress, size_t size);
+
+			/*
+			size_t getTotalMemory()
+			Returns the amount of memory registered to the MMU
+			*/
+			size_t getTotalMemory();
 
 			/*
 			void writeByte(icarus::bus::Bus<D_BUS_TYPE>& dBus, icarus::bus::Bus<A_BUS_TYPE>& aBus)

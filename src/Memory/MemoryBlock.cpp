@@ -10,16 +10,17 @@ Controls a block of memory that the CPU can access
 
 #include "MemoryBlock.hpp"
 
+#include "../COutSys.hpp"
+
 namespace im = icarus::memory;
 
-im::MemoryBlock::MemoryBlock(size_t startAddress, size_t size) {
-	m_data = new uint8_t[size];
+im::MemoryBlock::MemoryBlock(size_t startAddress, size_t size) : m_data(size) {
 	m_size = size;
 	m_startAddress = startAddress;
 }
 
 im::MemoryBlock::~MemoryBlock() {
-	delete[] m_data;
+
 }
 
 bool im::MemoryBlock::isInRange(size_t address) {

@@ -48,7 +48,7 @@ namespace icarus {
 		unsigned int m_cyclesPerTick = 0;
 
 		// Memory Management Unit
-		std::unique_ptr<icarus::memory::MMU> m_mmu;
+		icarus::memory::MMU m_mmu;
 
 		// Graphics display information
 		bool m_displayStatistics = true;
@@ -66,6 +66,12 @@ namespace icarus {
 		Creates the processor
 		*/
 		bool createProcessor();
+
+		/*
+		bool memoryTest(size_t startAddress, size_t size)
+		Tests memory in the range
+		*/
+		bool memoryTest(size_t startAddress, size_t size);
 
 		/*
 		void drawStatistics()

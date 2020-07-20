@@ -12,13 +12,15 @@ Controls a block of memory that the CPU can access
 
 #include "../Type.hpp"
 
+#include <vector>
+
 namespace icarus {
 
 	namespace memory {
 
 		class MemoryBlock {
 		private:
-			uint8_t* m_data;
+			std::vector<uint8_t> m_data;
 			size_t m_startAddress = 0;
 			size_t m_size;
 
