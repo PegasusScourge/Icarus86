@@ -151,6 +151,7 @@
     <ClCompile Include="src\Icarus86.cpp" />
     <ClCompile Include="src\Memory\MemoryBlock.cpp" />
     <ClCompile Include="src\Memory\MMU.cpp" />
+    <ClCompile Include="src\Processor\ALU.cpp" />
     <ClCompile Include="src\Processor\Processor_8086.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +161,7 @@
     <ClInclude Include="src\Icarus86.hpp" />
     <ClInclude Include="src\Memory\MemoryBlock.hpp" />
     <ClInclude Include="src\Memory\MMU.hpp" />
+    <ClInclude Include="src\Processor\ALU.hpp" />
     <ClInclude Include="src\Processor\Processor.hpp" />
     <ClInclude Include="src\Processor\Processor_8086.hpp" />
     <ClInclude Include="src\Processor\Register.hpp" />

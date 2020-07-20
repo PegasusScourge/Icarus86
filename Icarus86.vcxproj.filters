@@ -45,6 +45,9 @@
     <ClCompile Include="src\Memory\MemoryBlock.cpp">
       <Filter>Source Files\Memory</Filter>
     </ClCompile>
+    <ClCompile Include="src\Processor\ALU.cpp">
+      <Filter>Source Files\Processor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Icarus86.hpp">
@@ -76,6 +79,9 @@
     </ClInclude>
     <ClInclude Include="src\Memory\MemoryBlock.hpp">
       <Filter>Header Files\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Processor\ALU.hpp">
+      <Filter>Header Files\Processor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

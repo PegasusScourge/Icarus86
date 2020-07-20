@@ -15,6 +15,7 @@ Implementation of the 8086 processor
 #include "../Bus/Bus.hpp"
 #include "../Memory/MMU.hpp"
 #include "Register.hpp"
+#include "ALU.hpp"
 
 #include <vector>
 
@@ -28,7 +29,11 @@ namespace icarus {
 			icarus::bus::Bus16& m_dataBus;
 			icarus::bus::Bus32& m_addressBus;
 
+			// MMU reference
 			icarus::memory::MMU& m_mmu;
+
+			// ALU
+			icarus::processor::ALU m_alu;
 
 			// Register definitions
 			std::vector<Register16> m_registers;
