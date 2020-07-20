@@ -11,7 +11,6 @@ Memory Management Unit implementation
  **************************************************************************/
 
 #include "MemoryBlock.hpp"
-
 #include "../Bus/Bus.hpp"
 
 #include <vector>
@@ -56,6 +55,7 @@ namespace icarus {
 						return;
 					}
 				}
+				dBus.putData(v);
 			}
 			/*
 			bool tryReadByte(icarus::bus::Bus<D_BUS_TYPE>& dBus, icarus::bus::Bus<A_BUS_TYPE>& aBus)

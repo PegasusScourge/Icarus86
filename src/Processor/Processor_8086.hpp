@@ -41,19 +41,12 @@ namespace icarus {
 			*/
 			uint32_t resolveAddress(uint16_t segment, uint16_t offset);
 
-			/*
-			uint16_t fetchMemoryTwoByte()
-			Returns a two byte value, reads from memory in little endian format. Preload the addressBus before calling
-			*/
-			uint16_t fetchMemoryTwoByte();
-
 		public:
 			Processor_8086(icarus::memory::MMU& mmu, icarus::bus::Bus16& dataBus, icarus::bus::Bus32& addressBus);
 
 			/*
 			Overridden main functions
 			*/
-
 			void fetch() override;
 			unsigned int decode() override;
 			void execute() override;
