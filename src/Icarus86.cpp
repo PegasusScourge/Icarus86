@@ -191,7 +191,7 @@ void i::Icarus86::parseINI() {
 				value = ini.GetValue(bName.c_str(), "size"); startAddress = ini.GetValue(bName.c_str(), "startAddress");
 				if (value && startAddress) {
 					m_mmu.addMemoryBlock(std::stoul(startAddress), std::stoul(value));
-					i::COutSys::Println("[INI] Memory block '" + bName + "' created with add=" + std::string{ startAddress } + ", size=" + std::string{ value }, i::COutSys::LEVEL_INFO);
+					i::COutSys::Println("[INI] Memory block '" + bName + "' created with address=" + std::string{ startAddress } + ", size=" + std::string{ value }, i::COutSys::LEVEL_INFO);
 				
 					if (!memoryTest(std::stoul(startAddress), std::stoul(value))) {
 						i::COutSys::Println("[INI] Memory block '" + bName + "'failed memory test!", i::COutSys::LEVEL_ERR);
