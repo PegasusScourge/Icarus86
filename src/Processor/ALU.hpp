@@ -93,6 +93,8 @@ namespace icarus {
 			*/
 			void setCarryBit(bool c);
 
+			// ARITHMETIC
+
 			/*
 			T add(T a, T b, bool addCarry = false)
 			Adds a to b and returns the result. If addCarry, then the carryBit is added too
@@ -143,6 +145,35 @@ namespace icarus {
 
 				return result;
 			}
+
+			/*
+			T increment(T a)
+			Increments a by one and outputs the value, doesn't affect flags. Use add(a, b = 1) for this
+			*/
+			template <class T>
+			T increment(T a) {
+				return a + 1;
+			}
+
+			/*
+			T decrement(T a)
+			Decrements a by one and outputs the value, doesn't affect flags. Use subtract(a, b = 1) for this
+			*/
+			template <class T>
+			T decrement(T a) {
+				return a - 1;
+			}
+
+			/*
+			T twosComplement(T a)
+			Subtracts a from 0 (twos complement)
+			*/
+			template <class T>
+			T twosComplement(T a) {
+				return 0U - a;
+			}
+
+			// BIT SHIFTING
 
 			/*
 			T rotateLeft(T a, bool useCarryBit = false, unsigned int shiftAmount = 1)
@@ -196,6 +227,44 @@ namespace icarus {
 					}
 				}
 				return result;
+			}
+
+			// BINARY LOGIC
+
+			/*
+			T binaryAND(T a, T b)
+			Returns the value of a & b
+			*/
+			template <class T>
+			T binaryAND(T a, T b) {
+				return a & b;
+			}
+
+			/*
+			T binaryOR(T a, T b)
+			Returns the value of a | b
+			*/
+			template <class T>
+			T binaryOR(T a, T b) {
+				return a | b;
+			}
+
+			/*
+			T binaryXOR(T a, T b)
+			Returns the value of a ^ b
+			*/
+			template <class T>
+			T binaryXOR(T a, T b) {
+				return a ^ b;
+			}
+
+			/*
+			T binaryNOT(T a)
+			Inverts the bits of a and returns
+			*/
+			template <class T>
+			T binaryNOT(T a) {
+				return ~a;
 			}
 
 		};
