@@ -12,6 +12,7 @@ Abract implementation of a Processor allowing multiple types to be accessed in a
 
 #include "../Type.hpp"
 #include "../Bus/Bus.hpp"
+#include "ALU.hpp"
 
 #include <string>
 #include <vector>
@@ -23,6 +24,13 @@ namespace icarus {
 		class Processor {
 		private:
 			float m_clockRateMHz = 0.1f; // default clock rate
+			
+
+		protected:
+			// ALU
+			icarus::processor::ALU m_alu;
+
+			// Name
 			std::string m_name = "Default Processor";
 
 		public:
@@ -30,7 +38,6 @@ namespace icarus {
 			void setClockRateMHz(float clockRateMHz) { if (clockRateMHz < 0) { return; } m_clockRateMHz = clockRateMHz; }
 			float getClockRateMHz() { return m_clockRateMHz; }
 
-			void setName(std::string n) { m_name = n; }
 			std::string getName() { return m_name; }
 
 			/*

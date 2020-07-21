@@ -21,7 +21,7 @@ namespace ip = icarus::processor;
 std::string ip::Processor_8086::REGISTER_NAMES[14] = { "AX", "BX", "CX", "DX", "SI", "DI", "BP", "SP", "IP", "FS", "CS", "DS", "ES", "SS" };
 
 ip::Processor_8086::Processor_8086(icarus::memory::MMU& mmu, icarus::bus::Bus16& dataBus, icarus::bus::Bus32& addressBus) : m_mmu(mmu), m_dataBus(dataBus), m_addressBus(addressBus) {
-	setName("Intel 8086");
+	m_name = "Intel 8086";
 
 	// Create the registers
 	for(int i = 0; i < 4; i++)
