@@ -228,7 +228,7 @@ bool i::Icarus86::memoryTest(size_t startAddress, size_t size) {
 	bool failure = false;
 	int tried = 0, failedBytes = 0;
 	while (address < startAddress + size) {
-		m_addressBus.putData(address);
+		m_addressBus.putData((uint32_t)address);
 		if (!m_mmu.tryReadByte(m_addressBus, m_dataBus)) {
 			failure = true;
 			failedBytes++;

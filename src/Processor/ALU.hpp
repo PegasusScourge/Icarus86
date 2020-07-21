@@ -80,6 +80,12 @@ namespace icarus {
 			}
 
 		public:
+			/*
+			bool test()
+			Performs a test of the ALU operations. Returns true if it passed
+			*/
+			bool test();
+
 			// Getters
 			bool carryBit();
 			bool zeroFlag();

@@ -35,37 +35,7 @@ ip::Processor_8086::Processor_8086(icarus::memory::MMU& mmu, icarus::bus::Bus16&
 	for (int i = 0; i < 4; i++)
 		m_registers.push_back(Register16{ false }); // Create registers CS through SS
 
-	uint8_t aluTest = m_alu.add<uint8_t>(255, 1);
-	if (aluTest != 0 || !m_alu.carryBit())
-		icarus::COutSys::Println("Processor ALU failed test 1: " + std::to_string(aluTest) + "," + std::to_string(m_alu.carryBit()), icarus::COutSys::LEVEL_ERR);
-	else
-		icarus::COutSys::Println("Processor ALU passed test 1", icarus::COutSys::LEVEL_INFO);
-	aluTest = m_alu.add<uint8_t>(255, 1, true);
-	if (aluTest != 1 || !m_alu.carryBit())
-		icarus::COutSys::Println("Processor ALU failed test 2: " + std::to_string(aluTest) + "," + std::to_string(m_alu.carryBit()), icarus::COutSys::LEVEL_ERR);
-	else
-		icarus::COutSys::Println("Processor ALU passed test 2", icarus::COutSys::LEVEL_INFO);
-	aluTest = m_alu.add<uint8_t>(127, 127, false);
-	if (aluTest != 254 || !m_alu.overflowFlag())
-		icarus::COutSys::Println("Processor ALU failed test 3: " + std::to_string(aluTest) + "," + std::to_string(m_alu.overflowFlag()), icarus::COutSys::LEVEL_ERR);
-	else
-		icarus::COutSys::Println("Processor ALU passed test 3", icarus::COutSys::LEVEL_INFO);
-	aluTest = m_alu.subtract<uint8_t>(127, 127, false);
-	if (aluTest != 0 || !m_alu.zeroFlag())
-		icarus::COutSys::Println("Processor ALU failed test 4: " + std::to_string(aluTest) + "," + std::to_string(m_alu.zeroFlag()), icarus::COutSys::LEVEL_ERR);
-	else
-		icarus::COutSys::Println("Processor ALU passed test 4", icarus::COutSys::LEVEL_INFO);
-	aluTest = m_alu.rotateLeft<uint8_t>(2);
-	if (aluTest != 4)
-		icarus::COutSys::Println("Processor ALU failed test 5: " + std::to_string(aluTest), icarus::COutSys::LEVEL_ERR);
-	else
-		icarus::COutSys::Println("Processor ALU passed test 5", icarus::COutSys::LEVEL_INFO);
-	aluTest = m_alu.rotateRight<uint8_t>(2);
-	if (aluTest != 1)
-		icarus::COutSys::Println("Processor ALU failed test 6: " + std::to_string(aluTest), icarus::COutSys::LEVEL_ERR);
-	else
-		icarus::COutSys::Println("Processor ALU passed test 6", icarus::COutSys::LEVEL_INFO);
-
+	m_alu.test();
 }
 
 void ip::Processor_8086::fetch() {
