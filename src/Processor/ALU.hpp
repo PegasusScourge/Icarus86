@@ -86,11 +86,34 @@ namespace icarus {
 			*/
 			bool test();
 
-			// Getters
+			/*
+			bool carryBit()
+			Return the value of the carry bit
+			*/
 			bool carryBit();
+
+			/*
+			bool zeroFlag()
+			Return the value of the zero flag
+			*/
 			bool zeroFlag();
+
+			/*
+			bool negativeFlag()
+			Return the value of the negative flag
+			*/
 			bool negativeFlag();
+
+			/*
+			bool overflowFlag()
+			Return the value of the overflow flag
+			*/
 			bool overflowFlag();
+
+			/*
+			bool parityFlag()
+			Return the value of the parity flag
+			*/
 			bool parityFlag();
 
 			/*

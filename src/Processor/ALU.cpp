@@ -24,15 +24,19 @@ void ip::ALU::setCarryBit(bool c) {
 bool ip::ALU::carryBit() {
 	return m_carryBit;
 }
+
 bool ip::ALU::zeroFlag() {
 	return m_zeroFlag;
 }
+
 bool ip::ALU::negativeFlag() {
 	return m_negativeFlag;
 }
+
 bool ip::ALU::overflowFlag() {
 	return m_overflowFlag;
 }
+
 bool ip::ALU::parityFlag() {
 	return m_parityFlag;
 }
