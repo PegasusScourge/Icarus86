@@ -12,24 +12,25 @@ ModRMByte handling
 
 #include "../../Type.hpp"
 
-#include <vector>
-
 namespace icarus {
 
 	namespace processor {
 
 		namespace instruction {
 
-			typedef union ModRMByte {
-				union {
-					uint8_t	MOD : 2;
-					uint8_t REGOP : 3;
-					uint8_t RM : 3;
-				};
-				uint8_t w;
-			} ModRMByte;
+			class ModRMByte {
+			public:
+				ModRMByte(uint8_t b);
 
-			ModRMByte DecodeModRMByte(uint8_t byte);
+				union {
+					union {
+						uint8_t MOD : 2;
+						uint8_t REGOP : 3;
+						uint8_t RM : 3;
+					};
+					uint8_t byte;
+				};
+			};
 
 		}
 

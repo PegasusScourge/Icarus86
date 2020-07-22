@@ -281,10 +281,10 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 
 	// Draw the bus values
 	text.setFillColor(sf::Color::Cyan);
-	text.setString("Data Bus Value:    " + COutSys::ToHexStr(m_dataBus.readData(), true, true));
+	text.setString("Data Bus Value:    " + COutSys::ToHexStr(m_dataBus.readData(), true));
 	text.setPosition(x, y); y += 14;
 	window.draw(text);
-	text.setString("Address Bus Value: " + COutSys::ToHexStr(m_addressBus.readData(), true, true));
+	text.setString("Address Bus Value: " + COutSys::ToHexStr(m_addressBus.readData(), true));
 	text.setPosition(x, y); y += 14;
 	window.draw(text);
 

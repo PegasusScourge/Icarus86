@@ -13,6 +13,7 @@ Console Output System. Handles formating and displaying information to the conso
 #include <string>
 #include <iomanip>
 #include <sstream>
+#include <cstring>
 
 namespace icarus {
 
@@ -67,14 +68,15 @@ namespace icarus {
 		Returns a string with a number formatted into HEX
 		*/
 		template <class T>
-		static std::string ToHexStr(T v, bool pad = false, bool prefix = false) {
-			std::stringstream stream;
+		static std::string ToHexStr(T v, bool prefix = false) {
+			char str[50];
+
+			std::string fmt = "%0" + std::to_string(sizeof(T) * 2) + "X";
 			if (prefix)
-				stream << "0x";
-			if (pad)
-				stream << std::setw(sizeof(T) * 2) << std::setfill('0');
-			stream << std::hex << v;
-			return stream.str();
+				fmt = "0x" + fmt;
+			sprintf(str, fmt.c_str(), v);
+
+			return std::string(str);
 		}
 
 	};

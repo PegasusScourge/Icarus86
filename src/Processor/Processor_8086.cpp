@@ -11,6 +11,7 @@ Implementation of the 8086 processor
 #include "Processor_8086.hpp"
 
 #include "../COutSys.hpp"
+#include "Instruction/ModRMByte.hpp"
 
 namespace ip = icarus::processor;
 
@@ -36,6 +37,8 @@ ip::Processor_8086::Processor_8086(icarus::memory::MMU& mmu, icarus::bus::Bus16&
 		m_registers.push_back(Register16{ false }); // Create registers CS through SS
 
 	m_alu.test();
+
+	icarus::processor::instruction::ModRMByte byte(0x65);
 }
 
 void ip::Processor_8086::fetch() {
@@ -61,7 +64,7 @@ std::vector<uint64_t> ip::Processor_8086::getRegisterValues() {
 std::vector<std::string> ip::Processor_8086::getRegisterValuesAsStr() {
 	std::vector<std::string> regs;
 	for (auto& r : m_registers) {
-		regs.push_back(COutSys::ToHexStr(r.read(), true, true));
+		regs.push_back(COutSys::ToHexStr(r.read(), true));
 	}
 	return regs;
 }

@@ -10,9 +10,3 @@ Universal types that are useful throughout the program
  **************************************************************************/
 
 #include <cstdint>
-
-namespace icarus {
-
-
-
-}
