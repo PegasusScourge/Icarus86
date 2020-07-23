@@ -146,10 +146,32 @@ void ipi::InstructionSet::parseICodeEntry(nlohmann::json entry) {
 	using namespace nlohmann;
 
 	// Sanity check for the important things
-	if (!entry["hexcode"].is_string() || !entry["microcode"].is_array()) {
+	if (!entry["hexcode"].is_string()) {
 		// Fail this entry
 		return;
 	}
 	std::string code_s = entry["hexcode"].get<std::string>();
-	icarus::COutSys::Println("iCode: hexcode_s=" + code_s, icarus::COutSys::LEVEL_INFO);
+	icarus::COutSys::Print("iCode: hexcode_s=" + code_s + " ", icarus::COutSys::LEVEL_INFO);
+
+	// Check for prefix
+	if (entry["isPrefix"].is_boolean() && entry["isPrefix"].get<bool>()) {
+		icarus::COutSys::Print("[ PREFIX] Checking for child codes: ");
+		if (entry["childCodes"].is_array()) {
+			icarus::COutSys::Println("[FOUND]. Parsing");
+			for (auto& iCode : entry["childCodes"]) {
+				parseICodeEntry(iCode);
+			}
+			icarus::COutSys::Println("Parsed all child codes", icarus::COutSys::LEVEL_INFO);
+			return;
+		}
+		else {
+			icarus::COutSys::Println("[NOT FOUND]. Ignoring");
+			return;
+		}
+	}
+	else {
+		icarus::COutSys::Print("[!PREFIX] ");
+	}
+
+	icarus::COutSys::Println("[PARSED]");
 }

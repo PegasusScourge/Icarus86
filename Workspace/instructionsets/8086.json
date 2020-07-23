@@ -18,6 +18,24 @@
 			"microcode": [
 				"NOP"
 			]
+		},
+		{
+			"hexcode": "80",
+			"isPrefix": true,
+			"childCodes": [
+				{
+					"hexcode": "00",
+					"isPrefix": false,
+					"hasModRM": false,
+					"immediateBytes": 0,
+					"displacementBytes": 0,
+					"clockCost": 1,
+					"childCodes": [],
+					"microcode": [
+						"NOP"
+					]
+				}
+			]
 		}
 		
 	]
