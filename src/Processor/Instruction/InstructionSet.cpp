@@ -21,20 +21,18 @@ namespace ipi = icarus::processor::instruction;
 // class ICode
 /***********************************/
 
-ipi::ICode::ICode(uint8_t code, bool isPrefix, bool modRM, bool imm, bool disp, std::vector<Microcode> microCode,
-	std::vector<ICode> childCodes, unsigned int dispBytes, unsigned int immBytes) {
+ipi::ICode::ICode(uint8_t code, bool isPrefix, bool modRM, unsigned int dispBytes, unsigned int immBytes,
+	unsigned int clockCost, std::vector<Microcode> microCode, std::vector<ICode> childCodes = std::vector<ICode>(0)) {
 
 	// Init everything
 	m_code = code;
 	m_isPrefix = isPrefix;
 	m_hasModRM = modRM;
-	m_hasImmediate = imm;
-	m_hasDisplacement = disp;
 	m_microcode = microCode;
 	m_childCodes = childCodes;
 	m_displacementBytes = dispBytes;
 	m_immediateBytes = immBytes;
-
+	m_clockCost = clockCost;
 }
 
 bool ipi::ICode::isPrefix() {
@@ -45,12 +43,8 @@ bool ipi::ICode::hasModRM() {
 	return m_hasModRM;
 }
 
-bool ipi::ICode::hasImmediate() {
-	return m_hasImmediate;
-}
-
-bool ipi::ICode::hasDisplacement() {
-	return m_hasDisplacement;
+unsigned int ipi::ICode::clockCost() {
+	return m_clockCost;;
 }
 
 unsigned int ipi::ICode::numDisplacementBytes() {

@@ -20,7 +20,7 @@ namespace icarus {
 
 			class Microcode {
 				enum class MicrocodeType {
-					NONE = 0,
+					NOP = 0,
 
 					SRC_REG,
 					SRC_MEM,
@@ -56,7 +56,7 @@ namespace icarus {
 				void setDst(uint8_t d);
 
 			private:
-				MicrocodeType m_type = MicrocodeType::NONE;
+				MicrocodeType m_type = MicrocodeType::NOP;
 				MicrocodeSrcSlot m_srcSlot = MicrocodeSrcSlot::SRC_A;
 
 				uint8_t m_srcByteSize = 0;

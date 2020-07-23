@@ -12,6 +12,7 @@
 			"hasModRM": false,
 			"immediateBytes": 0,
 			"displacementBytes": 0,
+			"clockCost": 1,
 			"childCodes": {},
 			"microcode": [
 				"NOP"

@@ -27,25 +27,23 @@ namespace icarus {
 			private:
 				bool m_isPrefix = false;
 				bool m_hasModRM = false;
-				bool m_hasImmediate = false;
-				bool m_hasDisplacement = false;
 				uint8_t m_code = 0;
 				unsigned int m_displacementBytes = 0;
 				unsigned int m_immediateBytes = 0;
+				unsigned int m_clockCost = 0;
 				std::vector<ICode> m_childCodes;
 				std::vector<Microcode> m_microcode;
 
 			public:
-				ICode(uint8_t code, bool isPrefix, bool modRM, bool imm, bool disp, std::vector<Microcode> microCode,
-					std::vector<ICode> childCodes = std::vector<ICode>(0), unsigned int dispBytes = 0, unsigned int immBytes = 0);
+				ICode(uint8_t code, bool isPrefix, bool modRM, unsigned int dispBytes, unsigned int immBytes,
+					unsigned int clockCost, std::vector<Microcode> microCode, std::vector<ICode> childCodes = std::vector<ICode>(0));
 
 				bool isPrefix();
 				bool hasModRM();
-				bool hasImmediate();
-				bool hasDisplacement();
 
 				unsigned int numDisplacementBytes();
 				unsigned int numImmediateBytes();
+				unsigned int clockCost();
 
 				uint8_t getCode();
 
