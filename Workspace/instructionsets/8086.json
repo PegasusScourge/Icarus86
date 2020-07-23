@@ -5,9 +5,10 @@
 		"major": 0,
 		"minor": 1
 	},
-	"icode": {
+	"icode": [
 		
-		"0x00": {
+		{
+			"hexcode": "90",
 			"isPrefix": false,
 			"hasModRM": false,
 			"immediateBytes": 0,
@@ -19,5 +20,5 @@
 			]
 		}
 		
-	}
+	]
 }

@@ -14,6 +14,8 @@ Abract implementation of a instruction set
 #include "ModRMByte.hpp"
 #include "Microcode.hpp"
 
+#include "nlohmann/json.hpp"
+
 #include <vector>
 #include <string>
 
@@ -66,6 +68,12 @@ namespace icarus {
 				Parses the JSON file provided in the src string
 				*/
 				void parseJSON();
+
+				/*
+				void parseICodeEntry(json entry)
+				Takes an ICodeEntry and parses it, recursively if needed
+				*/
+				void parseICodeEntry(nlohmann::json entry);
 
 			public:
 				InstructionSet(); // Default constructor does nothing

@@ -11,7 +11,6 @@ Abract implementation of a instruction set
 #include "InstructionSet.hpp"
 
 #include "../../COutSys.hpp"
-#include "nlohmann/json.hpp"
 
 #include <fstream>
 
@@ -22,7 +21,7 @@ namespace ipi = icarus::processor::instruction;
 /***********************************/
 
 ipi::ICode::ICode(uint8_t code, bool isPrefix, bool modRM, unsigned int dispBytes, unsigned int immBytes,
-	unsigned int clockCost, std::vector<Microcode> microCode, std::vector<ICode> childCodes = std::vector<ICode>(0)) {
+	unsigned int clockCost, std::vector<Microcode> microCode, std::vector<ICode> childCodes) {
 
 	// Init everything
 	m_code = code;
@@ -94,9 +93,10 @@ bool ipi::InstructionSet::isValid() {
 }
 
 void ipi::InstructionSet::parseJSON() {
+	using namespace nlohmann;
+
 	icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "': opening", icarus::COutSys::LEVEL_INFO);
 
-	using namespace nlohmann;
 	json j;
 	std::ifstream stream(m_filesrc);
 	if (!stream.is_open()) {
@@ -128,5 +128,28 @@ void ipi::InstructionSet::parseJSON() {
 		return;
 	}
 
+	if (!j["icode"].is_array()) {
+		icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "' couldn't find header 'icode' array element. Aborted", icarus::COutSys::LEVEL_ERR);
+		return;
+	}
+
+	icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "' icode found. Parsing", icarus::COutSys::LEVEL_INFO);
 	// Now we must parse the instructions
+	auto& iCodeNode = j["icode"];
+
+	for (auto& iCode : iCodeNode) {
+		parseICodeEntry(iCode);
+	}
+}
+
+void ipi::InstructionSet::parseICodeEntry(nlohmann::json entry) {
+	using namespace nlohmann;
+
+	// Sanity check for the important things
+	if (!entry["hexcode"].is_string() || !entry["microcode"].is_array()) {
+		// Fail this entry
+		return;
+	}
+	std::string code_s = entry["hexcode"].get<std::string>();
+	icarus::COutSys::Println("iCode: hexcode_s=" + code_s, icarus::COutSys::LEVEL_INFO);
 }
