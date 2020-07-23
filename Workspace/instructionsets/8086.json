@@ -1,0 +1,22 @@
+{
+	"name": "InstructionSet_8086",
+	"icarus": true,
+	"version": {
+		"major": 0,
+		"minor": 1
+	},
+	"icode": {
+		
+		"0x00": {
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"childCodes": {},
+			"microcode": [
+				"NOP"
+			]
+		}
+		
+	}
+}
