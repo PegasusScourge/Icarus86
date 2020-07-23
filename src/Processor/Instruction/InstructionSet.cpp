@@ -109,7 +109,20 @@ void ipi::ICode::parseICodeEntry(nlohmann::json entry) {
 	}
 
 	// Get microcode
+	if (entry["microcode"].is_array()) {
+		// We have microcode
+		unsigned int microcodeAdded = 0;
+		for (auto& element : entry["microcode"]) {
+			if (!element.is_string())
+				continue;
+			std::string s = element.get<std::string>();
+			Microcode::MicrocodeType type = Microcode::GetTypeFromString(s);
+			microcodeAdded++;
+			m_microcode.push_back(Microcode(type));
+		}
 
+		icarus::COutSys::Print("[MCODE#: " + std::to_string(microcodeAdded) + "] ");
+	}
 
 	icarus::COutSys::Println("[PARSED]");
 }

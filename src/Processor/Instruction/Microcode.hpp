@@ -12,6 +12,8 @@ A set of microcode instructions to complete
 
 #include "../../Type.hpp"
 
+#include <string>
+
 namespace icarus {
 
 	namespace processor {
@@ -19,6 +21,7 @@ namespace icarus {
 		namespace instruction {
 
 			class Microcode {
+			public:
 				enum class MicrocodeType {
 					NOP = 0,
 
@@ -34,17 +37,11 @@ namespace icarus {
 					FN_ADD,
 				};
 
-				enum class MicrocodeSrcSlot {
-					SRC_A = 0,
-					SRC_B,
-					SRC_C,
-					SRC_D
-				};
+				static MicrocodeType GetTypeFromString(std::string s);
 
-				Microcode(MicrocodeType type, MicrocodeSrcSlot srcSlot = MicrocodeSrcSlot::SRC_A);
+				Microcode(MicrocodeType type);
 
 				MicrocodeType getType();
-				MicrocodeSrcSlot getSrcSlot();
 				uint8_t getSrcByteSize();
 				uint8_t getSrc();
 				uint8_t getDstByteSize();
@@ -57,7 +54,6 @@ namespace icarus {
 
 			private:
 				MicrocodeType m_type = MicrocodeType::NOP;
-				MicrocodeSrcSlot m_srcSlot = MicrocodeSrcSlot::SRC_A;
 
 				uint8_t m_srcByteSize = 0;
 				uint8_t m_src = 0;

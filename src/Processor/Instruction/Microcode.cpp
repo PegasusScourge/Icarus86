@@ -16,17 +16,21 @@ using namespace icarus::processor::instruction;
  // class Microcode
  /***********************************/
 
-Microcode::Microcode(MicrocodeType type, MicrocodeSrcSlot srcSlot) {
+Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
+	if (s.compare("NOP") == 0) {
+		return Microcode::MicrocodeType::NOP;
+	}
+	else {
+		return Microcode::MicrocodeType::NOP;
+	}
+}
+
+Microcode::Microcode(MicrocodeType type) {
 	m_type = type;
-	m_srcSlot = srcSlot;
 }
 
 Microcode::MicrocodeType Microcode::getType() {
 	return m_type;
-}
-
-Microcode::MicrocodeSrcSlot Microcode::getSrcSlot() {
-	return m_srcSlot;
 }
 
 uint8_t Microcode::getSrcByteSize() {
