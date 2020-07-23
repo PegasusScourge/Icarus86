@@ -15,6 +15,7 @@ Implementation of the 8086 processor
 #include "Instruction/ModRMByte.hpp"
 
 namespace ip = icarus::processor;
+namespace ipi = ip::instruction;
 
 /***********************************/
 // class Processor_8086 : public
@@ -38,19 +39,57 @@ ip::Processor_8086::Processor_8086(icarus::memory::MMU& mmu, icarus::bus::Bus16&
 		m_registers.push_back(Register16{ false }); // Create registers CS through SS
 
 	// Get the instrction set
-	m_iSet = ip::instruction::InstructionSet(icarus::processor::instruction::InstructionPath + "8086.json");
+	m_iSet = icarus::processor::instruction::InstructionSet(icarus::processor::instruction::InstructionPath + "8086.json");
 
 	m_alu.test();
-
-	icarus::processor::instruction::ModRMByte byte(0x65);
 }
 
-void ip::Processor_8086::fetch() {
+unsigned int ip::Processor_8086::fetchDecode() {
+	unsigned int cyclesToWait = 1;
 
-}
+	// Load the address bus with the address
+	unsigned int increment = 0;
+	uint16_t ipVal = m_registers[(int)REGISTERS::R_IP].read();
+	m_addressBus.putData(ipVal);
+	if (!m_mmu.tryReadByte(m_dataBus, m_addressBus)) {
+		// Failed to read a byte
+		m_failed = true;
+		return 0;
+	}
 
-unsigned int ip::Processor_8086::decode() {
-	return 1;
+	ipi::ICode& instr = m_iSet[m_dataBus.readData()];
+
+	while (instr.isValid() && instr.isPrefix()) {
+		m_addressBus.putData(ipVal + (++increment));
+		if (!m_mmu.tryReadByte(m_dataBus, m_addressBus)) {
+			// Failed to read a byte
+			icarus::COutSys::Println("Processor8086 failed to read byte", icarus::COutSys::LEVEL_ERR);
+			m_failed = true;
+			return 0;
+		}
+
+		instr = instr[m_dataBus.readData()];
+	}
+
+	if (!instr.isValid()) {
+		// Failed to get a valid instruction
+		icarus::COutSys::Println("Processor8086 failed to get valid instr", icarus::COutSys::LEVEL_ERR);
+		m_failed = true;
+		return 0;
+	}
+
+	// We have a valid instruction, now lets get the microcode
+	cInstrMicrocode = instr.getMicrocode();
+	if (cInstrMicrocode.size() == 0) {
+		// No microcode!
+		icarus::COutSys::Println("Processor8086 found no microcode in instr", icarus::COutSys::LEVEL_ERR);
+		return 0;
+	}
+
+	// Update the instruction pointer
+	m_registers[(int)REGISTERS::R_IP].put(ipVal + increment);
+
+	return cyclesToWait;
 }
 
 void ip::Processor_8086::execute() {
@@ -83,4 +122,8 @@ std::string* ip::Processor_8086::getRegisterNames() {
 
 uint32_t ip::Processor_8086::resolveAddress(uint16_t segment, uint16_t offset) {
 	return (segment * 0x10) + offset;
+}
+
+void ip::Processor_8086::onErrorDumpToConsole() {
+
 }

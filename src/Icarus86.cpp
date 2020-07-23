@@ -105,15 +105,22 @@ void i::Icarus86::run() {
 		m_processorClock.restart();
 		if (m_processorAccumulator >= m_microsPerClock)
 			m_cyclesPerTick = 0;
-		while (m_processorAccumulator >= m_microsPerClock) {
+		while (m_processorAccumulator >= m_microsPerClock && !m_processor->isFailed()) {
 			m_processorAccumulator -= m_microsPerClock;
 			if (cyclesToWait > 0) {
 				cyclesToWait--;
 			}
 			else {
-				m_processor->fetch();
-				cyclesToWait = m_processor->decode();
+				cyclesToWait = m_processor->fetchDecode();
+				if (m_processor->isFailed()) {
+					i::COutSys::Println("Icarus86 detected processor failure after fetchDecode()", i::COutSys::LEVEL_ERR);
+					break;
+				}
 				m_processor->execute();
+				if (m_processor->isFailed()) {
+					i::COutSys::Println("Icarus86 detected processor failure after execute()", i::COutSys::LEVEL_ERR);
+					break;
+				}
 			}
 			m_cyclesPerTick++;
 		}

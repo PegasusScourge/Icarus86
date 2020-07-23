@@ -8,7 +8,7 @@
 	"icode": [
 		
 		{
-			"hexcode": "90",
+			"hexcode": "00",
 			"isPrefix": false,
 			"hasModRM": false,
 			"immediateBytes": 0,

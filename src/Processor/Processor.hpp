@@ -27,6 +27,8 @@ namespace icarus {
 		private:
 			float m_clockRateMHz = 0.1f; // default clock rate
 
+			virtual void onErrorDumpToConsole() = 0;
+
 		protected:
 			// ALU
 			icarus::processor::ALU m_alu;
@@ -34,6 +36,8 @@ namespace icarus {
 			std::string m_name = "Default Processor";
 			// Instruction set
 			icarus::processor::instruction::InstructionSet m_iSet;
+			// Failure flag
+			bool m_failed = false;
 
 		public:
 			void setClockRateMHz(float clockRateMHz) { if (clockRateMHz <= 0) { return; } m_clockRateMHz = clockRateMHz; }
@@ -41,17 +45,13 @@ namespace icarus {
 
 			std::string getName() { return m_name; }
 
-			/*
-			virtual void fetch()
-			Virtual function overridden by the fetch process of the processor. Loads the next instruction
-			*/
-			virtual void fetch() = 0;
+			bool isFailed() { return m_failed; }
 
 			/*
-			virtual int decode()
-			Virtual function overriden by the decode process of the processor. Returns the number of clock cycles the execution of the instruction will take
+			virtual int fetchDecode()
+			Virtual function overriden by the fetch + decode. Returns the number of clock cycles the execution of the instruction will take
 			*/
-			virtual unsigned int decode() = 0;
+			virtual unsigned int fetchDecode() = 0;
 
 			/*
 			virtual void execute()

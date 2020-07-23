@@ -36,11 +36,16 @@ namespace icarus {
 			enum class REGISTERS { R_AX = 0, R_BX, R_CX, R_DX, R_SI, R_DI, R_BP, R_SP, R_IP, R_FLAGS, R_CS, R_DS, R_ES, R_SS };
 			static std::string REGISTER_NAMES[14];
 
+			// Current instruction copy
+			std::vector<icarus::processor::instruction::Microcode> cInstrMicrocode;
+
 			/*
 			uint32_t resolveAddress(uint16_t segment, uint16_t offset)
 			Returns the resolved address of a segment-offset register pair
 			*/
 			uint32_t resolveAddress(uint16_t segment, uint16_t offset);
+
+			void onErrorDumpToConsole() override;
 
 		public:
 			Processor_8086(icarus::memory::MMU& mmu, icarus::bus::Bus16& dataBus, icarus::bus::Bus32& addressBus);
@@ -48,8 +53,7 @@ namespace icarus {
 			/*
 			Overridden main functions
 			*/
-			void fetch() override;
-			unsigned int decode() override;
+			unsigned int fetchDecode() override;
 			void execute() override;
 			std::vector<uint64_t> getRegisterValues() override;
 			std::vector<std::string> getRegisterValuesAsStr() override;
