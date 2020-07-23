@@ -14,7 +14,7 @@
 			"immediateBytes": 0,
 			"displacementBytes": 0,
 			"clockCost": 1,
-			"childCodes": {},
+			"childCodes": [],
 			"microcode": [
 				"NOP"
 			]
