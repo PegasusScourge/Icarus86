@@ -266,6 +266,9 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 	text.setString("Cycles per tick: " + std::to_string(m_cyclesPerTick));
 	text.setPosition(x, y); y += 14;
 	window.draw(text);
+	text.setString("ProcessorAccumulator: " + std::to_string(m_processorAccumulator));
+	text.setPosition(x, y); y += 14;
+	window.draw(text);
 	text.setString("Wait cycles: " + std::to_string(m_cyclesToWait));
 	text.setPosition(x, y); y += 14;
 	window.draw(text);
