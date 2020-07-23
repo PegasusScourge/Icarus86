@@ -36,9 +36,15 @@ namespace icarus {
 				std::vector<ICode> m_childCodes;
 				std::vector<Microcode> m_microcode;
 
+				/*
+				void parseICodeEntry(json entry)
+				Takes an ICodeEntry and parses it, recursively if needed
+				*/
+				void parseICodeEntry(nlohmann::json entry);
+
 			public:
-				ICode(uint8_t code, bool isPrefix, bool modRM, unsigned int dispBytes, unsigned int immBytes,
-					unsigned int clockCost, std::vector<Microcode> microCode, std::vector<ICode> childCodes = std::vector<ICode>(0));
+				ICode();
+				ICode(nlohmann::json entry);
 
 				bool isPrefix();
 				bool hasModRM();
@@ -68,12 +74,6 @@ namespace icarus {
 				Parses the JSON file provided in the src string
 				*/
 				void parseJSON();
-
-				/*
-				void parseICodeEntry(json entry)
-				Takes an ICodeEntry and parses it, recursively if needed
-				*/
-				void parseICodeEntry(nlohmann::json entry);
 
 			public:
 				InstructionSet(); // Default constructor does nothing
