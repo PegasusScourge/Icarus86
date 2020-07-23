@@ -105,6 +105,8 @@ void i::Icarus86::run() {
 		m_processorClock.restart();
 		if (m_processorAccumulator >= m_microsPerClock)
 			m_cyclesPerTick = 0;
+		if (m_processorAccumulator >= m_microsPerClock * 2000)
+			m_processorAccumulator = m_microsPerClock * 2000;
 		while (m_processorAccumulator >= m_microsPerClock && !m_processor->isFailed()) {
 			m_processorAccumulator -= m_microsPerClock;
 			if (m_cyclesToWait > 0) {
@@ -261,6 +263,9 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 	text.setPosition(x, y); y += 14;
 	window.draw(text);
 	text.setString("CPU clock freq (MHz): " + std::to_string(m_processor->getClockRateMHz()));
+	text.setPosition(x, y); y += 14;
+	window.draw(text);
+	text.setString("Microseconds/clock: " + std::to_string(m_microsPerClock));
 	text.setPosition(x, y); y += 14;
 	window.draw(text);
 	text.setString("Cycles per tick: " + std::to_string(m_cyclesPerTick));
