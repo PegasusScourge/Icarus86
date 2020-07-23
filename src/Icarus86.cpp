@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
 	cout << endl << "Starting emulation:" << endl;
 
 	// Initialize the console output system
-	i::COutSys::Initialize(false);
+	i::COutSys::Initialize(true);
 	i::COutSys::Println("COutSys initialized", i::COutSys::LEVEL_INFO);
 
 	// Start the emulator

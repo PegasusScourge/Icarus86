@@ -12,6 +12,7 @@ Console Output System. Handles formating and displaying information to the conso
 #include "Constexprs.hpp"
 
 #include <iostream>
+#include <ctime>
 
 using std::cout;
 using icarus::endl;
@@ -25,11 +26,23 @@ void i::COutSys::Initialize(bool prependDate) {
 }
 
 void i::COutSys::PrintDate() {
-	// Do nothing for now
-	// TODO
+	time_t rawtime;
+	struct tm* timeinfo;
+	char buffer[80];
+
+	time(&rawtime);
+	timeinfo = localtime(&rawtime);
+
+	strftime(buffer, sizeof(buffer), "[%H:%M:%S] ", timeinfo);
+	std::string str(buffer);
+	cout << str;
 }
 
 void i::COutSys::PrintLevel(int level) {
+	if (level != COutSys::LEVEL_NONE && PREPEND_DATE) {
+		PrintDate();
+	}
+
 	switch (level) {
 	case COutSys::LEVEL_INFO:
 		cout << "[INFO] ";
@@ -54,8 +67,6 @@ void i::COutSys::Println(std::string s, int level) {
 }
 
 void i::COutSys::Print(std::string s, int level) {
-	if (PREPEND_DATE)
-		PrintDate();
 	PrintLevel(level);
 	cout << s;
 }
