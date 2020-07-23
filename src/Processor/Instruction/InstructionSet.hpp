@@ -12,20 +12,16 @@ Abract implementation of a instruction set
 
 #include "../../Type.hpp"
 #include "ModRMByte.hpp"
+#include "Microcode.hpp"
 
 #include <vector>
+#include <string>
 
 namespace icarus {
 
 	namespace processor {
 
 		namespace instruction {
-
-			enum class IType {
-
-				I_ADD
-
-			};
 
 			class ICode {
 			private:
@@ -34,13 +30,13 @@ namespace icarus {
 				bool m_hasImmediate = false;
 				bool m_hasDisplacement = false;
 				uint8_t m_code = 0;
-				IType type;
 				unsigned int m_displacementBytes = 0;
 				unsigned int m_immediateBytes = 0;
 				std::vector<ICode> m_childCodes;
+				std::vector<Microcode> m_microcode;
 
 			public:
-				ICode(IType type, uint8_t code, bool isPrefix, bool modRM, bool imm, bool disp,
+				ICode(uint8_t code, bool isPrefix, bool modRM, bool imm, bool disp, std::vector<Microcode> microCode,
 					std::vector<ICode> childCodes = std::vector<ICode>(0), unsigned int dispBytes = 0, unsigned int immBytes = 0);
 
 				bool isPrefix();
@@ -51,19 +47,35 @@ namespace icarus {
 				unsigned int numDisplacementBytes();
 				unsigned int numImmediateBytes();
 
-				IType getType();
 				uint8_t getCode();
 
 				std::vector<ICode>& getChildCodes();
+				std::vector<Microcode>& getMicrocode();
 
 			};
 
 			class InstructionSet {
 			private:
+				std::string m_filesrc;
+				std::string m_name;
 
+				bool m_valid = false;
+
+				std::vector<ICode> m_iCodes;
+
+				/*
+				void parseJSON()
+				Parses the JSON file provided in the src string
+				*/
+				void parseJSON();
 
 			public:
+				InstructionSet(); // Default constructor does nothing
+				InstructionSet(std::string filesrc);
 
+				std::string getName();
+				std::string getFilesrc();
+				bool isValid();
 
 			};
 

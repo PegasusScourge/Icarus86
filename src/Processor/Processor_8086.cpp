@@ -11,6 +11,7 @@ Implementation of the 8086 processor
 #include "Processor_8086.hpp"
 
 #include "../COutSys.hpp"
+#include "../Constexprs.hpp"
 #include "Instruction/ModRMByte.hpp"
 
 namespace ip = icarus::processor;
@@ -35,6 +36,9 @@ ip::Processor_8086::Processor_8086(icarus::memory::MMU& mmu, icarus::bus::Bus16&
 
 	for (int i = 0; i < 4; i++)
 		m_registers.push_back(Register16{ false }); // Create registers CS through SS
+
+	// Get the instrction set
+	m_iSet = ip::instruction::InstructionSet(icarus::processor::instruction::InstructionPath + "8086.json");
 
 	m_alu.test();
 

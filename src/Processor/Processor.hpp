@@ -33,7 +33,7 @@ namespace icarus {
 			// Name
 			std::string m_name = "Default Processor";
 			// Instruction set
-			std::unique_ptr<icarus::processor::instruction::InstructionSet> m_iSet;
+			icarus::processor::instruction::InstructionSet m_iSet;
 
 		public:
 			void setClockRateMHz(float clockRateMHz) { if (clockRateMHz <= 0) { return; } m_clockRateMHz = clockRateMHz; }

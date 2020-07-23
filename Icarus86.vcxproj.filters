@@ -57,6 +57,12 @@
     <ClCompile Include="src\Processor\Instruction\ModRMByte.cpp">
       <Filter>Source Files\Processor\Instruction</Filter>
     </ClCompile>
+    <ClCompile Include="src\Processor\Instruction\InstructionSet.cpp">
+      <Filter>Source Files\Processor\Instruction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Processor\Instruction\Microcode.cpp">
+      <Filter>Source Files\Processor\Instruction</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Icarus86.hpp">
@@ -96,6 +102,9 @@
       <Filter>Header Files\Processor\Instruction</Filter>
     </ClInclude>
     <ClInclude Include="src\Processor\Instruction\ModRMByte.hpp">
+      <Filter>Header Files\Processor\Instruction</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Processor\Instruction\Microcode.hpp">
       <Filter>Header Files\Processor\Instruction</Filter>
     </ClInclude>
   </ItemGroup>

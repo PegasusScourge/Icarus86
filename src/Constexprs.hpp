@@ -13,4 +13,14 @@ namespace icarus {
 
 	constexpr char endl = '\n';
 
+	namespace processor {
+
+		namespace instruction {
+
+			const std::string InstructionPath = "instructionsets/";
+
+		}
+
+	}
+
 }

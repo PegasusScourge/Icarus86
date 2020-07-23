@@ -152,6 +152,8 @@
     <ClCompile Include="src\Memory\MemoryBlock.cpp" />
     <ClCompile Include="src\Memory\MMU.cpp" />
     <ClCompile Include="src\Processor\ALU.cpp" />
+    <ClCompile Include="src\Processor\Instruction\InstructionSet.cpp" />
+    <ClCompile Include="src\Processor\Instruction\Microcode.cpp" />
     <ClCompile Include="src\Processor\Instruction\ModRMByte.cpp" />
     <ClCompile Include="src\Processor\Processor_8086.cpp" />
   </ItemGroup>
@@ -164,6 +166,7 @@
     <ClInclude Include="src\Memory\MMU.hpp" />
     <ClInclude Include="src\Processor\ALU.hpp" />
     <ClInclude Include="src\Processor\Instruction\InstructionSet.hpp" />
+    <ClInclude Include="src\Processor\Instruction\Microcode.hpp" />
     <ClInclude Include="src\Processor\Instruction\ModRMByte.hpp" />
     <ClInclude Include="src\Processor\Processor.hpp" />
     <ClInclude Include="src\Processor\Processor_8086.hpp" />
