@@ -25,23 +25,24 @@ namespace icarus {
 				enum class MicrocodeType {
 					NOP = 0,
 
-					SRC_REG,
-					SRC_MEM,
-					SRC_MEM_BY_REG,
+					SRC_REGOP,
+					SRC_MOD,
+					SRC_RM,
 					SRC_IMM,
 
-					DST_REG,
-					DST_MEM,
-					DST_MEM_BY_REG,
+					DST_REGOP,
+					DST_MOD,
+					DST_RM,
 
 					FN_ADD,
 				};
 
 				static MicrocodeType GetTypeFromString(std::string s);
 
-				Microcode(MicrocodeType type);
+				Microcode(std::string tStr, MicrocodeType type);
 
 				MicrocodeType getType();
+				std::string getTStr();
 				uint8_t getSrcByteSize();
 				uint8_t getSrc();
 				uint8_t getDstByteSize();
@@ -54,6 +55,7 @@ namespace icarus {
 
 			private:
 				MicrocodeType m_type = MicrocodeType::NOP;
+				std::string m_tStr;
 
 				uint8_t m_srcByteSize = 0;
 				uint8_t m_src = 0;

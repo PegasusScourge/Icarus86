@@ -118,7 +118,7 @@ void ipi::ICode::parseICodeEntry(nlohmann::json entry) {
 			std::string s = element.get<std::string>();
 			Microcode::MicrocodeType type = Microcode::GetTypeFromString(s);
 			microcodeAdded++;
-			m_microcode.push_back(Microcode(type));
+			m_microcode.push_back(Microcode(s, type));
 		}
 
 		icarus::COutSys::Print("[MCODE#: " + std::to_string(microcodeAdded) + "] ");

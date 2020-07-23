@@ -17,20 +17,32 @@ using namespace icarus::processor::instruction;
  /***********************************/
 
 Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
-	if (s.compare("NOP") == 0) {
-		return Microcode::MicrocodeType::NOP;
-	}
-	else {
-		return Microcode::MicrocodeType::NOP;
-	}
+	if (s.compare("NOP") == 0) { return Microcode::MicrocodeType::NOP; }
+
+	else if (s.compare("SRC_REGOP") == 0) { return Microcode::MicrocodeType::SRC_REGOP; }
+	else if (s.compare("SRC_MOD") == 0) { return Microcode::MicrocodeType::SRC_MOD; }
+	else if (s.compare("SRC_RM") == 0) { return Microcode::MicrocodeType::SRC_RM; }
+	else if (s.compare("SRC_IMM") == 0) { return Microcode::MicrocodeType::SRC_IMM; }
+
+	else if (s.compare("DST_REGOP") == 0) { return Microcode::MicrocodeType::DST_REGOP; }
+	else if (s.compare("DST_MOD") == 0) { return Microcode::MicrocodeType::DST_MOD; }
+	else if (s.compare("DST_RM") == 0) { return Microcode::MicrocodeType::DST_RM; }
+
+	else if (s.compare("FN_ADD") == 0) { return Microcode::MicrocodeType::FN_ADD; }
+	return Microcode::MicrocodeType::NOP;
 }
 
-Microcode::Microcode(MicrocodeType type) {
+Microcode::Microcode(std::string tStr, MicrocodeType type) {
 	m_type = type;
+	m_tStr = tStr;
 }
 
 Microcode::MicrocodeType Microcode::getType() {
 	return m_type;
+}
+
+std::string Microcode::getTStr() {
+	return m_tStr;
 }
 
 uint8_t Microcode::getSrcByteSize() {
