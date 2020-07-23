@@ -91,7 +91,7 @@ void i::Icarus86::run() {
 	sf::RenderWindow window(sf::VideoMode(800, 600), "Icarus86");
 
 	// Processor
-	unsigned int cyclesToWait = 0;
+	m_cyclesToWait = 0;
 	
 	while (window.isOpen()) {
 		sf::Event evt;
@@ -107,11 +107,11 @@ void i::Icarus86::run() {
 			m_cyclesPerTick = 0;
 		while (m_processorAccumulator >= m_microsPerClock && !m_processor->isFailed()) {
 			m_processorAccumulator -= m_microsPerClock;
-			if (cyclesToWait > 0) {
-				cyclesToWait--;
+			if (m_cyclesToWait > 0) {
+				m_cyclesToWait--;
 			}
 			else {
-				cyclesToWait = m_processor->fetchDecode();
+				m_cyclesToWait = m_processor->fetchDecode();
 				if (m_processor->isFailed()) {
 					i::COutSys::Println("Icarus86 detected processor failure after fetchDecode()", i::COutSys::LEVEL_ERR);
 					break;
@@ -264,6 +264,9 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 	text.setPosition(x, y); y += 14;
 	window.draw(text);
 	text.setString("Cycles per tick: " + std::to_string(m_cyclesPerTick));
+	text.setPosition(x, y); y += 14;
+	window.draw(text);
+	text.setString("Wait cycles: " + std::to_string(m_cyclesToWait));
 	text.setPosition(x, y); y += 14;
 	window.draw(text);
 

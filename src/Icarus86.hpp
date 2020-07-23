@@ -47,6 +47,8 @@ namespace icarus {
 
 		unsigned int m_cyclesPerTick = 0;
 
+		unsigned int m_cyclesToWait = 0;
+
 		// Memory Management Unit
 		icarus::memory::MMU m_mmu;
 

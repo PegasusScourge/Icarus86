@@ -48,7 +48,7 @@ unsigned int ip::Processor_8086::fetchDecode() {
 	unsigned int cyclesToWait = 1;
 
 	// Load the address bus with the address
-	unsigned int increment = 0;
+	unsigned int increment = 1;
 	uint16_t ipVal = m_registers[(int)REGISTERS::R_IP].read();
 	m_addressBus.putData(ipVal);
 	if (!m_mmu.tryReadByte(m_dataBus, m_addressBus)) {
