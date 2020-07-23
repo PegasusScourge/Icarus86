@@ -103,12 +103,16 @@ void i::Icarus86::run() {
 
 		m_processorAccumulator += m_processorClock.getElapsedTime().asMicroseconds();
 		m_processorClock.restart();
+
 		if (m_processorAccumulator >= m_microsPerClock)
 			m_cyclesPerTick = 0;
+
 		if (m_processorAccumulator >= m_microsPerClock * 2000)
 			m_processorAccumulator = m_microsPerClock * 2000;
-		while (m_processorAccumulator >= m_microsPerClock && !m_processor->isFailed()) {
+
+		while (m_processorAccumulator >= m_microsPerClock && !m_processor->isFailed() && !m_processor->isHLT()) {
 			m_processorAccumulator -= m_microsPerClock;
+			
 			if (m_cyclesToWait > 0) {
 				m_cyclesToWait--;
 			}
@@ -252,6 +256,8 @@ bool i::Icarus86::memoryTest(size_t startAddress, size_t size) {
 void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 	float x = 10;
 	float y = 10;
+
+	icarus::processor::ProcessorState& pState = m_processor->getProcessorState();
 	
 	sf::Text text;
 	text.setFont(m_font);
@@ -286,11 +292,10 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 	text.setPosition(x, y); y += 14;
 	window.draw(text);
 
-	std::vector<std::string> regValues = m_processor->getRegisterValuesAsStr();
-	std::string* regNames = m_processor->getRegisterNames();
+	std::vector<std::string>& regValues = pState.registerValues_str;
 	text.setFillColor(sf::Color::White);
 	for (int i = 0; i < regValues.size(); i++, y += 12) {
-		text.setString("[" + regNames[i] + "]: " + regValues.at(i));
+		text.setString("[" + pState.registerValues_names[i] + "]: " + regValues.at(i));
 		text.setPosition(x, y);
 		window.draw(text);
 	}

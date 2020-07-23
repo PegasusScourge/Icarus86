@@ -45,7 +45,9 @@ namespace icarus {
 			*/
 			uint32_t resolveAddress(uint16_t segment, uint16_t offset);
 
-			void onErrorDumpToConsole() override;
+			void onError() override;
+
+			void onGetProcessorState() override;
 
 		public:
 			Processor_8086(icarus::memory::MMU& mmu, icarus::bus::Bus16& dataBus, icarus::bus::Bus32& addressBus);
@@ -55,9 +57,6 @@ namespace icarus {
 			*/
 			unsigned int fetchDecode() override;
 			void execute() override;
-			std::vector<uint64_t> getRegisterValues() override;
-			std::vector<std::string> getRegisterValuesAsStr() override;
-			std::string* getRegisterNames() override;
 		};
 
 	}

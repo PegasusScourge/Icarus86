@@ -23,11 +23,23 @@ namespace icarus {
 
 	namespace processor {
 
+		class ProcessorState {
+		public:
+			std::vector<uint64_t> registerValues_num;
+			std::vector<std::string> registerValues_str;
+			std::string* registerValues_names;
+		};
+
 		class Processor {
 		private:
 			float m_clockRateMHz = 0.1f; // default clock rate
 
-			virtual void onErrorDumpToConsole() = 0;
+			// Failure flag
+			bool m_failed = false;
+			// HLT flag
+			bool m_isHLT = false;
+
+			virtual void onError() = 0;
 
 		protected:
 			// ALU
@@ -36,8 +48,19 @@ namespace icarus {
 			std::string m_name = "Default Processor";
 			// Instruction set
 			icarus::processor::instruction::InstructionSet m_iSet;
-			// Failure flag
-			bool m_failed = false;
+			// Processor state
+			ProcessorState m_state;
+
+			void triggerError() {
+				m_failed = true;
+				onError();
+			}
+
+			/*
+			virtual void onGetProcessorState()
+			Called when getProcessorState() is called
+			*/
+			virtual void onGetProcessorState() = 0;
 
 		public:
 			void setClockRateMHz(float clockRateMHz) { if (clockRateMHz <= 0) { return; } m_clockRateMHz = clockRateMHz; }
@@ -46,6 +69,9 @@ namespace icarus {
 			std::string getName() { return m_name; }
 
 			bool isFailed() { return m_failed; }
+
+			void setHLT(bool h) { m_isHLT = h; }
+			bool isHLT() { return m_isHLT; }
 
 			/*
 			virtual int fetchDecode()
@@ -64,14 +90,23 @@ namespace icarus {
 			virtual std::vector<std::string> getRegisterValuesAsStr()
 			Returns the registers of the processor
 			*/
-			virtual std::vector<uint64_t> getRegisterValues() = 0;
-			virtual std::vector<std::string> getRegisterValuesAsStr() = 0;
+			// virtual std::vector<uint64_t> getRegisterValues() = 0;
+			// virtual std::vector<std::string> getRegisterValuesAsStr() = 0;
 
 			/*
 			virtual std::string* getRegisterNames()
 			Returns a string array of the register names
 			*/
-			virtual std::string* getRegisterNames() = 0;
+			// virtual std::string* getRegisterNames() = 0;
+
+			/*
+			ProcessorState& getProcessorState()
+			Returns the processor state. Calls onGetProcessorState() which can be overriden to provide functionality if needed
+			*/
+			ProcessorState& getProcessorState() {
+				onGetProcessorState();
+				return m_state;
+			}
 
 		};
 
