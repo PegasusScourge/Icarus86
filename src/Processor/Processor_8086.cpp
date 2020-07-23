@@ -57,7 +57,7 @@ unsigned int ip::Processor_8086::fetchDecode() {
 		return 0;
 	}
 
-	ipi::ICode& instr = m_iSet[m_dataBus.readData()];
+	ipi::ICode& instr = m_iSet[(uint8_t)m_dataBus.readData()];
 
 	while (instr.isValid() && instr.isPrefix()) {
 		m_addressBus.putData(ipVal + (++increment));
@@ -68,7 +68,7 @@ unsigned int ip::Processor_8086::fetchDecode() {
 			return 0;
 		}
 
-		instr = instr[m_dataBus.readData()];
+		instr = instr[(uint8_t)m_dataBus.readData()];
 	}
 
 	if (!instr.isValid()) {
@@ -82,7 +82,7 @@ unsigned int ip::Processor_8086::fetchDecode() {
 	cInstrMicrocode = instr.getMicrocode();
 	if (cInstrMicrocode.size() == 0) {
 		// No microcode!
-		icarus::COutSys::Println("Processor8086 found no microcode in instr", icarus::COutSys::LEVEL_ERR);
+		icarus::COutSys::Println("Processor8086 found no microcode in instr", icarus::COutSys::LEVEL_WARN);
 		return 0;
 	}
 
@@ -93,7 +93,20 @@ unsigned int ip::Processor_8086::fetchDecode() {
 }
 
 void ip::Processor_8086::execute() {
+	// We now have to execute the microcode instructions
+	uint16_t srcCache[2];
+	uint16_t* srcPtr = srcCache;
 
+	for (auto& mcode : cInstrMicrocode) {
+		namespace m = icarus::processor::instruction;
+		switch (mcode.getType()) {
+
+		default:
+			// We assume NOP and do nothing
+			break;
+
+		}
+	}
 }
 
 std::vector<uint64_t> ip::Processor_8086::getRegisterValues() {

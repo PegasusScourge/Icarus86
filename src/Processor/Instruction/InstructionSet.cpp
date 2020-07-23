@@ -52,7 +52,7 @@ void ipi::ICode::parseICodeEntry(nlohmann::json entry) {
 	ss << std::hex << code_s;
 	ss >> code;
 	m_code = (uint8_t)code;
-	icarus::COutSys::Print("(hexcode=" + std::to_string(m_code) + ") ");
+	icarus::COutSys::Print("(#=" + std::to_string(m_code) + ")\t");
 
 	// Check for prefix
 	if (entry["isPrefix"].is_boolean() && entry["isPrefix"].get<bool>()) {
@@ -60,10 +60,11 @@ void ipi::ICode::parseICodeEntry(nlohmann::json entry) {
 		icarus::COutSys::Print("[ PREFIX] Checking for child codes: ");
 		if (entry["childCodes"].is_array()) {
 			icarus::COutSys::Println("[FOUND]. Parsing");
+			icarus::COutSys::Println("iCode: <children>", icarus::COutSys::LEVEL_INFO);
 			for (auto& iCode : entry["childCodes"]) {
 				m_childCodes.push_back(ICode(iCode));
 			}
-			icarus::COutSys::Println("Parsed all child codes", icarus::COutSys::LEVEL_INFO);
+			icarus::COutSys::Println("iCode: </children>", icarus::COutSys::LEVEL_INFO);
 			m_valid = true;
 			return;
 		}
@@ -210,45 +211,45 @@ bool ipi::InstructionSet::isValid() {
 void ipi::InstructionSet::parseJSON() {
 	using namespace nlohmann;
 
-	icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "': opening", icarus::COutSys::LEVEL_INFO);
+	icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "': Opening", icarus::COutSys::LEVEL_INFO);
 
 	json j;
 	std::ifstream stream(m_filesrc);
 	if (!stream.is_open()) {
 		// ERROR
-		icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "' couldn't open file stream. Aborted", icarus::COutSys::LEVEL_ERR);
+		icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "': Couldn't open file stream. Aborted", icarus::COutSys::LEVEL_ERR);
 		m_valid = false;
 		return;
 	}
 
 	// We are clear to continue
-	icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "': got file. Reading", icarus::COutSys::LEVEL_INFO);
+	icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "': Got file. Reading", icarus::COutSys::LEVEL_INFO);
 	stream >> j;
-	icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "': read. Checking header", icarus::COutSys::LEVEL_INFO);
+	icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "': Read. Checking header", icarus::COutSys::LEVEL_INFO);
 	
 	// Check that we have the right header information
 	if (!j["icarus"].is_boolean() && j["icarus"].get<bool>()) {
 		// ERROR
-		icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "' couldn't find header 'icarus' bool element. Aborted", icarus::COutSys::LEVEL_ERR);
+		icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "': Couldn't find header 'icarus' bool element. Aborted", icarus::COutSys::LEVEL_ERR);
 		return;
 	}
 
 	// Now load the name
 	if (j["name"].is_string()) {
 		m_name = j["name"].get<std::string>();
-		icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "' loaded. Name = " + m_name, icarus::COutSys::LEVEL_INFO);
+		icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "': Loaded. Name = " + m_name, icarus::COutSys::LEVEL_INFO);
 	}
 	else {
-		icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "' couldn't find header 'name' string element. Aborted", icarus::COutSys::LEVEL_ERR);
+		icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "': Couldn't find header 'name' string element. Aborted", icarus::COutSys::LEVEL_ERR);
 		return;
 	}
 
 	if (!j["icode"].is_array()) {
-		icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "' couldn't find header 'icode' array element. Aborted", icarus::COutSys::LEVEL_ERR);
+		icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "': Couldn't find header 'icode' array element. Aborted", icarus::COutSys::LEVEL_ERR);
 		return;
 	}
 
-	icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "' icode found. Parsing", icarus::COutSys::LEVEL_INFO);
+	icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "': iCode found! Parsing...", icarus::COutSys::LEVEL_INFO);
 	// Now we must parse the instructions
 	auto& iCodeNode = j["icode"];
 
