@@ -36,6 +36,8 @@ namespace icarus {
 				std::vector<ICode> m_childCodes;
 				std::vector<Microcode> m_microcode;
 
+				bool m_valid = false;
+
 				/*
 				void parseICodeEntry(json entry)
 				Takes an ICodeEntry and parses it, recursively if needed
@@ -49,6 +51,8 @@ namespace icarus {
 				bool isPrefix();
 				bool hasModRM();
 
+				bool isValid();
+
 				unsigned int numDisplacementBytes();
 				unsigned int numImmediateBytes();
 				unsigned int clockCost();
@@ -57,6 +61,8 @@ namespace icarus {
 
 				std::vector<ICode>& getChildCodes();
 				std::vector<Microcode>& getMicrocode();
+
+				ICode& operator[](uint8_t code);
 
 			};
 
@@ -67,6 +73,7 @@ namespace icarus {
 
 				bool m_valid = false;
 
+				ICode m_NOICODE;
 				std::vector<ICode> m_iCodes;
 
 				/*
@@ -82,6 +89,8 @@ namespace icarus {
 				std::string getName();
 				std::string getFilesrc();
 				bool isValid();
+
+				ICode& operator[](uint8_t code);
 
 			};
 

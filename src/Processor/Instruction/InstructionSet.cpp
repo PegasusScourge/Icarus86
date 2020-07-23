@@ -64,6 +64,7 @@ void ipi::ICode::parseICodeEntry(nlohmann::json entry) {
 				m_childCodes.push_back(ICode(iCode));
 			}
 			icarus::COutSys::Println("Parsed all child codes", icarus::COutSys::LEVEL_INFO);
+			m_valid = true;
 			return;
 		}
 		else {
@@ -122,9 +123,18 @@ void ipi::ICode::parseICodeEntry(nlohmann::json entry) {
 		}
 
 		icarus::COutSys::Print("[MCODE#: " + std::to_string(microcodeAdded) + "] ");
+		if (microcodeAdded == 0) {
+			icarus::COutSys::Println("[FAIL: MCODE len = 0]");
+			return;
+		}
+	}
+	else {
+		icarus::COutSys::Println("[FAIL: MCODE missing]");
+		return;
 	}
 
 	icarus::COutSys::Println("[PARSED]");
+	m_valid = true;
 }
 
 bool ipi::ICode::isPrefix() {
@@ -133,6 +143,10 @@ bool ipi::ICode::isPrefix() {
 
 bool ipi::ICode::hasModRM() {
 	return m_hasModRM;
+}
+
+bool ipi::ICode::isValid() {
+	return m_valid;
 }
 
 unsigned int ipi::ICode::clockCost() {
@@ -156,6 +170,14 @@ std::vector<ipi::ICode>& ipi::ICode::getChildCodes() {
 }
 std::vector<ipi::Microcode>& ipi::ICode::getMicrocode() {
 	return m_microcode;
+}
+
+ipi::ICode& ipi::ICode::operator[](uint8_t code) {
+	for (auto& i : m_childCodes) {
+		if (i.getCode() == code)
+			return i;
+	}
+	return *this;
 }
 
 /***********************************/
@@ -233,4 +255,12 @@ void ipi::InstructionSet::parseJSON() {
 	for (auto& iCode : iCodeNode) {
 		m_iCodes.push_back(ICode(iCode));
 	}
+}
+
+ipi::ICode& ipi::InstructionSet::operator[](uint8_t code) {
+	for (auto& i : m_iCodes) {
+		if (i.getCode() == code)
+			return i;
+	}
+	return m_NOICODE;
 }
