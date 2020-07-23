@@ -29,6 +29,18 @@ Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 	else if (s.compare("DST_RM") == 0) { return Microcode::MicrocodeType::DST_RM; }
 
 	else if (s.compare("FN_ADD") == 0) { return Microcode::MicrocodeType::FN_ADD; }
+	else if (s.compare("FN_ADC") == 0) { return Microcode::MicrocodeType::FN_ADC; }
+	else if (s.compare("FN_SUB") == 0) { return Microcode::MicrocodeType::FN_SUB; }
+	else if (s.compare("FN_SBB") == 0) { return Microcode::MicrocodeType::FN_SBB; }
+	else if (s.compare("FN_OR") == 0) { return Microcode::MicrocodeType::FN_OR; }
+	else if (s.compare("FN_XOR") == 0) { return Microcode::MicrocodeType::FN_XOR; }
+	else if (s.compare("FN_AND") == 0) { return Microcode::MicrocodeType::FN_AND; }
+	else if (s.compare("FN_CMP") == 0) { return Microcode::MicrocodeType::FN_CMP; }
+	else if (s.compare("FN_INC") == 0) { return Microcode::MicrocodeType::FN_INC; }
+	else if (s.compare("FN_DEC") == 0) { return Microcode::MicrocodeType::FN_DEC; }
+
+	else if (s.compare("FN_MOV") == 0) { return Microcode::MicrocodeType::FN_MOV; }
+	else if (s.compare("FN_XCHG") == 0) { return Microcode::MicrocodeType::FN_XCHG; }
 	return Microcode::MicrocodeType::NOP;
 }
 
@@ -43,36 +55,4 @@ Microcode::MicrocodeType Microcode::getType() {
 
 std::string Microcode::getTStr() {
 	return m_tStr;
-}
-
-uint8_t Microcode::getSrcByteSize() {
-	return m_srcByteSize;
-}
-
-uint8_t Microcode::getSrc() {
-	return m_src;
-}
-
-uint8_t Microcode::getDstByteSize() {
-	return m_dstByteSize;
-}
-
-uint8_t Microcode::getDst() {
-	return m_dst;
-}
-
-void Microcode::setSrcByteSize(uint8_t bs) {
-	m_srcByteSize = bs;
-}
-
-void Microcode::setSrc(uint8_t s) {
-	m_src = s;
-}
-
-void Microcode::setDstByteSize(uint8_t bs) {
-	m_dstByteSize = bs;
-}
-
-void Microcode::setDst(uint8_t d) {
-	m_dst = d;
 }

@@ -35,6 +35,18 @@ namespace icarus {
 					DST_RM,
 
 					FN_ADD,
+					FN_ADC,
+					FN_SUB,
+					FN_SBB,
+					FN_OR,
+					FN_XOR,
+					FN_AND,
+					FN_CMP,
+					FN_INC,
+					FN_DEC,
+
+					FN_MOV,
+					FN_XCHG,
 				};
 
 				static MicrocodeType GetTypeFromString(std::string s);
@@ -43,25 +55,10 @@ namespace icarus {
 
 				MicrocodeType getType();
 				std::string getTStr();
-				uint8_t getSrcByteSize();
-				uint8_t getSrc();
-				uint8_t getDstByteSize();
-				uint8_t getDst();
-
-				void setSrcByteSize(uint8_t bs);
-				void setSrc(uint8_t s);
-				void setDstByteSize(uint8_t bs);
-				void setDst(uint8_t d);
 
 			private:
 				MicrocodeType m_type = MicrocodeType::NOP;
 				std::string m_tStr;
-
-				uint8_t m_srcByteSize = 0;
-				uint8_t m_src = 0;
-
-				uint8_t m_dstByteSize = 0;
-				uint8_t m_dst = 0;
 			};
 
 		}
