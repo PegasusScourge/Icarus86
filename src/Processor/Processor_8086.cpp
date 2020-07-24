@@ -113,6 +113,15 @@ void ip::Processor_8086::execute() {
 	}
 }
 
+void ip::Processor_8086::forceIP(uint64_t ip) {
+	m_registers[(int)REGISTERS::R_IP].put(ip);
+}
+
+void ip::Processor_8086::forceSP(uint64_t sp) {
+	m_registers[(int)REGISTERS::R_SP].put(sp);
+}
+
+
 /***********************************/
 // class Processor_8086 : private
 /***********************************/

@@ -190,6 +190,18 @@ void i::Icarus86::parseINI() {
 		i::COutSys::Println("[INI] Requested clockMHz of " + std::string(value), i::COutSys::LEVEL_INFO);
 	}
 
+	value = ini.GetValue("processor", "force_ip");
+	if (value) {
+		m_processor->forceIP(std::stoul(value));
+		i::COutSys::Println("[INI] Requested forcedIP of " + std::string(value), i::COutSys::LEVEL_INFO);
+	}
+
+	value = ini.GetValue("processor", "force_sp");
+	if (value) {
+		m_processor->forceSP(std::stoul(value));
+		i::COutSys::Println("[INI] Requested forcedSP of " + std::string(value), i::COutSys::LEVEL_INFO);
+	}
+
 	// Get memory specification
 	value = ini.GetValue("memory", "blocks");
 	if (value) {

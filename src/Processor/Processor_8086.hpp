@@ -57,6 +57,9 @@ namespace icarus {
 			*/
 			unsigned int fetchDecode() override;
 			void execute() override;
+
+			void forceIP(uint64_t ip) override;
+			void forceSP(uint64_t sp) override;
 		};
 
 	}

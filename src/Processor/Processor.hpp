@@ -75,6 +75,9 @@ namespace icarus {
 			void setHLT(bool h) { m_isHLT = h; }
 			bool isHLT() { return m_isHLT; }
 
+			virtual void forceIP(uint64_t ip) = 0;
+			virtual void forceSP(uint64_t sp) = 0;
+
 			/*
 			virtual int fetchDecode()
 			Virtual function overriden by the fetch + decode. Returns the number of clock cycles the execution of the instruction will take
