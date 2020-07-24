@@ -16,6 +16,8 @@ Entry point to the emulator
 #include "SimpleIni/SimpleIni.h"
 
 #include <iostream>
+#include <iterator>
+#include <fstream>
 
 using std::cout;
 using icarus::endl; // Use our endl so we don't do constant flushes to cout. This line also simplifies changing to the flushing varient if necessary.
@@ -226,6 +228,39 @@ void i::Icarus86::parseINI() {
 					i::COutSys::Println("[INI] Memory block '" + bName + "' couldn't be found!", i::COutSys::LEVEL_WARN);
 				}
 			}
+		}
+	}
+
+	// Check if we need to force load something into memory
+	value = ini.GetValue("force_load", "path");
+	if (value) {
+		std::string path{ value };
+		value = ini.GetValue("force_load", "address");
+		if (value) {
+			size_t address = std::stoul(value);
+			i::COutSys::Println("[INI] Requested force load of file '" + path + "'", i::COutSys::LEVEL_INFO);
+
+			std::ifstream is(path, std::ios::binary);
+			std::istream_iterator<uint8_t> start(is), end;
+			std::vector<uint8_t> binaryContent(start, end);
+			i::COutSys::Println("[INI] Got content of file: size=" + i::COutSys::ToHexStr(binaryContent.size(), true), i::COutSys::LEVEL_INFO);
+			i::COutSys::Print("[INI] Content dump:", i::COutSys::LEVEL_INFO);
+			for (size_t i = 0; i < binaryContent.size(); i++) {
+				if (i % 32 == 0) {
+					cout << endl << "[" << i::COutSys::ToHexStr(i) << "] ";
+				}
+				cout << i::COutSys::ToHexStr(binaryContent[i]) << " ";
+			}
+			cout << endl;
+			// Load the file
+			i::COutSys::Println("[INI] Loading file into memory ", i::COutSys::LEVEL_INFO);
+			m_addressBus.putData(0);
+			for (auto& v : binaryContent) {
+				m_dataBus.putData(v);
+				m_mmu.writeByte(m_dataBus, m_addressBus);
+				m_addressBus.putData(m_addressBus.readData() + 1);
+			}
+			i::COutSys::Println("[INI] Loading complete", i::COutSys::LEVEL_INFO);
 		}
 	}
 
