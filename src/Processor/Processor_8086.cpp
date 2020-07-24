@@ -82,11 +82,24 @@ unsigned int ip::Processor_8086::fetchDecode() {
 	}
 
 	// We have a valid instruction, now lets get the microcode
-	cInstrMicrocode = instr.getMicrocode();
-	if (cInstrMicrocode.size() == 0) {
+	m_cInstrMicrocode = instr.getMicrocode();
+	if (m_cInstrMicrocode.size() == 0) {
 		// No microcode!
 		icarus::COutSys::Println("Processor8086 found no microcode in instr", icarus::COutSys::LEVEL_WARN);
 		return 0;
+	}
+
+	// Get a ModRMByte if needed
+	if (instr.hasModRM()) {
+		m_addressBus.putData(ipVal + (++increment));
+		if (!m_mmu.tryReadByte(m_dataBus, m_addressBus)) {
+			// Failed to read a byte
+			icarus::COutSys::Println("Processor8086 failed to read byte (for ModRM)", icarus::COutSys::LEVEL_ERR);
+			triggerError();
+			return 0;
+		}
+		
+		m_cInstrModRMByte = icarus::processor::instruction::ModRMByte((uint8_t)m_dataBus.readData());
 	}
 
 	// Update the instruction pointer
@@ -101,7 +114,7 @@ void ip::Processor_8086::execute() {
 	uint16_t srcCache[2];
 	uint16_t* srcPtr = srcCache;
 
-	for (auto& mcode : cInstrMicrocode) {
+	for (auto& mcode : m_cInstrMicrocode) {
 		namespace m = icarus::processor::instruction;
 		switch (mcode.getType()) {
 

@@ -17,6 +17,7 @@ Entry point to the emulator
 #include "Bus/Bus.hpp"
 #include "Processor/Processor.hpp"
 #include "Memory/MMU.hpp"
+#include "Graphics/GPU.hpp"
 
 #include "SFML/Graphics.hpp"
 #include "SFML/System.hpp"
@@ -52,10 +53,11 @@ namespace icarus {
 		// Memory Management Unit
 		icarus::memory::MMU m_mmu;
 
+		// GPU
+		icarus::graphics::GPU m_gpu;
+
 		// Graphics display information
 		bool m_displayStatistics = true;
-
-		sf::Font m_font;
 
 		/*
 		void parseINI()

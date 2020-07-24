@@ -14,6 +14,10 @@ ModRMByte handling
 
 namespace ipi = icarus::processor::instruction;
 
+ipi::ModRMByte::ModRMByte() {
+	byte = 0;
+}
+
 ipi::ModRMByte::ModRMByte(uint8_t b) {
 	byte = b;
 

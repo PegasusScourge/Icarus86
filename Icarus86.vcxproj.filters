@@ -34,6 +34,12 @@
     <Filter Include="Source Files\Processor\Instruction">
       <UniqueIdentifier>{05bb7a86-1bc9-4280-86bd-4f041e905e08}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Graphics">
+      <UniqueIdentifier>{df86d17a-b34f-444b-b8a1-4a3aa2102bd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics">
+      <UniqueIdentifier>{e31d1767-7169-46d5-99ed-341a8d90597e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Icarus86.cpp">
@@ -62,6 +68,9 @@
     </ClCompile>
     <ClCompile Include="src\Processor\Instruction\Microcode.cpp">
       <Filter>Source Files\Processor\Instruction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\GPU.cpp">
+      <Filter>Source Files\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -109,6 +118,9 @@
     </ClInclude>
     <ClInclude Include="src\CircularBuffer.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\GPU.hpp">
+      <Filter>Header Files\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

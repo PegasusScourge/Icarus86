@@ -21,6 +21,7 @@ namespace icarus {
 			class ModRMByte {
 			public:
 				ModRMByte(uint8_t b);
+				ModRMByte();
 
 				union {
 					union {

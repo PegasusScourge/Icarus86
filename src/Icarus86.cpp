@@ -79,8 +79,9 @@ i::Icarus86::Icarus86() {
 }
 
 void i::Icarus86::run() {
-	if (!m_font.loadFromFile("Consolas.ttf")) {
-		i::COutSys::Println("Icarus86 failed to load Consolas.ttf font", i::COutSys::LEVEL_ERR);
+	// Load the Font
+	icarus::graphics::GPU::InitializeFont();
+	if (!icarus::graphics::GPU::FontLoaded) {
 		return;
 	}
 
@@ -102,6 +103,8 @@ void i::Icarus86::run() {
 				window.close();
 			}
 		}
+
+		m_gpu.update(m_dataBus, m_addressBus, m_mmu);
 
 		m_processorAccumulator += m_processorClock.getElapsedTime().asMicroseconds();
 		m_processorClock.restart();
@@ -137,6 +140,11 @@ void i::Icarus86::run() {
 			m_renderClock.restart();
 
 			window.clear();
+
+			sf::Sprite gpuSprite;
+			gpuSprite.setTexture(m_gpu.getTexture().getTexture(), true);
+			gpuSprite.setPosition(0, 0);
+			window.draw(gpuSprite);
 
 			if (m_displayStatistics)
 				drawStatistics(window);
@@ -307,8 +315,10 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 	icarus::processor::ProcessorState& pState = m_processor->getProcessorState();
 	
 	sf::Text text;
-	text.setFont(m_font);
+	text.setFont(icarus::graphics::GPU::Font);
 	text.setCharacterSize(12);
+	text.setOutlineThickness(3.0f);
+	text.setOutlineColor(sf::Color::Black);
 
 	// Draw the CPU information
 	text.setFillColor(sf::Color::Cyan);
