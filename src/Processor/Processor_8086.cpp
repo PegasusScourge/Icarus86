@@ -90,6 +90,7 @@ unsigned int ip::Processor_8086::fetchDecode() {
 	}
 
 	// Update the instruction pointer
+	m_state.lastIP.push(ipVal);
 	m_registers[(int)REGISTERS::R_IP].put(ipVal + increment);
 
 	return cyclesToWait;

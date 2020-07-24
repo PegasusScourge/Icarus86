@@ -312,4 +312,19 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 	window.draw(text);
 
 	y += 20;
+
+	// Draw the lastIPs
+	text.setFillColor(sf::Color::Cyan);
+	text.setString("LastIPs:");
+	text.setPosition(x, y); y += 14;
+	window.draw(text);
+
+	text.setFillColor(sf::Color::White);
+	for (int i = 0; i < pState.lastIP.size(); i++, y += 12) {
+		text.setString("[" + std::to_string(i) + "]: " + std::to_string(pState.lastIP[i]));
+		text.setPosition(x, y);
+		window.draw(text);
+	}
+
+	y += 20;
 }

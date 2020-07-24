@@ -107,5 +107,8 @@
     <ClInclude Include="src\Processor\Instruction\Microcode.hpp">
       <Filter>Header Files\Processor\Instruction</Filter>
     </ClInclude>
+    <ClInclude Include="src\CircularBuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

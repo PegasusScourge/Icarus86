@@ -232,6 +232,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Bus\Bus.hpp" />
+    <ClInclude Include="src\CircularBuffer.hpp" />
     <ClInclude Include="src\Constexprs.hpp" />
     <ClInclude Include="src\COutSys.hpp" />
     <ClInclude Include="src\Icarus86.hpp" />

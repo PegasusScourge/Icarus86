@@ -12,6 +12,7 @@ Abract implementation of a Processor allowing multiple types to be accessed in a
 
 #include "../Type.hpp"
 #include "../Bus/Bus.hpp"
+#include "../CircularBuffer.hpp"
 #include "ALU.hpp"
 #include "Instruction/InstructionSet.hpp"
 
@@ -28,6 +29,7 @@ namespace icarus {
 			std::vector<uint64_t> registerValues_num;
 			std::vector<std::string> registerValues_str;
 			std::string* registerValues_names;
+			icarus::CircularBuffer<uint64_t> lastIP;
 		};
 
 		class Processor {
