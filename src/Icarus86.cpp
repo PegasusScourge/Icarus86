@@ -24,6 +24,9 @@ using icarus::endl; // Use our endl so we don't do constant flushes to cout. Thi
 
 namespace i = icarus;
 
+constexpr unsigned int WINDOW_WIDTH = 800;
+constexpr unsigned int WINDOW_HEIGHT = 600;
+
 int main(int argc, char* argv[]) {
 
 	// Compile the command line arguments into strings to pass to the emulator
@@ -91,7 +94,7 @@ void i::Icarus86::run() {
 	m_microsPerClock = (sf::Int64)(1000000.0f / (m_processor->getClockRateMHz() * 1000000.0f));
 
 	// Display
-	sf::RenderWindow window(sf::VideoMode(800, 600), "Icarus86");
+	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Icarus86");
 
 	// Processor
 	m_cyclesToWait = 0;
@@ -143,7 +146,7 @@ void i::Icarus86::run() {
 
 			sf::Sprite gpuSprite;
 			gpuSprite.setTexture(m_gpu.getTexture().getTexture(), true);
-			gpuSprite.setPosition(0, 0);
+			gpuSprite.setPosition((WINDOW_WIDTH / 2.0f) - (m_gpu.getXWidth() / 2.0f), (WINDOW_HEIGHT / 2) - (m_gpu.getYWidth() / 2.0f));
 			window.draw(gpuSprite);
 
 			if (m_displayStatistics)
@@ -317,7 +320,7 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 	sf::Text text;
 	text.setFont(icarus::graphics::GPU::Font);
 	text.setCharacterSize(12);
-	text.setOutlineThickness(3.0f);
+	text.setOutlineThickness(2.0f);
 	text.setOutlineColor(sf::Color::Black);
 
 	// Draw the CPU information

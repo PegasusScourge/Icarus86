@@ -39,6 +39,9 @@ namespace icarus{
 			*/
 			GPU();
 
+			unsigned int getXWidth();
+			unsigned int getYWidth();
+
 			/*
 			sf::Texture& getTexture()
 			Returns the texture for rendering
@@ -51,11 +54,13 @@ namespace icarus{
 			*/
 			template <class D_BUS_TYPE, class A_BUS_TYPE>
 			void update(icarus::bus::Bus<D_BUS_TYPE>& dBus, icarus::bus::Bus<A_BUS_TYPE>& aBus, icarus::memory::MMU& mmu) {
+				D_BUS_TYPE dBusOld = dBus.readData();
+				A_BUS_TYPE aBusOld = aBus.readData();
+				
 				if (m_updateClock.getElapsedTime().asMicroseconds() >= m_updateIntervalMicros) {
 					m_updateClock.restart();
 
 					// Update the graphics texture
-
 					m_texture.clear(sf::Color::Blue);
 
 					if (m_resMode == GPUResMode::MEMORY_TXT80x25 && m_colorMode == GPUColorMode::MONO) {
@@ -69,8 +74,8 @@ namespace icarus{
 								aBus.putData(m_memoryBase + (i * 80) + y);
 								mmu.readByte(dBus, aBus);
 								v = (uint8_t)dBus.readData();
-								if (v == 0)
-									v = '?';
+								if (v < ' ' || v > '~')
+									v = ' ';
 								lineStr += v;
 							}
 							m_textObj.setString(lineStr);
@@ -82,14 +87,23 @@ namespace icarus{
 
 					m_texture.display();
 				}
+
+				// We preserve the values before we screwed with them drawing the graphics
+				dBus.putData(dBusOld);
+				aBus.putData(aBusOld);
 			}
 			
 		private:
+			static constexpr int FONT_PT = 16;
+
 			void initialize();
 
 			sf::Image m_buffer;
 			sf::RenderTexture m_texture;
 			sf::Text m_textObj;
+
+			unsigned int m_xWidth = 0;
+			unsigned int m_yWidth = 0;
 
 			GPUResMode m_resMode;
 			GPUColorMode m_colorMode;
