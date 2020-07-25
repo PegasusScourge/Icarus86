@@ -28,6 +28,70 @@ using namespace icarus::processor;
 
 #endif
 
+void Processor_8086::mcode_execCode(Microcode mcode) {
+	MCODE_DEBUG("MicrocodeType " + mcode.getTStr() + " exec");
+
+	switch (mcode.getType()) {
+		/*
+		REG
+		*/
+
+	case Microcode::MicrocodeType::REG_8: // Switch to interpreting registers as the 8 bit registers
+		m_cInstr.mCodeI.regMode8Bit = true;
+		break;
+
+	case Microcode::MicrocodeType::REG_16: // Switch to interpreting registers as the 16 bit registers
+		m_cInstr.mCodeI.regMode8Bit = false;
+		break;
+
+		/*
+		SRC
+		*/
+
+	case Microcode::MicrocodeType::SRC_REGOP:
+		mcode_getSrcRegop();
+		break;
+
+	case Microcode::MicrocodeType::SRC_MODRM:
+		mcode_getSrcModRM();
+		break;
+
+	case Microcode::MicrocodeType::SRC_IMM:
+		mcode_getSrcImm();
+		break;
+
+		/*
+		DST
+		*/
+
+		/*
+		FN
+		*/
+
+	case Microcode::MicrocodeType::FN_REGOP_8X:
+		mcode_fnRegop8X();
+		break;
+
+		/*
+		MISC
+		*/
+
+	case Microcode::MicrocodeType::NOP:
+		MCODE_DEBUG("NOP");
+		break;
+	default:
+		MCODE_DEBUG("UDEF");
+		icarus::COutSys::Println("Undefined Microcode type detected, type=" + std::to_string((uint8_t)mcode.getType()), icarus::COutSys::LEVEL_ERR);
+		triggerError();
+		break;
+
+	}
+}
+
+/***********************************/
+// SRC MICROCODE
+/***********************************/
+
 void Processor_8086::mcode_toSrcFromReg(Processor_8086::CurrentInstruction::MicrocodeInformation::Source& src, uint8_t sval) {
 	MCODE_DEBUG("SVAL = " + std::to_string(sval));
 	
@@ -118,37 +182,6 @@ void Processor_8086::mcode_toSrcFromReg(Processor_8086::CurrentInstruction::Micr
 	}
 }
 
-void Processor_8086::mcode_execCode(Microcode mcode) {
-	MCODE_DEBUG("MicrocodeType " + mcode.getTStr() + " exec");
-	
-	switch (mcode.getType()) {
-	case Microcode::MicrocodeType::REG_8: // Switch to interpreting registers as the 8 bit registers
-		m_cInstr.mCodeI.regMode8Bit = true;
-		break;
-
-	case Microcode::MicrocodeType::REG_16: // Switch to interpreting registers as the 16 bit registers
-		m_cInstr.mCodeI.regMode8Bit = false;
-		break;
-
-	case Microcode::MicrocodeType::SRC_REGOP:
-		mcode_getSrcRegop();
-		break;
-
-	case Microcode::MicrocodeType::SRC_MODRM:
-		mcode_getSrcModRM();
-		break;
-
-	case Microcode::MicrocodeType::SRC_IMM:
-		mcode_getSrcImm();
-		break;
-
-	default:
-		MCODE_DEBUG("NOP || UDEF");
-		break;
-
-	}
-}
-
 void Processor_8086::mcode_getSrcImm() {
 	// We get the source from the immediate value.
 	// We simply copy
@@ -201,4 +234,65 @@ void Processor_8086::mcode_getSrcRegop() {
 		m_cInstr.mCodeI.srcAUsed = true;
 
 	mcode_toSrcFromReg(src, m_cInstr.modRMByte.REGOP());
+}
+
+/***********************************/
+// DST MICROCODE
+/***********************************/
+
+
+
+/***********************************/
+// FN MICROCODE
+/***********************************/
+
+void Processor_8086::mcode_fnRegop8X() {
+	// Depending on the REGOP value, we need to do a different FN execution
+	// These are mathematical and will use the ALU. We assume that srcA and srcB are thus filled already with the relevant values
+	// We decay this FN into the appropriate FN
+
+	Microcode::MicrocodeType t = Microcode::MicrocodeType::FN_ADD;
+
+	switch (m_cInstr.modRMByte.REGOP()) {
+	case 0: // FN_ADD
+		MCODE_DEBUG("REGOP FN SELECT = FN_ADD");
+		t = Microcode::MicrocodeType::FN_ADD;
+		break;
+	case 1: // FN_OR
+		MCODE_DEBUG("REGOP FN SELECT = FN_OR");
+		t = Microcode::MicrocodeType::FN_OR;
+		break;
+	case 2: // FN_ADC
+		MCODE_DEBUG("REGOP FN SELECT = FN_ADC");
+		t = Microcode::MicrocodeType::FN_ADC;
+		break;
+	case 3: // FN_SBB
+		MCODE_DEBUG("REGOP FN SELECT = FN_SBB");
+		t = Microcode::MicrocodeType::FN_SBB;
+		break;
+	case 4: // FN_AND
+		MCODE_DEBUG("REGOP FN SELECT = FN_AND");
+		t = Microcode::MicrocodeType::FN_AND;
+		break;
+	case 5: // FN_SUB
+		MCODE_DEBUG("REGOP FN SELECT = FN_SUB");
+		t = Microcode::MicrocodeType::FN_SUB;
+		break;
+	case 6: // FN_XOR
+		MCODE_DEBUG("REGOP FN SELECT = FN_XOR");
+		t = Microcode::MicrocodeType::FN_XOR;
+		break;
+	case 7: // FN_CMP
+		MCODE_DEBUG("REGOP FN SELECT = FN_CMP");
+		t = Microcode::MicrocodeType::FN_CMP;
+		break;
+	default:
+		// ERROR
+		MCODE_DEBUG_ERR("REGOP FN SELECT = ERROR");
+		break;
+	}
+
+	MCODE_DEBUG("Executing daughter FN");
+	Microcode mcode("FN_REGOP_8X_DAUGHTER", t);
+	mcode_execCode(mcode);
 }

@@ -23,7 +23,8 @@ namespace icarus {
 			class Microcode {
 			public:
 				enum class MicrocodeType {
-					NOP = 0,
+					UDEF = 0,
+					NOP,
 
 					REG_8, // Switches to registers being interpreted as the 8 bit registers
 					REG_16, // Siwtches to registers being interpreted as the 16 bit registers
@@ -49,7 +50,7 @@ namespace icarus {
 					FN_MOV,
 					FN_XCHG,
 
-					FN_REGOP_81, // Opcode 81 regop function family as decided by the REGOP field of the ModRM byte. Decays to one of the FNs
+					FN_REGOP_8X, // Opcode 81-83 regop function family as decided by the REGOP field of the ModRM byte. Decays to one of the FNs
 				};
 
 				static MicrocodeType GetTypeFromString(std::string s);

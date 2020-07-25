@@ -31,7 +31,7 @@
 				"REG_16",
 				"SRC_MODRM",
 				"SRC_IMM",
-				"FN_REGOP_81",
+				"FN_REGOP_8X",
 				"DST_MODRM"
 			]
 		}

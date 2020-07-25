@@ -70,10 +70,21 @@ namespace icarus {
 			
 			*/
 			void mcode_execCode(instruction::Microcode mcode);
+			/*
+			SRC MICROCODE
+			*/
 			void mcode_toSrcFromReg(CurrentInstruction::MicrocodeInformation::Source& src, uint8_t sval);
 			void mcode_getSrcRegop();
 			void mcode_getSrcImm();
 			void mcode_getSrcModRM();
+			/*
+			DST MICROCODE
+			*/
+
+			/*
+			FN MICROCODE
+			*/
+			void mcode_fnRegop8X();
 
 		public:
 			Processor_8086(icarus::memory::MMU& mmu, icarus::bus::Bus16& dataBus, icarus::bus::Bus32& addressBus);

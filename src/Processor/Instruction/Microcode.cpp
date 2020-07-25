@@ -43,8 +43,8 @@ Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 	else if (s.compare("FN_MOV") == 0) { return Microcode::MicrocodeType::FN_MOV; }
 	else if (s.compare("FN_XCHG") == 0) { return Microcode::MicrocodeType::FN_XCHG; }
 
-	else if (s.compare("FN_REGOP_81") == 0) { return Microcode::MicrocodeType::FN_REGOP_81; }
-	return Microcode::MicrocodeType::NOP;
+	else if (s.compare("FN_REGOP_8X") == 0) { return Microcode::MicrocodeType::FN_REGOP_8X; }
+	return Microcode::MicrocodeType::UDEF;
 }
 
 Microcode::Microcode(std::string tStr, MicrocodeType type) {
