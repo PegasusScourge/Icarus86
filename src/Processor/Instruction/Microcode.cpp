@@ -19,14 +19,15 @@ using namespace icarus::processor::instruction;
 Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 	if (s.compare("NOP") == 0) { return Microcode::MicrocodeType::NOP; }
 
+	else if (s.compare("REG_8") == 0) { return Microcode::MicrocodeType::REG_8; }
+	else if (s.compare("REG_16") == 0) { return Microcode::MicrocodeType::REG_16; }
+
 	else if (s.compare("SRC_REGOP") == 0) { return Microcode::MicrocodeType::SRC_REGOP; }
-	else if (s.compare("SRC_MOD") == 0) { return Microcode::MicrocodeType::SRC_MOD; }
-	else if (s.compare("SRC_RM") == 0) { return Microcode::MicrocodeType::SRC_RM; }
+	else if (s.compare("SRC_MODRM") == 0) { return Microcode::MicrocodeType::SRC_MODRM; }
 	else if (s.compare("SRC_IMM") == 0) { return Microcode::MicrocodeType::SRC_IMM; }
 
 	else if (s.compare("DST_REGOP") == 0) { return Microcode::MicrocodeType::DST_REGOP; }
-	else if (s.compare("DST_MOD") == 0) { return Microcode::MicrocodeType::DST_MOD; }
-	else if (s.compare("DST_RM") == 0) { return Microcode::MicrocodeType::DST_RM; }
+	else if (s.compare("DST_MODRM") == 0) { return Microcode::MicrocodeType::DST_MODRM; }
 
 	else if (s.compare("FN_ADD") == 0) { return Microcode::MicrocodeType::FN_ADD; }
 	else if (s.compare("FN_ADC") == 0) { return Microcode::MicrocodeType::FN_ADC; }
@@ -41,6 +42,8 @@ Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 
 	else if (s.compare("FN_MOV") == 0) { return Microcode::MicrocodeType::FN_MOV; }
 	else if (s.compare("FN_XCHG") == 0) { return Microcode::MicrocodeType::FN_XCHG; }
+
+	else if (s.compare("FN_REGOP_81") == 0) { return Microcode::MicrocodeType::FN_REGOP_81; }
 	return Microcode::MicrocodeType::NOP;
 }
 

@@ -25,14 +25,15 @@ namespace icarus {
 				enum class MicrocodeType {
 					NOP = 0,
 
-					SRC_REGOP,
-					SRC_MOD,
-					SRC_RM,
-					SRC_IMM,
+					REG_8, // Switches to registers being interpreted as the 8 bit registers
+					REG_16, // Siwtches to registers being interpreted as the 16 bit registers
 
-					DST_REGOP,
-					DST_MOD,
-					DST_RM,
+					SRC_REGOP, // A source is deduced from the REGOP
+					SRC_MODRM,  // A source is deduced from the MODRM
+					SRC_IMM, // A source is the immediate byte(s)
+
+					DST_REGOP, // Destination is deduced from the REGOP
+					DST_MODRM, // Destination is deduced from the MODRM
 
 					FN_ADD,
 					FN_ADC,
@@ -47,6 +48,8 @@ namespace icarus {
 
 					FN_MOV,
 					FN_XCHG,
+
+					FN_REGOP_81, // Opcode 81 regop function family as decided by the REGOP field of the ModRM byte. Decays to one of the FNs
 				};
 
 				static MicrocodeType GetTypeFromString(std::string s);

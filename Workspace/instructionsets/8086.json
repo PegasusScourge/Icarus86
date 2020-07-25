@@ -20,19 +20,19 @@
 			]
 		},
 		{
-			"hexcode": "80",
-			"isPrefix": true,
-			"childCodes": [
-				{
-					"hexcode": "00",
-					"isPrefix": false,
-					"hasModRM": false,
-					"immediateBytes": 0,
-					"displacementBytes": 0,
-					"clockCost": 1,
-					"childCodes": [],
-					"microcode": []
-				}
+			"hexcode": "81",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 2,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"REG_16",
+				"SRC_MODRM",
+				"SRC_IMM",
+				"FN_REGOP_81",
+				"DST_MODRM"
 			]
 		}
 		

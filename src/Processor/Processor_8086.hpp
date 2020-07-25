@@ -42,6 +42,15 @@ namespace icarus {
 				icarus::processor::instruction::ModRMByte modRMByte;
 				uint16_t displacement;
 				uint16_t immediate;
+				uint8_t code;
+				struct MicrocodeInformation {
+					bool regMode8Bit; // If true, interpret registers as 8 bit regs. False = 16 bit regs
+					bool srcAUsed;
+					struct Source {
+						uint8_t bytes;
+						uint16_t v;
+					} srcA, srcB;
+				} mCodeI;
 			} m_cInstr;
 
 			/*
@@ -60,7 +69,11 @@ namespace icarus {
 			Definition is in Processor_8086_MCODEEXEC.cpp to keep code easier to read
 			
 			*/
-
+			void mcode_execCode(instruction::Microcode mcode);
+			void mcode_toSrcFromReg(CurrentInstruction::MicrocodeInformation::Source& src, uint8_t sval);
+			void mcode_getSrcRegop();
+			void mcode_getSrcImm();
+			void mcode_getSrcModRM();
 
 		public:
 			Processor_8086(icarus::memory::MMU& mmu, icarus::bus::Bus16& dataBus, icarus::bus::Bus32& addressBus);

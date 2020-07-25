@@ -9,6 +9,13 @@ Universal constexpr definitions that are useful throughout the program
 
  **************************************************************************/
 
+// Prints the microcode debug information
+#define MCODE_DEBUG_PRINT
+// Prints the execution debug information
+#define EXEC8086_DEBUG_PRINT
+// Prints the decode debug information
+#define DECODE8086_DEBUG_PRINT
+
 namespace icarus {
 
 	constexpr char endl = '\n';
