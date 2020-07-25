@@ -98,6 +98,9 @@ void i::Icarus86::run() {
 
 	// Processor
 	m_cyclesToWait = 0;
+
+	m_runningProcessor = true;
+	m_singleStep = false;
 	
 	while (window.isOpen()) {
 		sf::Event evt;
@@ -118,13 +121,20 @@ void i::Icarus86::run() {
 		if (m_processorAccumulator >= m_microsPerClock * 2000)
 			m_processorAccumulator = m_microsPerClock * 2000;
 
-		while (m_processorAccumulator >= m_microsPerClock && !m_processor->isFailed() && !m_processor->isHLT()) {
+		if (m_processor->isHLT() || m_processor->isFailed())
+			m_runningProcessor = false;
+
+		while (m_processorAccumulator >= m_microsPerClock && m_runningProcessor) {
 			m_processorAccumulator -= m_microsPerClock;
 			
 			if (m_cyclesToWait > 0) {
 				m_cyclesToWait--;
 			}
 			else {
+				if (m_singleStep) {
+					m_runningProcessor = false;
+				}
+
 				m_cyclesToWait = m_processor->fetchDecode();
 				if (m_processor->isFailed()) {
 					i::COutSys::Println("Icarus86 detected processor failure after fetchDecode()", i::COutSys::LEVEL_ERR);
@@ -326,22 +336,35 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 	// Draw the CPU information
 	text.setFillColor(sf::Color::Cyan);
 	text.setString("CPU name: " + m_processor->getName());
-	text.setPosition(x, y); y += 14;
+	text.setPosition(x, y); y += 12;
 	window.draw(text);
 	text.setString("CPU clock freq (MHz): " + std::to_string(m_processor->getClockRateMHz()));
-	text.setPosition(x, y); y += 14;
+	text.setPosition(x, y); y += 12;
 	window.draw(text);
 	text.setString("Microseconds/clock: " + std::to_string(m_microsPerClock));
-	text.setPosition(x, y); y += 14;
+	text.setPosition(x, y); y += 12;
 	window.draw(text);
 	text.setString("Cycles per tick: " + std::to_string(m_cyclesPerTick));
-	text.setPosition(x, y); y += 14;
+	text.setPosition(x, y);  y += 12;
 	window.draw(text);
 	text.setString("ProcessorAccumulator: " + std::to_string(m_processorAccumulator));
-	text.setPosition(x, y); y += 14;
+	text.setPosition(x, y); y += 12;
 	window.draw(text);
 	text.setString("Wait cycles: " + std::to_string(m_cyclesToWait));
-	text.setPosition(x, y); y += 14;
+	text.setPosition(x, y); y += 12;
+	window.draw(text);
+
+	text.setString("SingleStep:       " + (m_singleStep ? std::string("true") : std::string("false")));
+	text.setPosition(x, y); y += 12;
+	window.draw(text);
+	text.setString("RunningProcessor: " + (m_runningProcessor ? std::string("true") : std::string("false")));
+	text.setPosition(x, y); y += 12;
+	window.draw(text);
+	text.setString("ProcessorHLT:     " + (m_processor->isHLT() ? std::string("true") : std::string("false")));
+	text.setPosition(x, y); y += 12;
+	window.draw(text);
+	text.setString("ProcessorFail:    " + (m_processor->isFailed() ? std::string("true") : std::string("false")));
+	text.setPosition(x, y); y += 12;
 	window.draw(text);
 
 	y += 20;

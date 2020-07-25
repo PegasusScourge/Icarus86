@@ -50,6 +50,9 @@ namespace icarus {
 
 		unsigned int m_cyclesToWait = 0;
 
+		bool m_runningProcessor = false;
+		bool m_singleStep = true;
+
 		// Memory Management Unit
 		icarus::memory::MMU m_mmu;
 
