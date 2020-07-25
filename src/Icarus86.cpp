@@ -268,11 +268,12 @@ void i::Icarus86::parseINI() {
 			i::COutSys::Print("[INI] Content dump:", i::COutSys::LEVEL_INFO);
 			for (size_t i = 0; i < binaryContent.size(); i++) {
 				if (i % 32 == 0) {
-					cout << endl << "[" << i::COutSys::ToHexStr(i) << "] ";
+					i::COutSys::Println("");
+					i::COutSys::Print("[" + i::COutSys::ToHexStr(i) + "] ");
 				}
-				cout << i::COutSys::ToHexStr(binaryContent[i]) << " ";
+				i::COutSys::Print(i::COutSys::ToHexStr(binaryContent[i]) + " ");
 			}
-			cout << endl;
+			i::COutSys::Println("");
 			// Load the file
 			i::COutSys::Println("[INI] Loading file into memory ", i::COutSys::LEVEL_INFO);
 			m_addressBus.putData(0);
