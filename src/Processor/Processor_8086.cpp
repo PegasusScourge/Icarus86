@@ -86,8 +86,8 @@ unsigned int ip::Processor_8086::fetchDecode() {
 	}
 
 	// We have a valid instruction, now lets get the microcode
-	m_cInstrMicrocode = instr.getMicrocode();
-	if (m_cInstrMicrocode.size() == 0) {
+	m_cInstr.microcode = instr.getMicrocode();
+	if (m_cInstr.microcode.size() == 0) {
 		// No microcode!
 		icarus::COutSys::Println("Processor8086 found no microcode in instr", icarus::COutSys::LEVEL_WARN);
 		return 0;
@@ -103,11 +103,59 @@ unsigned int ip::Processor_8086::fetchDecode() {
 			return 0;
 		}
 		
-		m_cInstrModRMByte = icarus::processor::instruction::ModRMByte((uint8_t)m_dataBus.readData());
+		m_cInstr.modRMByte = icarus::processor::instruction::ModRMByte((uint8_t)m_dataBus.readData());
+	}
+
+	// Get displacment bytes if needed
+	if (instr.numDisplacementBytes() > 0) {
+		m_addressBus.putData(ipVal + (++increment));
+		m_cInstr.displacement = 0;
+		switch (instr.numDisplacementBytes()) {
+		case 2:
+			m_mmu.readByte(m_dataBus, m_addressBus);
+			m_cInstr.displacement |= (m_dataBus.readData() << 8);
+			m_addressBus.putData(ipVal + (++increment));
+		case 1:
+			m_mmu.readByte(m_dataBus, m_addressBus);
+			m_cInstr.displacement |= m_dataBus.readData();
+			break;
+
+		default:
+			// Error getting displacement bytes
+			icarus::COutSys::Println("Processor8086 failed to get displacement bytes (num=" + 
+				std::to_string(instr.numDisplacementBytes()) + ")", icarus::COutSys::LEVEL_ERR);
+			triggerError();
+			return 0;
+		}
+	}
+
+	// Get immediate bytes if needed
+	if (instr.numImmediateBytes() > 0) {
+		m_addressBus.putData(ipVal + (++increment));
+		m_cInstr.immediate = 0;
+		switch (instr.numImmediateBytes()) {
+		case 2:
+			m_mmu.readByte(m_dataBus, m_addressBus);
+			m_cInstr.immediate |= (m_dataBus.readData() << 8);
+			m_addressBus.putData(ipVal + (++increment));
+		case 1:
+			m_mmu.readByte(m_dataBus, m_addressBus);
+			m_cInstr.immediate |= m_dataBus.readData();
+			break;
+
+		default:
+			// Error getting displacement bytes
+			icarus::COutSys::Println("Processor8086 failed to get immediate bytes (num=" +
+				std::to_string(instr.numImmediateBytes()) + ")", icarus::COutSys::LEVEL_ERR);
+			triggerError();
+			return 0;
+		}
 	}
 
 	// Update the instruction pointer
-	m_state.lastIP.push(ipVal);
+	m_state.lastIPs.push(ipVal);
+	m_state.lastDisplacements.push(m_cInstr.displacement);
+	m_state.lastImmediates.push(m_cInstr.immediate);
 	m_registers[(int)REGISTERS::R_IP].put(ipVal + increment);
 
 	return cyclesToWait;
@@ -118,7 +166,7 @@ void ip::Processor_8086::execute() {
 	uint16_t srcCache[2];
 	uint16_t* srcPtr = srcCache;
 
-	for (auto& mcode : m_cInstrMicrocode) {
+	for (auto& mcode : m_cInstr.microcode) {
 		namespace m = icarus::processor::instruction;
 		switch (mcode.getType()) {
 

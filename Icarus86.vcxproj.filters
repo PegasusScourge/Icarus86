@@ -72,6 +72,9 @@
     <ClCompile Include="src\Graphics\GPU.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="src\Processor\Processor_8086_MCODEEXEC.cpp">
+      <Filter>Source Files\Processor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Icarus86.hpp">

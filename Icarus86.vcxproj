@@ -230,6 +230,7 @@
     <ClCompile Include="src\Processor\Instruction\Microcode.cpp" />
     <ClCompile Include="src\Processor\Instruction\ModRMByte.cpp" />
     <ClCompile Include="src\Processor\Processor_8086.cpp" />
+    <ClCompile Include="src\Processor\Processor_8086_MCODEEXEC.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Bus\Bus.hpp" />

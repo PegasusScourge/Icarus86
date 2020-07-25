@@ -37,8 +37,12 @@ namespace icarus {
 			static std::string REGISTER_NAMES[14];
 
 			// Current instruction
-			std::vector<icarus::processor::instruction::Microcode> m_cInstrMicrocode;
-			icarus::processor::instruction::ModRMByte m_cInstrModRMByte;
+			struct CurrentInstruction {
+				std::vector<icarus::processor::instruction::Microcode> microcode;
+				icarus::processor::instruction::ModRMByte modRMByte;
+				uint16_t displacement;
+				uint16_t immediate;
+			} m_cInstr;
 
 			/*
 			uint32_t resolveAddress(uint16_t segment, uint16_t offset)
@@ -49,6 +53,14 @@ namespace icarus {
 			void onError() override;
 
 			void onGetProcessorState() override;
+
+			/*
+			
+			MICROCODE EXECUTION FUNCTIONS
+			Definition is in Processor_8086_MCODEEXEC.cpp to keep code easier to read
+			
+			*/
+
 
 		public:
 			Processor_8086(icarus::memory::MMU& mmu, icarus::bus::Bus16& dataBus, icarus::bus::Bus32& addressBus);

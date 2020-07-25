@@ -371,7 +371,7 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 	text.setPosition(x, y); y += 14;
 	window.draw(text);
 
-	y += 20; float tempY = y;
+	y += 20;
 
 	// Draw the lastIPs
 	text.setFillColor(sf::Color::Cyan);
@@ -380,13 +380,13 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 	window.draw(text);
 
 	text.setFillColor(sf::Color::White);
-	for (int i = 0; i < pState.lastIP.size(); i++, y += 12) {
-		text.setString("[" + std::to_string(i) + "]: " + COutSys::ToHexStr(pState.lastIP[i]));
+	for (int i = 0; i < pState.lastIPs.size(); i++, y += 12) {
+		text.setString("[" + std::to_string(i) + "]: " + COutSys::ToHexStr(pState.lastIPs[i]));
 		text.setPosition(x, y);
 		window.draw(text);
 	}
 
-	y = tempY; x += 200;
+	y += 20; float tempY = y;
 
 	// Draw the lastICodes
 	text.setFillColor(sf::Color::Cyan);
@@ -395,7 +395,7 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 	window.draw(text);
 
 	text.setFillColor(sf::Color::White);
-	for (int i = 0; i < pState.lastIP.size(); i++, y += 12) {
+	for (int i = 0; i < pState.lastICodes.size(); i++, y += 12) {
 		auto& iCode = pState.lastICodes[i];
 		text.setString("[" + std::to_string(i) + "]: " + COutSys::ToHexStr(iCode.getCode()) + ", valid=" + std::to_string(iCode.isValid()) + 
 		", prefix=" + COutSys::ToHexStr(iCode.getPrefix()));
@@ -403,5 +403,35 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 		window.draw(text);
 	}
 
-	y += 20;
+	y = tempY; x += 300;
+
+	// Draw the lastDisplacements
+	text.setFillColor(sf::Color::Cyan);
+	text.setString("LastDisplacements:");
+	text.setPosition(x, y); y += 14;
+	window.draw(text);
+
+	text.setFillColor(sf::Color::White);
+	for (int i = 0; i < pState.lastDisplacements.size(); i++, y += 12) {
+		auto& lDisps = pState.lastDisplacements[i];
+		text.setString("[" + std::to_string(i) + "]: " + COutSys::ToHexStr(lDisps));
+		text.setPosition(x, y);
+		window.draw(text);
+	}
+
+	y = tempY; x += 150;
+
+	// Draw the lastImmediates
+	text.setFillColor(sf::Color::Cyan);
+	text.setString("LastImmediates:");
+	text.setPosition(x, y); y += 14;
+	window.draw(text);
+
+	text.setFillColor(sf::Color::White);
+	for (int i = 0; i < pState.lastImmediates.size(); i++, y += 12) {
+		auto& lImm = pState.lastImmediates[i];
+		text.setString("[" + std::to_string(i) + "]: " + COutSys::ToHexStr(lImm));
+		text.setPosition(x, y);
+		window.draw(text);
+	}
 }

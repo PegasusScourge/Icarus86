@@ -29,8 +29,10 @@ namespace icarus {
 			std::vector<uint64_t> registerValues_num;
 			std::vector<std::string> registerValues_str;
 			std::string* registerValues_names;
-			icarus::CircularBuffer<uint64_t> lastIP;
+			icarus::CircularBuffer<uint64_t> lastIPs;
 			icarus::CircularBuffer<icarus::processor::instruction::ICode> lastICodes;
+			icarus::CircularBuffer<uint32_t> lastDisplacements;
+			icarus::CircularBuffer<uint32_t> lastImmediates;
 		};
 
 		class Processor {
