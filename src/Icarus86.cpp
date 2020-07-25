@@ -371,7 +371,7 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 	text.setPosition(x, y); y += 14;
 	window.draw(text);
 
-	y += 20;
+	y += 20; float tempY = y;
 
 	// Draw the lastIPs
 	text.setFillColor(sf::Color::Cyan);
@@ -381,7 +381,24 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 
 	text.setFillColor(sf::Color::White);
 	for (int i = 0; i < pState.lastIP.size(); i++, y += 12) {
-		text.setString("[" + std::to_string(i) + "]: " + std::to_string(pState.lastIP[i]));
+		text.setString("[" + std::to_string(i) + "]: " + COutSys::ToHexStr(pState.lastIP[i]));
+		text.setPosition(x, y);
+		window.draw(text);
+	}
+
+	y = tempY; x += 200;
+
+	// Draw the lastICodes
+	text.setFillColor(sf::Color::Cyan);
+	text.setString("LastICodes:");
+	text.setPosition(x, y); y += 14;
+	window.draw(text);
+
+	text.setFillColor(sf::Color::White);
+	for (int i = 0; i < pState.lastIP.size(); i++, y += 12) {
+		auto& iCode = pState.lastICodes[i];
+		text.setString("[" + std::to_string(i) + "]: " + COutSys::ToHexStr(iCode.getCode()) + ", valid=" + std::to_string(iCode.isValid()) + 
+		", prefix=" + COutSys::ToHexStr(iCode.getPrefix()));
 		text.setPosition(x, y);
 		window.draw(text);
 	}

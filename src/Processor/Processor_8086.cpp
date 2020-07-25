@@ -74,6 +74,10 @@ unsigned int ip::Processor_8086::fetchDecode() {
 		instr = instr[(uint8_t)m_dataBus.readData()];
 	}
 
+	// Add to the last ICodes
+	m_state.lastICodes.push(instr);
+	// icarus::COutSys::Println("Pushed instr code=" + icarus::COutSys::ToHexStr(instr.getCode()), icarus::COutSys::LEVEL_WARN);
+
 	if (!instr.isValid()) {
 		// Failed to get a valid instruction
 		icarus::COutSys::Println("Processor8086 failed to get valid instr", icarus::COutSys::LEVEL_ERR);

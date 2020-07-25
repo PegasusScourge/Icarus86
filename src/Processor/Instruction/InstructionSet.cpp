@@ -31,11 +31,11 @@ ipi::ICode::ICode() {
 	m_clockCost = 0;
 }
 
-ipi::ICode::ICode(nlohmann::json entry) {
-	parseICodeEntry(entry);
+ipi::ICode::ICode(nlohmann::json entry, uint64_t prefix) {
+	parseICodeEntry(entry, prefix);
 }
 
-void ipi::ICode::parseICodeEntry(nlohmann::json entry) {
+void ipi::ICode::parseICodeEntry(nlohmann::json entry, uint64_t prefix) {
 	using namespace nlohmann;
 
 	// Sanity check for the important things
@@ -59,10 +59,11 @@ void ipi::ICode::parseICodeEntry(nlohmann::json entry) {
 		m_isPrefix = true;
 		icarus::COutSys::Print("[ PREFIX] Checking for child codes: ");
 		if (entry["childCodes"].is_array()) {
-			icarus::COutSys::Println("[FOUND]. Parsing");
+			uint64_t newPrefix = (prefix << 8) & m_code;
+			icarus::COutSys::Println("[FOUND]. Parsing (newPrefix=" + icarus::COutSys::ToHexStr(newPrefix) + ")");
 			icarus::COutSys::Println("iCode: <children>", icarus::COutSys::LEVEL_INFO);
 			for (auto& iCode : entry["childCodes"]) {
-				m_childCodes.push_back(ICode(iCode));
+				m_childCodes.push_back(ICode(iCode, newPrefix));
 			}
 			icarus::COutSys::Println("iCode: </children>", icarus::COutSys::LEVEL_INFO);
 			m_valid = true;
@@ -166,6 +167,10 @@ uint8_t ipi::ICode::getCode() {
 	return m_code;
 }
 
+uint64_t ipi::ICode::getPrefix() {
+	return m_prefix;
+}
+
 std::vector<ipi::ICode>& ipi::ICode::getChildCodes() {
 	return m_childCodes;
 }
@@ -254,7 +259,7 @@ void ipi::InstructionSet::parseJSON() {
 	auto& iCodeNode = j["icode"];
 
 	for (auto& iCode : iCodeNode) {
-		m_iCodes.push_back(ICode(iCode));
+		m_iCodes.push_back(ICode(iCode, 0));
 	}
 }
 

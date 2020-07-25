@@ -30,6 +30,7 @@ namespace icarus {
 				bool m_isPrefix = false;
 				bool m_hasModRM = false;
 				uint8_t m_code = 0;
+				uint64_t m_prefix = 0;
 				unsigned int m_displacementBytes = 0;
 				unsigned int m_immediateBytes = 0;
 				unsigned int m_clockCost = 0;
@@ -42,11 +43,11 @@ namespace icarus {
 				void parseICodeEntry(json entry)
 				Takes an ICodeEntry and parses it, recursively if needed
 				*/
-				void parseICodeEntry(nlohmann::json entry);
+				void parseICodeEntry(nlohmann::json entry, uint64_t prefix);
 
 			public:
 				ICode();
-				ICode(nlohmann::json entry);
+				ICode(nlohmann::json entry, uint64_t prefix);
 
 				bool isPrefix();
 				bool hasModRM();
@@ -58,6 +59,7 @@ namespace icarus {
 				unsigned int clockCost();
 
 				uint8_t getCode();
+				uint64_t getPrefix();
 
 				std::vector<ICode>& getChildCodes();
 				std::vector<Microcode>& getMicrocode();
