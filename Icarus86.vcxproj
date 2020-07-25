@@ -223,6 +223,7 @@
     <ClCompile Include="src\COutSys.cpp" />
     <ClCompile Include="src\Graphics\GPU.cpp" />
     <ClCompile Include="src\Icarus86.cpp" />
+    <ClCompile Include="src\LOutSys.cpp" />
     <ClCompile Include="src\Memory\MemoryBlock.cpp" />
     <ClCompile Include="src\Memory\MMU.cpp" />
     <ClCompile Include="src\Processor\ALU.cpp" />
@@ -239,6 +240,7 @@
     <ClInclude Include="src\COutSys.hpp" />
     <ClInclude Include="src\Graphics\GPU.hpp" />
     <ClInclude Include="src\Icarus86.hpp" />
+    <ClInclude Include="src\LOutSys.hpp" />
     <ClInclude Include="src\Memory\MemoryBlock.hpp" />
     <ClInclude Include="src\Memory\MMU.hpp" />
     <ClInclude Include="src\Processor\ALU.hpp" />

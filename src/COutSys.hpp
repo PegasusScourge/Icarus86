@@ -15,11 +15,15 @@ Console Output System. Handles formating and displaying information to the conso
 #include <sstream>
 #include <cstring>
 
+#include "LOutSys.hpp"
+
 namespace icarus {
 
 	class COutSys {
 	private:
 		static bool PREPEND_DATE;
+
+		static icarus::LOutSys CONSOLE_OUT;
 
 		/*
 		void PrintLevel(int level)

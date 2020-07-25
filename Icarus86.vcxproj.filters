@@ -75,6 +75,9 @@
     <ClCompile Include="src\Processor\Processor_8086_MCODEEXEC.cpp">
       <Filter>Source Files\Processor</Filter>
     </ClCompile>
+    <ClCompile Include="src\LOutSys.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Icarus86.hpp">
@@ -124,6 +127,9 @@
     </ClInclude>
     <ClInclude Include="src\Graphics\GPU.hpp">
       <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LOutSys.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

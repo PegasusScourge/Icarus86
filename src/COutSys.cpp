@@ -20,6 +20,7 @@ using icarus::endl;
 namespace i = icarus;
 
 bool i::COutSys::PREPEND_DATE = false;
+icarus::LOutSys i::COutSys::CONSOLE_OUT("console.log", true);
 
 void i::COutSys::Initialize(bool prependDate) {
 	PREPEND_DATE = prependDate;
@@ -64,9 +65,11 @@ void i::COutSys::PrintLevel(int level) {
 void i::COutSys::Println(std::string s, int level) {
 	Print(s, level);
 	cout << endl;
+	CONSOLE_OUT.println("");
 }
 
 void i::COutSys::Print(std::string s, int level) {
 	PrintLevel(level);
 	cout << s;
+	CONSOLE_OUT.print(s, level);
 }
