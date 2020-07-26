@@ -38,7 +38,7 @@ namespace ipi = ip::instruction;
 
 std::string ip::Processor_8086::REGISTER_NAMES[14] = { "AX", "BX", "CX", "DX", "SI", "DI", "BP", "SP", "IP", "FS", "CS", "DS", "ES", "SS" };
 
-ip::Processor_8086::Processor_8086(icarus::memory::MMU& mmu, icarus::bus::Bus16& dataBus, icarus::bus::Bus32& addressBus) : m_mmu(mmu), m_dataBus(dataBus), m_addressBus(addressBus) {
+ip::Processor_8086::Processor_8086(icarus::memory::MMU& mmu, icarus::bus::Bus& dataBus, icarus::bus::Bus& addressBus) : m_mmu(mmu), m_dataBus(dataBus), m_addressBus(addressBus) {
 	m_name = "Intel 8086";
 
 	// Configure our state
@@ -94,7 +94,7 @@ unsigned int ip::Processor_8086::fetchDecode() {
 	m_state.lastICodes.push(instr);
 
 	DECODE8086_DEBUG("Processor8086 DECODE information:");
-	DECODE8086_DEBUG("Pushed instr code=" + icarus::COutSys::ToHexStr(instr.getCode()));
+	DECODE8086_DEBUG("Pushed instr code=" + icarus::COutSys::ToHexStr(instr.getCode()) + ", dBusCode=" + icarus::COutSys::ToHexStr(m_dataBus.readData()));
 
 	if (!instr.isValid()) {
 		// Failed to get a valid instruction

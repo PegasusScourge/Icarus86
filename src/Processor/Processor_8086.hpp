@@ -36,8 +36,8 @@ namespace icarus {
 			const int FLAGS_OF = 11;
 
 			// Bus references
-			icarus::bus::Bus16& m_dataBus;
-			icarus::bus::Bus32& m_addressBus;
+			icarus::bus::Bus& m_dataBus;
+			icarus::bus::Bus& m_addressBus;
 
 			// MMU reference
 			icarus::memory::MMU& m_mmu;
@@ -100,7 +100,7 @@ namespace icarus {
 			void mcode_fnCmp();
 
 		public:
-			Processor_8086(icarus::memory::MMU& mmu, icarus::bus::Bus16& dataBus, icarus::bus::Bus32& addressBus);
+			Processor_8086(icarus::memory::MMU& mmu, icarus::bus::Bus& dataBus, icarus::bus::Bus& addressBus);
 
 			/*
 			Overridden main functions

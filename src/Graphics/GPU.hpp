@@ -52,10 +52,9 @@ namespace icarus{
 			void update()
 			Allows the GPU to consider updating
 			*/
-			template <class D_BUS_TYPE, class A_BUS_TYPE>
-			void update(icarus::bus::Bus<D_BUS_TYPE>& dBus, icarus::bus::Bus<A_BUS_TYPE>& aBus, icarus::memory::MMU& mmu) {
-				D_BUS_TYPE dBusOld = dBus.readData();
-				A_BUS_TYPE aBusOld = aBus.readData();
+			void update(icarus::bus::Bus& dBus, icarus::bus::Bus& aBus, icarus::memory::MMU& mmu) {
+				uint32_t dBusOld = dBus.readData();
+				uint32_t aBusOld = aBus.readData();
 				
 				if (m_updateClock.getElapsedTime().asMicroseconds() >= m_updateIntervalMicros) {
 					m_updateClock.restart();

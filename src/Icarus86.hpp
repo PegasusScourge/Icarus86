@@ -33,8 +33,8 @@ namespace icarus {
 		int m_returnValue = 0;
 
 		// Buses
-		icarus::bus::Bus16 m_dataBus;
-		icarus::bus::Bus32 m_addressBus{ 20 }; // This is a 32 bit bus, but it is limited to 20 bits
+		icarus::bus::Bus m_dataBus;
+		icarus::bus::Bus m_addressBus{ 20 }; // This is a 32 bit bus, but it is limited to 20 bits
 
 		// Processor information
 		std::unique_ptr<icarus::processor::Processor> m_processor;

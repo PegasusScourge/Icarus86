@@ -44,8 +44,7 @@ namespace icarus {
 			void writeByte(icarus::bus::Bus<D_BUS_TYPE>& dBus, icarus::bus::Bus<A_BUS_TYPE>& aBus)
 			Writes a byte to the address
 			*/
-			template <class D_BUS_TYPE, class A_BUS_TYPE>
-			void writeByte(icarus::bus::Bus<D_BUS_TYPE>& dBus, icarus::bus::Bus<A_BUS_TYPE>& aBus) {
+			void writeByte(icarus::bus::Bus& dBus, icarus::bus::Bus& aBus) {
 				for (auto& block : memoryBlocks) {
 					block.tryByteWrite(aBus.readData(), dBus.readData());
 				}
@@ -54,8 +53,7 @@ namespace icarus {
 			void readByte(icarus::bus::Bus<D_BUS_TYPE>& dBus, icarus::bus::Bus<A_BUS_TYPE>& aBus)
 			Reads a byte from address. Returns 0 in the event of a failure (undetectable failure, use tryReadByte if failure needs to be detected)
 			*/
-			template <class D_BUS_TYPE, class A_BUS_TYPE>
-			void readByte(icarus::bus::Bus<D_BUS_TYPE>& dBus, icarus::bus::Bus<A_BUS_TYPE>& aBus) {
+			void readByte(icarus::bus::Bus& dBus, icarus::bus::Bus& aBus) {
 				uint8_t v = 0;
 				for (auto& block : memoryBlocks) {
 					if (block.tryByteRead(aBus.readData(), &v)) {
@@ -69,8 +67,7 @@ namespace icarus {
 			bool tryReadByte(icarus::bus::Bus<D_BUS_TYPE>& dBus, icarus::bus::Bus<A_BUS_TYPE>& aBus)
 			Returns true if a byte was read from the address into dest
 			*/
-			template <class D_BUS_TYPE, class A_BUS_TYPE>
-			bool tryReadByte(icarus::bus::Bus<D_BUS_TYPE>& dBus, icarus::bus::Bus<A_BUS_TYPE>& aBus) {
+			bool tryReadByte(icarus::bus::Bus& dBus, icarus::bus::Bus& aBus) {
 				uint8_t v = 0;
 				bool readSuccess = false;
 				for (auto& block : memoryBlocks) {
@@ -87,10 +84,9 @@ namespace icarus {
 			void fillBus(icarus::bus::Bus<D_BUS_TYPE>& dBus, icarus::bus::Bus<A_BUS_TYPE>& aBus, ReadType endianness)
 			Fills the dBus with bytes read from memory starting at the address given by aBus.
 			*/
-			template <class D_BUS_TYPE, class A_BUS_TYPE>
-			void fillBus(icarus::bus::Bus<D_BUS_TYPE>& dBus, icarus::bus::Bus<A_BUS_TYPE>& aBus, ReadType endianness) {
-				A_BUS_TYPE address = aBus.readData();
-				D_BUS_TYPE dataToPush = 0;
+			void fillBus(icarus::bus::Bus& dBus, icarus::bus::Bus& aBus, ReadType endianness) {
+				uint32_t address = aBus.readData();
+				uint32_t dataToPush = 0;
 
 				size_t dataBusByteWidth = dBus.getBitWidth() / 8;
 				size_t currentShift = 0;

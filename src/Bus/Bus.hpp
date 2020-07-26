@@ -16,12 +16,11 @@ namespace icarus {
 
 	namespace bus {
 
-		template <class T>
 		class Bus {
 		private:
-			T m_data;
-			T m_dataBitWidth;
-			T m_mask; // If non-zero, we apply it
+			uint32_t m_data;
+			uint32_t m_dataBitWidth;
+			uint32_t m_mask; // If non-zero, we apply it
 
 		public:
 			Bus() {
@@ -29,7 +28,7 @@ namespace icarus {
 				m_data = 0;
 				m_mask = 0;
 			}
-			Bus(T bitWidthLimit) { // Enforce a specific bit width limit
+			Bus(uint32_t bitWidthLimit) { // Enforce a specific bit width limit
 				unsigned long widthTemp = sizeof(m_data) * 8;
 				m_dataBitWidth = bitWidthLimit;
 				if (m_dataBitWidth > widthTemp) {
@@ -42,27 +41,23 @@ namespace icarus {
 				m_data = 0;
 			}
 
-			T readData() {
+			uint32_t readData() {
 				if (m_mask)
 					return m_data & m_mask;
 				return m_data;
 			}
 
-			void putData(T d) {
+			void putData(uint32_t d) {
 				if (m_mask)
 					m_data = d & m_mask;
 				else
 					m_data = d;
 			}
 
-			T getBitWidth() {
+			uint32_t getBitWidth() {
 				return m_dataBitWidth;
 			}
 		};
-
-		typedef Bus<uint16_t> Bus16;
-		typedef Bus<uint32_t> Bus32;
-		typedef Bus<uint8_t> Bus8;
 
 	}
 
