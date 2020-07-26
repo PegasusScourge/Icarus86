@@ -17,15 +17,11 @@ using namespace icarus::processor::instruction;
 using namespace icarus::processor;
 
 #ifdef MCODE_DEBUG_PRINT
-
-#define MCODE_DEBUG(s) icarus::COutSys::Println(std::string(__FUNCTION__) +  ":\t" + s, icarus::COutSys::LEVEL_INFO)
-#define MCODE_DEBUG_ERR(s) icarus::COutSys::Println(std::string(__FUNCTION__) +  ":\t" + s, icarus::COutSys::LEVEL_ERR)
-
+	#define MCODE_DEBUG(s) icarus::COutSys::Println(std::string(__FUNCTION__) +  ":\t" + s, icarus::COutSys::LEVEL_INFO)
+	#define MCODE_DEBUG_ERR(s) icarus::COutSys::Println(std::string(__FUNCTION__) +  ":\t" + s, icarus::COutSys::LEVEL_ERR)
 #else
-
-#define MCODE_DEBUG(s)
-#define MCODE_DEBUG_ERR(s)
-
+	#define MCODE_DEBUG(s)
+	#define MCODE_DEBUG_ERR(s)
 #endif
 
 void Processor_8086::mcode_execCode(Microcode mcode) {
@@ -64,12 +60,20 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 		DST
 		*/
 
+	case Microcode::MicrocodeType::DST_MODRM:
+		mcode_dstModRM();
+		break;
+
 		/*
 		FN
 		*/
 
 	case Microcode::MicrocodeType::FN_REGOP_8X:
 		mcode_fnRegop8X();
+		break;
+		
+	case Microcode::MicrocodeType::FN_CMP:
+		mcode_fnCmp();
 		break;
 
 		/*
@@ -92,7 +96,7 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 // SRC MICROCODE
 /***********************************/
 
-void Processor_8086::mcode_toSrcFromReg(Processor_8086::CurrentInstruction::MicrocodeInformation::Source& src, uint8_t sval) {
+void Processor_8086::mcode_toSrcFromReg(Processor_8086::CurrentInstruction::MicrocodeInformation::Values& src, uint8_t sval) {
 	MCODE_DEBUG("SVAL = " + std::to_string(sval));
 	
 	if (m_cInstr.mCodeI.regMode8Bit) {
@@ -240,7 +244,9 @@ void Processor_8086::mcode_getSrcRegop() {
 // DST MICROCODE
 /***********************************/
 
-
+void Processor_8086::mcode_dstModRM() {
+	MCODE_DEBUG_ERR("Not implemeted!");
+}
 
 /***********************************/
 // FN MICROCODE
@@ -295,4 +301,24 @@ void Processor_8086::mcode_fnRegop8X() {
 	MCODE_DEBUG("Executing daughter FN");
 	Microcode mcode("FN_REGOP_8X_DAUGHTER", t);
 	mcode_execCode(mcode);
+}
+
+void Processor_8086::mcode_fnCmp() {
+	if (m_cInstr.mCodeI.srcA.bytes > 1 || m_cInstr.mCodeI.srcB.bytes > 1)
+		m_cInstr.mCodeI.dst.bytes = 2;
+	else
+		m_cInstr.mCodeI.dst.bytes = 1;
+
+	// We don't generate an output here as we are doing a compare. Do a subtract but lose the value
+	m_alu.subtract(m_cInstr.mCodeI.srcA.v, m_cInstr.mCodeI.srcB.v);
+	m_cInstr.mCodeI.dstEnabled = false; // Don't allow DST_X microcodes to output
+
+	// Update the relevant flags
+	Register16& R_F = m_registers[(uint8_t)REGISTERS::R_FLAGS];
+	R_F.putBit(FLAGS_OF, m_alu.overflowFlag());
+	// R_F.putBit(FLAGS_SF, m_alu.signFlag()); TODO
+	R_F.putBit(FLAGS_ZF, m_alu.zeroFlag());
+	// R_F.putBit(FLAGS_AF, m_alu.adjustFlag()); TODO
+	R_F.putBit(FLAGS_PF, m_alu.parityFlag());
+	R_F.putBit(FLAGS_CF, m_alu.carryBit());
 }

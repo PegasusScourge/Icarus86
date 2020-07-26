@@ -325,6 +325,8 @@ bool i::Icarus86::memoryTest(size_t startAddress, size_t size) {
 void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 	float x = 10;
 	float y = 10;
+	float tempY = y;
+	float tempX = x;
 
 	icarus::processor::ProcessorState& pState = m_processor->getProcessorState();
 	
@@ -368,7 +370,7 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 	text.setPosition(x, y); y += 12;
 	window.draw(text);
 
-	y += 20;
+	y += 20; tempY = y;
 
 	// Draw the registers
 	text.setFillColor(sf::Color::Cyan);
@@ -384,7 +386,24 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 		window.draw(text);
 	}
 
-	y += 20;
+	float tempY2 = y;
+	y = tempY; tempX = x; x += 200;
+
+	// Draw the flags 
+	text.setFillColor(sf::Color::Cyan);
+	text.setString("Flags:");
+	text.setPosition(x, y); y += 14;
+	window.draw(text);
+	text.setFillColor(sf::Color::White);
+	text.setString(pState.flagsRegBin);
+	text.setPosition(x, y); y += 14;
+	window.draw(text);
+	text.setFillColor(sf::Color::Cyan);
+	text.setString(pState.flagsNames);
+	text.setPosition(x, y); y += 14;
+	window.draw(text);
+
+	y = tempY2 + 20; x = tempX;
 
 	// Draw the bus values
 	text.setFillColor(sf::Color::Cyan);
@@ -410,7 +429,7 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 		window.draw(text);
 	}
 
-	y += 20; float tempY = y;
+	y += 20; tempY = y; tempX = x;
 
 	// Draw the lastICodes
 	text.setFillColor(sf::Color::Cyan);
@@ -458,4 +477,6 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 		text.setPosition(x, y);
 		window.draw(text);
 	}
+
+	y += 20; x = tempX;
 }

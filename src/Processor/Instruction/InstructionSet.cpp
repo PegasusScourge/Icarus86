@@ -52,7 +52,7 @@ void ipi::ICode::parseICodeEntry(nlohmann::json entry, uint64_t prefix) {
 	ss << std::hex << code_s;
 	ss >> code;
 	m_code = (uint8_t)code;
-	icarus::COutSys::Print("(#=" + std::to_string(m_code) + ")\t");
+	icarus::COutSys::Print("(#=" + std::to_string(m_code) + ")\t\t");
 
 	// Check for prefix
 	if (entry["isPrefix"].is_boolean() && entry["isPrefix"].get<bool>()) {

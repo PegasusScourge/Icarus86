@@ -54,6 +54,13 @@ namespace icarus {
 				m_data &= ~(1U << bit);
 			}
 
+			void putBit(T bit, bool on) {
+				if (on)
+					setBit(bit);
+				else
+					clearBit(bit);
+			}
+
 			void put(T value) {
 				m_data = value;
 			}

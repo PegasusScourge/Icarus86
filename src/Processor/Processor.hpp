@@ -33,6 +33,8 @@ namespace icarus {
 			icarus::CircularBuffer<icarus::processor::instruction::ICode> lastICodes;
 			icarus::CircularBuffer<uint32_t> lastDisplacements;
 			icarus::CircularBuffer<uint32_t> lastImmediates;
+			std::string flagsRegBin;
+			std::string flagsNames;
 		};
 
 		class Processor {

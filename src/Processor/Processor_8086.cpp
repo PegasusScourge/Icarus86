@@ -17,6 +17,21 @@ Implementation of the 8086 processor
 namespace ip = icarus::processor;
 namespace ipi = ip::instruction;
 
+#ifdef DECODE8086_DEBUG_PRINT
+	#define DECODE8086_DEBUG(s) icarus::COutSys::Println(std::string(__FUNCTION__) +  ":\t" + s, icarus::COutSys::LEVEL_INFO)
+	#define DECODE8086_DEBUG_ERR(s) icarus::COutSys::Println(std::string(__FUNCTION__) +  ":\t" + s, icarus::COutSys::LEVEL_ERR)
+#else
+	#define DECODE8086_DEBUG(s)
+	#define DECODE8086_DEBUG_ERR(s)
+#endif
+#ifdef EXEC8086_DEBUG_PRINT
+	#define EXEC8086_DEBUG(s) icarus::COutSys::Println(std::string(__FUNCTION__) +  ":\t" + s, icarus::COutSys::LEVEL_INFO)
+	#define EXEC8086_DEBUG_ERR(s) icarus::COutSys::Println(std::string(__FUNCTION__) +  ":\t" + s, icarus::COutSys::LEVEL_ERR)
+#else
+	#define EXEC8086_DEBUG(s)
+	#define EXEC8086_DEBUG_ERR(s)
+#endif
+
 /***********************************/
 // class Processor_8086 : public
 /***********************************/
@@ -28,6 +43,7 @@ ip::Processor_8086::Processor_8086(icarus::memory::MMU& mmu, icarus::bus::Bus16&
 
 	// Configure our state
 	m_state.registerValues_names = REGISTER_NAMES;
+	m_state.flagsNames = "....ODITSZ.A.P.C";
 
 	// Create the registers
 	for(int i = 0; i < 4; i++)
@@ -77,10 +93,8 @@ unsigned int ip::Processor_8086::fetchDecode() {
 	// Add to the last ICodes
 	m_state.lastICodes.push(instr);
 
-#ifdef DECODE8086_DEBUG_PRINT
-	icarus::COutSys::Println("Processor8086 DECODE information:", icarus::COutSys::LEVEL_INFO);
-	icarus::COutSys::Println("Pushed instr code=" + icarus::COutSys::ToHexStr(instr.getCode()));
-#endif
+	DECODE8086_DEBUG("Processor8086 DECODE information:");
+	DECODE8086_DEBUG("Pushed instr code=" + icarus::COutSys::ToHexStr(instr.getCode()));
 
 	if (!instr.isValid()) {
 		// Failed to get a valid instruction
@@ -88,9 +102,8 @@ unsigned int ip::Processor_8086::fetchDecode() {
 		triggerError();
 		return 0;
 	}
-#ifdef DECODE8086_DEBUG_PRINT
-	icarus::COutSys::Println("Instr valid");
-#endif
+
+	DECODE8086_DEBUG("Instr valid");
 
 	m_cInstr.code = instr.getCode();
 
@@ -101,15 +114,11 @@ unsigned int ip::Processor_8086::fetchDecode() {
 		icarus::COutSys::Println("Processor8086 found no microcode in instr", icarus::COutSys::LEVEL_WARN);
 		return 0;
 	}
-#ifdef DECODE8086_DEBUG_PRINT
-	icarus::COutSys::Println("Has microcode");
-#endif
+	DECODE8086_DEBUG("Has microcode");
 
 	// Get a ModRMByte if needed
 	if (instr.hasModRM()) {
-#ifdef DECODE8086_DEBUG_PRINT
-		icarus::COutSys::Println("Has modrm");
-#endif
+		DECODE8086_DEBUG("Has modrm");
 		m_addressBus.putData(ipVal + (++increment));
 		if (!m_mmu.tryReadByte(m_dataBus, m_addressBus)) {
 			// Failed to read a byte
@@ -118,16 +127,12 @@ unsigned int ip::Processor_8086::fetchDecode() {
 			return 0;
 		}
 		m_cInstr.modRMByte.setByte((uint8_t)m_dataBus.readData());
-#ifdef DECODE8086_DEBUG_PRINT
-		icarus::COutSys::Println("MODRM = " + icarus::COutSys::ToHexStr(m_dataBus.readData()));
-#endif
+		DECODE8086_DEBUG("MODRM = " + icarus::COutSys::ToHexStr(m_dataBus.readData()));
 	}
 
 	// Get displacment bytes if needed
 	if (instr.numDisplacementBytes() > 0) {
-#ifdef DECODE8086_DEBUG_PRINT
-		icarus::COutSys::Println("Has displacement");
-#endif
+		DECODE8086_DEBUG("Has displacement");
 		m_addressBus.putData(ipVal + (++increment));
 		m_cInstr.displacement = 0;
 		switch (instr.numDisplacementBytes()) {
@@ -151,16 +156,12 @@ unsigned int ip::Processor_8086::fetchDecode() {
 
 	// Get immediate bytes if needed
 	if (instr.numImmediateBytes() > 0) {
-#ifdef DECODE8086_DEBUG_PRINT
-		icarus::COutSys::Println("Has immediate");
-#endif
+		DECODE8086_DEBUG("Has immediate");
 		m_addressBus.putData(ipVal + (++increment));
 		m_cInstr.immediate = 0;
 		switch (instr.numImmediateBytes()) {
 		case 2:
-#ifdef DECODE8086_DEBUG_PRINT
-			icarus::COutSys::Println("2 Byte");
-#endif
+			DECODE8086_DEBUG("2 Byte");
 			m_mmu.readByte(m_dataBus, m_addressBus);
 			m_cInstr.immediate |= m_dataBus.readData();
 			m_addressBus.putData(ipVal + (++increment));
@@ -168,9 +169,7 @@ unsigned int ip::Processor_8086::fetchDecode() {
 			m_cInstr.immediate |= (m_dataBus.readData() << 8);
 			break;
 		case 1:
-#ifdef DECODE8086_DEBUG_PRINT
-			icarus::COutSys::Println("1 Byte");
-#endif
+			DECODE8086_DEBUG("1 Byte");
 			m_mmu.readByte(m_dataBus, m_addressBus);
 			m_cInstr.immediate |= m_dataBus.readData();
 			break;
@@ -194,20 +193,19 @@ unsigned int ip::Processor_8086::fetchDecode() {
 }
 
 void ip::Processor_8086::execute() {
-#ifdef EXEC8086_DEBUG_PRINT
 	// Print out the information
-	icarus::COutSys::Println("Processor8086 execution information:", icarus::COutSys::LEVEL_INFO);
-	icarus::COutSys::Println("code = " + icarus::COutSys::ToHexStr(m_cInstr.code));
-	icarus::COutSys::Println("immediate = " + icarus::COutSys::ToHexStr(m_cInstr.immediate));
-	icarus::COutSys::Println("displacement = " + icarus::COutSys::ToHexStr(m_cInstr.displacement));
-	icarus::COutSys::Println("MODRM = " + icarus::COutSys::ToHexStr(m_cInstr.modRMByte.byte()));
-#endif
+	EXEC8086_DEBUG("Processor8086 execution information:");
+	EXEC8086_DEBUG("code = " + icarus::COutSys::ToHexStr(m_cInstr.code));
+	EXEC8086_DEBUG("immediate = " + icarus::COutSys::ToHexStr(m_cInstr.immediate));
+	EXEC8086_DEBUG("displacement = " + icarus::COutSys::ToHexStr(m_cInstr.displacement));
+	EXEC8086_DEBUG("MODRM = " + icarus::COutSys::ToHexStr(m_cInstr.modRMByte.byte()));
 
 	// We now have to execute the microcode instructions
 
 	// Init the mCodeI struct
 	m_cInstr.mCodeI.regMode8Bit = false;
 	m_cInstr.mCodeI.srcAUsed = false;
+	m_cInstr.mCodeI.dstEnabled = false; // Disable dst writing by default
 
 	for (auto& mcode : m_cInstr.microcode) {
 		mcode_execCode(mcode);
@@ -247,4 +245,6 @@ void ip::Processor_8086::onGetProcessorState() {
 		regs_s.push_back(COutSys::ToHexStr(r.read(), true));
 	}
 	m_state.registerValues_str = regs_s;
+
+	m_state.flagsRegBin = COutSys::ToBinaryStr(m_registers[(uint8_t)REGISTERS::R_FLAGS].read());
 }

@@ -14,6 +14,7 @@ Console Output System. Handles formating and displaying information to the conso
 #include <iomanip>
 #include <sstream>
 #include <cstring>
+#include <bitset>
 
 #include "LOutSys.hpp"
 
@@ -81,6 +82,16 @@ namespace icarus {
 			sprintf(str, fmt.c_str(), v);
 
 			return std::string(str);
+		}
+
+		/*
+		std::string ToBinaryStr(T v)
+		Returns a string with a number formatted into BINARY
+		*/
+		template <class T>
+		static std::string ToBinaryStr(T v) {
+			std::string str = std::bitset<sizeof(T) * 8>(v).to_string();
+			return str;
 		}
 
 	};

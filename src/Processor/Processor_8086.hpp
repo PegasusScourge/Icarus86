@@ -24,6 +24,17 @@ namespace icarus {
 
 		class Processor_8086 : public Processor {
 		private:
+			// FLAGS register constexprs
+			const int FLAGS_CF = 0;
+			const int FLAGS_PF = 2;
+			const int FLAGS_AF = 4;
+			const int FLAGS_ZF = 6;
+			const int FLAGS_SF = 7;
+			const int FLAGS_TF = 8;
+			const int FLAGS_IE = 9;
+			const int FLAGS_DF = 10;
+			const int FLAGS_OF = 11;
+
 			// Bus references
 			icarus::bus::Bus16& m_dataBus;
 			icarus::bus::Bus32& m_addressBus;
@@ -46,10 +57,11 @@ namespace icarus {
 				struct MicrocodeInformation {
 					bool regMode8Bit; // If true, interpret registers as 8 bit regs. False = 16 bit regs
 					bool srcAUsed;
-					struct Source {
+					bool dstEnabled;
+					struct Values {
 						uint8_t bytes;
 						uint16_t v;
-					} srcA, srcB;
+					} srcA, srcB, dst;
 				} mCodeI;
 			} m_cInstr;
 
@@ -73,18 +85,19 @@ namespace icarus {
 			/*
 			SRC MICROCODE
 			*/
-			void mcode_toSrcFromReg(CurrentInstruction::MicrocodeInformation::Source& src, uint8_t sval);
+			void mcode_toSrcFromReg(CurrentInstruction::MicrocodeInformation::Values& src, uint8_t sval);
 			void mcode_getSrcRegop();
 			void mcode_getSrcImm();
 			void mcode_getSrcModRM();
 			/*
 			DST MICROCODE
 			*/
-
+			void mcode_dstModRM();
 			/*
 			FN MICROCODE
 			*/
 			void mcode_fnRegop8X();
+			void mcode_fnCmp();
 
 		public:
 			Processor_8086(icarus::memory::MMU& mmu, icarus::bus::Bus16& dataBus, icarus::bus::Bus32& addressBus);
