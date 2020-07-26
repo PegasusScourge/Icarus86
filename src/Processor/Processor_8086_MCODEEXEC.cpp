@@ -316,9 +316,9 @@ void Processor_8086::mcode_fnCmp() {
 	// Update the relevant flags
 	Register16& R_F = m_registers[(uint8_t)REGISTERS::R_FLAGS];
 	R_F.putBit(FLAGS_OF, m_alu.overflowFlag());
-	// R_F.putBit(FLAGS_SF, m_alu.signFlag()); TODO
+	R_F.putBit(FLAGS_SF, m_alu.negativeFlag()); // Sign flag = negative flag
 	R_F.putBit(FLAGS_ZF, m_alu.zeroFlag());
-	// R_F.putBit(FLAGS_AF, m_alu.adjustFlag()); TODO
+	// R_F.putBit(FLAGS_AF, m_alu.adjustFlag()); TODO - Also Aux Carry flag
 	R_F.putBit(FLAGS_PF, m_alu.parityFlag());
 	R_F.putBit(FLAGS_CF, m_alu.carryBit());
 }
