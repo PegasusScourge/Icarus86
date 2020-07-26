@@ -68,7 +68,7 @@ unsigned int ip::Processor_8086::fetchDecode() {
 
 	// Load the address bus with the address
 	unsigned int increment = 0;
-	uint16_t ipVal = m_registers[(int)REGISTERS::R_IP].read();
+	uint16_t ipVal = m_registers[REGISTERS::R_IP].read();
 	m_addressBus.putData(ipVal);
 	if (!m_mmu.tryReadByte(m_dataBus, m_addressBus)) {
 		// Failed to read a byte
@@ -187,7 +187,7 @@ unsigned int ip::Processor_8086::fetchDecode() {
 	m_state.lastIPs.push(ipVal);
 	m_state.lastDisplacements.push(m_cInstr.displacement);
 	m_state.lastImmediates.push(m_cInstr.immediate);
-	m_registers[(int)REGISTERS::R_IP].put(ipVal + increment + 1);
+	m_registers[REGISTERS::R_IP].put(ipVal + increment + 1);
 
 	return cyclesToWait;
 }
@@ -213,11 +213,11 @@ void ip::Processor_8086::execute() {
 }
 
 void ip::Processor_8086::forceIP(uint64_t ip) {
-	m_registers[(int)REGISTERS::R_IP].put(ip);
+	m_registers[REGISTERS::R_IP].put(ip);
 }
 
 void ip::Processor_8086::forceSP(uint64_t sp) {
-	m_registers[(int)REGISTERS::R_SP].put(sp);
+	m_registers[REGISTERS::R_SP].put(sp);
 }
 
 
@@ -246,5 +246,5 @@ void ip::Processor_8086::onGetProcessorState() {
 	}
 	m_state.registerValues_str = regs_s;
 
-	m_state.flagsRegBin = COutSys::ToBinaryStr(m_registers[(uint8_t)REGISTERS::R_FLAGS].read());
+	m_state.flagsRegBin = COutSys::ToBinaryStr(m_registers[REGISTERS::R_FLAGS].read());
 }

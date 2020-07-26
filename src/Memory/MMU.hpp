@@ -89,7 +89,7 @@ namespace icarus {
 				uint32_t dataToPush = 0;
 
 				size_t dataBusByteWidth = dBus.getBitWidth() / 8;
-				size_t currentShift = 0;
+				long long currentShift = 0;
 				
 				if (endianness == ReadType::BigEndian) {
 					// Correct for BigEndian

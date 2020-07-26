@@ -104,35 +104,35 @@ void Processor_8086::mcode_toSrcFromReg(Processor_8086::CurrentInstruction::Micr
 		switch (sval) {
 		case 0: // Get register AL
 			MCODE_DEBUG("SRC = REGISTER_AL");
-			src.v = m_registers[(uint8_t)REGISTERS::R_AX].readLower();
+			src.v = m_registers[REGISTERS::R_AX].readLower();
 			break;
 		case 1: // Get register CL
 			MCODE_DEBUG("SRC = REGISTER_CL");
-			src.v = m_registers[(uint8_t)REGISTERS::R_CX].readLower();
+			src.v = m_registers[REGISTERS::R_CX].readLower();
 			break;
 		case 2: // Get register DL
 			MCODE_DEBUG("SRC = REGISTER_DL");
-			src.v = m_registers[(uint8_t)REGISTERS::R_DX].readLower();
+			src.v = m_registers[REGISTERS::R_DX].readLower();
 			break;
 		case 3: // Get register BL
 			MCODE_DEBUG("SRC = REGISTER_BL");
-			src.v = m_registers[(uint8_t)REGISTERS::R_BX].readLower();
+			src.v = m_registers[REGISTERS::R_BX].readLower();
 			break;
 		case 4: // Get register AH
 			MCODE_DEBUG("SRC = REGISTER_AH");
-			src.v = m_registers[(uint8_t)REGISTERS::R_AX].readUpper();
+			src.v = m_registers[REGISTERS::R_AX].readUpper();
 			break;
 		case 5: // Get register CH
 			MCODE_DEBUG("SRC = REGISTER_CH");
-			src.v = m_registers[(uint8_t)REGISTERS::R_CX].readUpper();
+			src.v = m_registers[REGISTERS::R_CX].readUpper();
 			break;
 		case 6: // Get register DH
 			MCODE_DEBUG("SRC = REGISTER_DH");
-			src.v = m_registers[(uint8_t)REGISTERS::R_DX].readUpper();
+			src.v = m_registers[REGISTERS::R_DX].readUpper();
 			break;
 		case 7: // Get register BH
 			MCODE_DEBUG("SRC = REGISTER_BH");
-			src.v = m_registers[(uint8_t)REGISTERS::R_BX].readUpper();
+			src.v = m_registers[REGISTERS::R_BX].readUpper();
 			break;
 		default:
 			// ERROR
@@ -182,7 +182,7 @@ void Processor_8086::mcode_toSrcFromReg(Processor_8086::CurrentInstruction::Micr
 			break;
 		}
 		// Read into v
-		src.v = m_registers[(uint8_t)reg].read();
+		src.v = m_registers[reg].read();
 	}
 }
 
@@ -314,7 +314,7 @@ void Processor_8086::mcode_fnCmp() {
 	m_cInstr.mCodeI.dstEnabled = false; // Don't allow DST_X microcodes to output
 
 	// Update the relevant flags
-	Register16& R_F = m_registers[(uint8_t)REGISTERS::R_FLAGS];
+	Register16& R_F = m_registers[REGISTERS::R_FLAGS];
 	R_F.putBit(FLAGS_OF, m_alu.overflowFlag());
 	R_F.putBit(FLAGS_SF, m_alu.negativeFlag()); // Sign flag = negative flag
 	R_F.putBit(FLAGS_ZF, m_alu.zeroFlag());

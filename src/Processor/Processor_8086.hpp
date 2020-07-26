@@ -44,7 +44,7 @@ namespace icarus {
 
 			// Register definitions
 			std::vector<Register16> m_registers;
-			enum class REGISTERS { R_AX = 0, R_BX, R_CX, R_DX, R_SI, R_DI, R_BP, R_SP, R_IP, R_FLAGS, R_CS, R_DS, R_ES, R_SS };
+			enum REGISTERS { R_AX = 0, R_BX, R_CX, R_DX, R_SI, R_DI, R_BP, R_SP, R_IP, R_FLAGS, R_CS, R_DS, R_ES, R_SS };
 			static std::string REGISTER_NAMES[14];
 
 			// Current instruction
