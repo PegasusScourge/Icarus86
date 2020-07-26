@@ -66,10 +66,10 @@ namespace icarus{
 						m_textObj.setFillColor(sf::Color::White);
 						float y = -2.0f;
 						uint8_t v = 0;
-						for (int i = 0; i < 25; i++) {
+						for (size_t i = 0; i < 25; i++) {
 							// Compile the string
 							std::string lineStr = "";
-							for (int y = 0; y < 80; y++) {
+							for (size_t y = 0; y < 80; y++) {
 								aBus.putData(m_memoryBase + (i * 80) + y);
 								mmu.readByte(dBus, aBus);
 								v = (uint8_t)dBus.readData();
