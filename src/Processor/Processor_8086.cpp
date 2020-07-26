@@ -90,11 +90,8 @@ unsigned int ip::Processor_8086::fetchDecode() {
 		instr = instr[(uint8_t)m_dataBus.readData()];
 	}
 
-	// Add to the last ICodes
-	m_state.lastICodes.push(instr);
-
 	DECODE8086_DEBUG("Processor8086 DECODE information:");
-	DECODE8086_DEBUG("Pushed instr code=" + icarus::COutSys::ToHexStr(instr.getCode()) + ", dBusCode=" + icarus::COutSys::ToHexStr(m_dataBus.readData()));
+	DECODE8086_DEBUG("Instr code=" + icarus::COutSys::ToHexStr(instr.getCode()) + ", dBusCode=" + icarus::COutSys::ToHexStr(m_dataBus.readData()));
 
 	if (!instr.isValid()) {
 		// Failed to get a valid instruction
@@ -183,10 +180,14 @@ unsigned int ip::Processor_8086::fetchDecode() {
 		}
 	}
 
-	// Update the instruction pointer
-	m_state.lastIPs.push(ipVal);
-	m_state.lastDisplacements.push(m_cInstr.displacement);
-	m_state.lastImmediates.push(m_cInstr.immediate);
+	// Update the last instruction
+	LastInstruction_t lastInstr;
+	lastInstr.iCode = instr;
+	lastInstr.ip = ipVal;
+	lastInstr.disp = m_cInstr.displacement;
+	lastInstr.imm = m_cInstr.immediate;
+
+	m_state.lastInstrs.push(lastInstr);
 	m_registers[REGISTERS::R_IP].put(ipVal + increment + 1);
 
 	return cyclesToWait;

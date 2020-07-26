@@ -24,17 +24,26 @@ namespace icarus {
 
 	namespace processor {
 
+		typedef struct LastInstruction {
+			uint32_t ip;
+			icarus::processor::instruction::ICode iCode;
+			uint32_t disp;
+			uint32_t imm;
+		} LastInstruction_t;
+
 		class ProcessorState {
 		public:
 			std::vector<uint64_t> registerValues_num;
 			std::vector<std::string> registerValues_str;
 			std::string* registerValues_names;
-			icarus::CircularBuffer<uint64_t> lastIPs;
-			icarus::CircularBuffer<icarus::processor::instruction::ICode> lastICodes;
-			icarus::CircularBuffer<uint32_t> lastDisplacements;
-			icarus::CircularBuffer<uint32_t> lastImmediates;
 			std::string flagsRegBin;
 			std::string flagsNames;
+
+			// icarus::CircularBuffer<uint64_t> lastIPs;
+			// icarus::CircularBuffer<icarus::processor::instruction::ICode> lastICodes;
+			// icarus::CircularBuffer<uint32_t> lastDisplacements;
+			// icarus::CircularBuffer<uint32_t> lastImmediates;
+			icarus::CircularBuffer<LastInstruction_t> lastInstrs;
 		};
 
 		class Processor {

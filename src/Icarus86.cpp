@@ -423,8 +423,8 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 	window.draw(text);
 
 	text.setFillColor(sf::Color::White);
-	for (int i = 0; i < pState.lastIPs.size(); i++, y += 12) {
-		text.setString("[" + std::to_string(i) + "]: " + COutSys::ToHexStr(pState.lastIPs[i]));
+	for (int i = 0; i < pState.lastInstrs.size(); i++, y += 12) {
+		text.setString("[" + std::to_string(i) + "]: " + COutSys::ToHexStr(pState.lastInstrs[i].ip));
 		text.setPosition(x, y);
 		window.draw(text);
 	}
@@ -438,8 +438,8 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 	window.draw(text);
 
 	text.setFillColor(sf::Color::White);
-	for (int i = 0; i < pState.lastICodes.size(); i++, y += 12) {
-		auto& iCode = pState.lastICodes[i];
+	for (int i = 0; i < pState.lastInstrs.size(); i++, y += 12) {
+		auto& iCode = pState.lastInstrs[i].iCode;
 		text.setString("[" + std::to_string(i) + "]: " + COutSys::ToHexStr(iCode.getCode()) + ", valid=" + std::to_string(iCode.isValid()) + 
 		", prefix=" + COutSys::ToHexStr(iCode.getPrefix()));
 		text.setPosition(x, y);
@@ -455,8 +455,8 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 	window.draw(text);
 
 	text.setFillColor(sf::Color::White);
-	for (int i = 0; i < pState.lastDisplacements.size(); i++, y += 12) {
-		auto& lDisps = pState.lastDisplacements[i];
+	for (int i = 0; i < pState.lastInstrs.size(); i++, y += 12) {
+		auto& lDisps = pState.lastInstrs[i].disp;
 		text.setString("[" + std::to_string(i) + "]: " + COutSys::ToHexStr(lDisps));
 		text.setPosition(x, y);
 		window.draw(text);
@@ -471,8 +471,8 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 	window.draw(text);
 
 	text.setFillColor(sf::Color::White);
-	for (int i = 0; i < pState.lastImmediates.size(); i++, y += 12) {
-		auto& lImm = pState.lastImmediates[i];
+	for (int i = 0; i < pState.lastInstrs.size(); i++, y += 12) {
+		auto& lImm = pState.lastInstrs[i].imm;
 		text.setString("[" + std::to_string(i) + "]: " + COutSys::ToHexStr(lImm));
 		text.setPosition(x, y);
 		window.draw(text);
