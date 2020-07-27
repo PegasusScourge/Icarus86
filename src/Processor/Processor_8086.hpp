@@ -51,6 +51,8 @@ namespace icarus {
 			struct CurrentInstruction {
 				std::vector<icarus::processor::instruction::Microcode> microcode;
 				icarus::processor::instruction::ModRMByte modRMByte;
+				uint8_t numImmeditateBytes;
+				uint8_t numDisplacementBytes;
 				uint16_t displacement;
 				uint16_t immediate;
 				uint8_t code;
@@ -99,6 +101,10 @@ namespace icarus {
 			*/
 			void mcode_fnRegop8X();
 			void mcode_fnCmp();
+			/*
+			JMP MICROCODE
+			*/
+			void mcode_jmpCondRelativeShort(bool condition);
 
 		public:
 			Processor_8086(icarus::memory::MMU& mmu, icarus::bus::Bus& dataBus, icarus::bus::Bus& addressBus);

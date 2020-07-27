@@ -61,6 +61,10 @@ namespace icarus {
 					clearBit(bit);
 			}
 
+			bool getBit(T bit) {
+				return (m_data >> bit) & 0x1;
+			}
+
 			void put(T value) {
 				m_data = value;
 			}

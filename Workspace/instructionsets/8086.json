@@ -8,18 +8,21 @@
 	"icode": [
 		
 		{
-			"hexcode": "00",
+			"mnemonic": "JZ/JE",
+			"hexcode": "74",
 			"isPrefix": false,
 			"hasModRM": false,
-			"immediateBytes": 0,
+			"immediateBytes": 1,
 			"displacementBytes": 0,
 			"clockCost": 1,
 			"childCodes": [],
 			"microcode": [
-				"NOP"
+				"SRC_IMM",
+				"FN_JZ"
 			]
 		},
 		{
+			"mnemonic": "MULT",
 			"hexcode": "81",
 			"isPrefix": false,
 			"hasModRM": true,

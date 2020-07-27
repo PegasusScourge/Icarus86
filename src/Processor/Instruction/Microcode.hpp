@@ -50,6 +50,8 @@ namespace icarus {
 					FN_MOV,
 					FN_XCHG,
 
+					FN_JZ, // Jump if Zero flag set, takes immediate byte as relative to PC for jump. Relative is SIGNED
+
 					FN_REGOP_8X, // Opcode 81-83 regop function family as decided by the REGOP field of the ModRM byte. Decays to one of the FNs
 				};
 

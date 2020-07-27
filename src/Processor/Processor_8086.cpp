@@ -132,6 +132,7 @@ unsigned int ip::Processor_8086::fetchDecode() {
 		DECODE8086_DEBUG("Has displacement");
 		m_addressBus.putData(ipVal + (++increment));
 		m_cInstr.displacement = 0;
+		m_cInstr.numDisplacementBytes = instr.numDisplacementBytes();
 		switch (instr.numDisplacementBytes()) {
 		case 2:
 			m_mmu.readByte(m_dataBus, m_addressBus);
@@ -156,6 +157,7 @@ unsigned int ip::Processor_8086::fetchDecode() {
 		DECODE8086_DEBUG("Has immediate");
 		m_addressBus.putData(ipVal + (++increment));
 		m_cInstr.immediate = 0;
+		m_cInstr.numImmeditateBytes = instr.numImmediateBytes();
 		switch (instr.numImmediateBytes()) {
 		case 2:
 			DECODE8086_DEBUG("2 Byte");

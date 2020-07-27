@@ -68,6 +68,10 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 		FN
 		*/
 
+	case Microcode::MicrocodeType::FN_JZ:
+		mcode_jmpCondRelativeShort(m_registers[REGISTERS::R_FLAGS].getBit(FLAGS_ZF));
+		break;
+
 	case Microcode::MicrocodeType::FN_REGOP_8X:
 		mcode_fnRegop8X();
 		break;
@@ -194,7 +198,7 @@ void Processor_8086::mcode_getSrcImm() {
 	if (!m_cInstr.mCodeI.srcAUsed)
 		m_cInstr.mCodeI.srcAUsed = true;
 
-	src.bytes = 2;
+	src.bytes = m_cInstr.numImmeditateBytes;
 	src.v = m_cInstr.immediate;
 }
 
@@ -451,4 +455,33 @@ void Processor_8086::mcode_fnCmp() {
 	// R_F.putBit(FLAGS_AF, m_alu.adjustFlag()); TODO - Also Aux Carry flag
 	R_F.putBit(FLAGS_PF, m_alu.parityFlag());
 	R_F.putBit(FLAGS_CF, m_alu.carryBit());
+}
+
+/***********************************/
+// JMP MICROCODE
+/***********************************/
+
+void Processor_8086::mcode_jmpCondRelativeShort(bool condition) {
+	if (!condition) {
+		MCODE_DEBUG("Condition == false, not jumping");
+		return;
+	}
+	MCODE_DEBUG("Condition == true");
+	if (m_cInstr.mCodeI.srcA.bytes == 1) {
+		// Relative 8 jump
+		int8_t rel8 = (int8_t)m_cInstr.mCodeI.srcA.v;
+		// Execute jump by adding rel8 to IP
+		MCODE_DEBUG("[REL8 ] Jumping to IP = " + COutSys::ToHexStr((m_registers[REGISTERS::R_IP].read() + rel8)));
+		m_registers[REGISTERS::R_IP].put(m_registers[REGISTERS::R_IP].read() + rel8);
+	}
+	else if (m_cInstr.mCodeI.srcA.bytes == 2) {
+		// Relative 16 jump
+		int16_t rel16 = (int16_t)m_cInstr.mCodeI.srcA.v;
+		// Execute jump by adding rel16 to IP
+		MCODE_DEBUG("[REL16] Jumping to IP = " + COutSys::ToHexStr((m_registers[REGISTERS::R_IP].read() + rel16)));
+		m_registers[REGISTERS::R_IP].put(m_registers[REGISTERS::R_IP].read() + rel16);
+	}
+	else {
+		MCODE_DEBUG_ERR("srcA.bytes is of unknown value, unable to jump!");
+	}
 }
