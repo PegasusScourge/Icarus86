@@ -64,6 +64,27 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 		mcode_dstModRM();
 		break;
 
+	case Microcode::MicrocodeType::DST_R_AL:
+		if (!m_cInstr.mCodeI.dstEnabled)
+			MCODE_DEBUG("!dstEnabled: not writing to destination");
+		else
+			m_registers[REGISTERS::R_AX].putLower(m_cInstr.mCodeI.dst.v);
+		break;
+
+	case Microcode::MicrocodeType::DST_R_BX:
+		if (!m_cInstr.mCodeI.dstEnabled)
+			MCODE_DEBUG("!dstEnabled: not writing to destination");
+		else
+			m_registers[REGISTERS::R_BX].put(m_cInstr.mCodeI.dst.v);
+		break;
+
+	case Microcode::MicrocodeType::DST_R_SP:
+		if (!m_cInstr.mCodeI.dstEnabled)
+			MCODE_DEBUG("!dstEnabled: not writing to destination");
+		else
+			m_registers[REGISTERS::R_SP].put(m_cInstr.mCodeI.dst.v);
+		break;
+
 		/*
 		FN
 		*/
@@ -78,6 +99,10 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 		
 	case Microcode::MicrocodeType::FN_CMP:
 		mcode_fnCmp();
+		break;
+
+	case Microcode::MicrocodeType::FN_APASS:
+		m_cInstr.mCodeI.dst = m_cInstr.mCodeI.srcA; m_cInstr.mCodeI.dstEnabled = true;
 		break;
 
 		/*

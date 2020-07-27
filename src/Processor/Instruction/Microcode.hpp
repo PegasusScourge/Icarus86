@@ -36,6 +36,10 @@ namespace icarus {
 					DST_REGOP, // Destination is deduced from the REGOP
 					DST_MODRM, // Destination is deduced from the MODRM
 
+					DST_R_AL, // Destination is register AL, not deduced
+					DST_R_BX, // Destination is register BX, not deduced
+					DST_R_SP, // Destination is register SP, not deduced
+
 					FN_ADD,
 					FN_ADC,
 					FN_SUB,
@@ -51,6 +55,8 @@ namespace icarus {
 					FN_XCHG,
 
 					FN_JZ, // Jump if Zero flag set, takes immediate byte as relative to PC for jump. Relative is SIGNED
+
+					FN_APASS, // Passes srcA to dst and sets dstEnabled
 
 					FN_REGOP_8X, // Opcode 81-83 regop function family as decided by the REGOP field of the ModRM byte. Decays to one of the FNs
 				};

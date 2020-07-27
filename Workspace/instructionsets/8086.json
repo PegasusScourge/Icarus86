@@ -37,6 +37,246 @@
 				"FN_REGOP_8X",
 				"DST_MODRM"
 			]
+		},
+		{
+			"mnemonic": "MOV_AL",
+			"hexcode": "B0",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_AL"
+			]
+		},
+		{
+			"mnemonic": "MOV_CL",
+			"hexcode": "B1",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_CL"
+			]
+		},
+		{
+			"mnemonic": "MOV_DL",
+			"hexcode": "B2",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_DL"
+			]
+		},
+		{
+			"mnemonic": "MOV_BL",
+			"hexcode": "B3",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_BL"
+			]
+		},
+		{
+			"mnemonic": "MOV_AH",
+			"hexcode": "B4",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_AH"
+			]
+		},
+		{
+			"mnemonic": "MOV_CH",
+			"hexcode": "B5",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_CL"
+			]
+		},
+		{
+			"mnemonic": "MOV_DH",
+			"hexcode": "B6",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_DL"
+			]
+		},
+		{
+			"mnemonic": "MOV_BH",
+			"hexcode": "B7",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_BH"
+			]
+		},
+		{
+			"mnemonic": "MOV_AX",
+			"hexcode": "B8",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 2,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_AX"
+			]
+		},
+		{
+			"mnemonic": "MOV_CX",
+			"hexcode": "B9",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 2,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_CX"
+			]
+		},
+		{
+			"mnemonic": "MOV_DX",
+			"hexcode": "BA",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 2,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_DX"
+			]
+		},
+		{
+			"mnemonic": "MOV_BX",
+			"hexcode": "BB",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 2,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_BX"
+			]
+		},
+		{
+			"mnemonic": "MOV_SP",
+			"hexcode": "BC",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 2,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_SP"
+			]
+		},
+		{
+			"mnemonic": "MOV_BP",
+			"hexcode": "BD",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 2,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_BP"
+			]
+		},
+		{
+			"mnemonic": "MOV_SI",
+			"hexcode": "BE",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 2,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_SI"
+			]
+		},
+		{
+			"mnemonic": "MOV_DI",
+			"hexcode": "BF",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 2,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_DI"
+			]
 		}
 		
 	]
