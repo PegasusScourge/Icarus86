@@ -167,11 +167,6 @@ void i::Icarus86::run() {
 	}
 }
 
-// Setters
-
-
-// Getters
-
 int i::Icarus86::getReturnValue() {
 	return m_returnValue;
 }

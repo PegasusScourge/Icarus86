@@ -93,6 +93,7 @@ namespace icarus {
 			DST MICROCODE
 			*/
 			void mcode_dstModRM();
+			void mcode_toDstFromReg(uint8_t sval);
 			/*
 			FN MICROCODE
 			*/

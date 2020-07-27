@@ -211,15 +211,19 @@ void Processor_8086::mcode_getSrcModRM() {
 
 	switch (m_cInstr.modRMByte.MOD()) {
 	case 0b00: // Memory addressing
-
+		MCODE_DEBUG("SRC = M");
+		MCODE_DEBUG_ERR("Not implemented!");
 		break;
 	case 0b01: // Memory addressing + displacement8
-
+		MCODE_DEBUG("SRC = M+disp8");
+		MCODE_DEBUG_ERR("Not implemented!");
 		break;
 	case 0b10: // Memory addressing + displacement16
-
+		MCODE_DEBUG("SRC = M+disp16");
+		MCODE_DEBUG_ERR("Not implemented!");
 		break;
 	case 0b11: // Register addressing
+		MCODE_DEBUG("SRC = REG (RM)");
 		mcode_toSrcFromReg(src, m_cInstr.modRMByte.RM());
 		break;
 	default:
@@ -244,8 +248,134 @@ void Processor_8086::mcode_getSrcRegop() {
 // DST MICROCODE
 /***********************************/
 
+void Processor_8086::mcode_toDstFromReg(uint8_t sval) {
+	if (!m_cInstr.mCodeI.dstEnabled) {
+		// Not allowed to write to dst
+		MCODE_DEBUG("!dstEnabled: not writing to destination");
+		return;
+	}
+
+	MCODE_DEBUG("SVAL = " + std::to_string(sval));
+
+	if (m_cInstr.mCodeI.regMode8Bit) {
+		switch (sval) {
+		case 0: // Get register AL
+			MCODE_DEBUG("DST = REGISTER_AL");
+			m_registers[REGISTERS::R_AX].putLower(m_cInstr.mCodeI.dst.v);
+			break;
+		case 1: // Get register CL
+			MCODE_DEBUG("DST = REGISTER_CL");
+			m_registers[REGISTERS::R_CX].putLower(m_cInstr.mCodeI.dst.v);
+			break;
+		case 2: // Get register DL
+			MCODE_DEBUG("DST = REGISTER_DL");
+			m_registers[REGISTERS::R_DX].putLower(m_cInstr.mCodeI.dst.v);
+			break;
+		case 3: // Get register BL
+			MCODE_DEBUG("DST = REGISTER_BL");
+			m_registers[REGISTERS::R_BX].putLower(m_cInstr.mCodeI.dst.v);
+			break;
+		case 4: // Get register AH
+			MCODE_DEBUG("DST = REGISTER_AH");
+			m_registers[REGISTERS::R_AX].putLower(m_cInstr.mCodeI.dst.v);
+			break;
+		case 5: // Get register CH
+			MCODE_DEBUG("DST = REGISTER_CH");
+			m_registers[REGISTERS::R_CX].putLower(m_cInstr.mCodeI.dst.v);
+			break;
+		case 6: // Get register DH
+			MCODE_DEBUG("DST = REGISTER_DH");
+			m_registers[REGISTERS::R_DX].putLower(m_cInstr.mCodeI.dst.v);
+			break;
+		case 7: // Get register BH
+			MCODE_DEBUG("DST = REGISTER_BH");
+			m_registers[REGISTERS::R_BX].putLower(m_cInstr.mCodeI.dst.v);
+			break;
+		default:
+			// ERROR
+			MCODE_DEBUG_ERR("DST = REGISTER_ERROR");
+			break;
+		}
+	}
+	else {
+		REGISTERS reg = REGISTERS::R_AX;
+		switch (sval) {
+		case 0: // Get register AX
+			MCODE_DEBUG("DST = REGISTER_AX");
+			reg = REGISTERS::R_AX;
+			break;
+		case 1: // Get register CX
+			MCODE_DEBUG("DST = REGISTER_CX");
+			reg = REGISTERS::R_CX;
+			break;
+		case 2: // Get register DX
+			MCODE_DEBUG("DST = REGISTER_DX");
+			reg = REGISTERS::R_DX;
+			break;
+		case 3: // Get register BX
+			MCODE_DEBUG("DST = REGISTER_BX");
+			reg = REGISTERS::R_BX;
+			break;
+		case 4: // Get register SP
+			MCODE_DEBUG("DST = REGISTER_SP");
+			reg = REGISTERS::R_SP;
+			break;
+		case 5: // Get register BP
+			MCODE_DEBUG("DST = REGISTER_BP");
+			reg = REGISTERS::R_BP;
+			break;
+		case 6: // Get register SI
+			MCODE_DEBUG("DST = REGISTER_SI");
+			reg = REGISTERS::R_SI;
+			break;
+		case 7: // Get register DI
+			MCODE_DEBUG("DST = REGISTER_DI");
+			reg = REGISTERS::R_DI;
+			break;
+		default:
+			// ERROR
+			MCODE_DEBUG_ERR("DST = REGISTER_ERROR");
+			break;
+		}
+		// Put our dst.v
+		m_registers[reg].put(m_cInstr.mCodeI.dst.v);
+	}
+}
+
 void Processor_8086::mcode_dstModRM() {
-	MCODE_DEBUG_ERR("Not implemeted!");
+	if (!m_cInstr.mCodeI.dstEnabled) {
+		// Not allowed to write to dst
+		MCODE_DEBUG("!dstEnabled: not writing to destination");
+		return;
+	}
+	
+	// We get the destination from the ModRM values.
+	// This could be a memory address (mod 00 - 10 inclusive) or a register (mod 11)(16 bit or 8 bit register, see m_cInstr.mCodeI.regMode8Bit)
+
+	MCODE_DEBUG("MOD=" + std::to_string(m_cInstr.modRMByte.MOD()));
+
+	switch (m_cInstr.modRMByte.MOD()) {
+	case 0b00: // Memory addressing
+		MCODE_DEBUG("DST = M");
+		MCODE_DEBUG_ERR("Not implemented!");
+		break;
+	case 0b01: // Memory addressing + displacement8
+		MCODE_DEBUG("DST = M+disp8");
+		MCODE_DEBUG_ERR("Not implemented!");
+		break;
+	case 0b10: // Memory addressing + displacement16
+		MCODE_DEBUG("DST = M+disp16");
+		MCODE_DEBUG_ERR("Not implemented!");
+		break;
+	case 0b11: // Register addressing
+		MCODE_DEBUG("DST = REG (RM)");
+		mcode_toDstFromReg(m_cInstr.modRMByte.RM());
+		break;
+	default:
+		// ERROR
+		MCODE_DEBUG_ERR("DST = MOD_ERROR");
+		break;
+	}
 }
 
 /***********************************/

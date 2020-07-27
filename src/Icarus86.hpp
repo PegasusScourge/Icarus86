@@ -94,11 +94,6 @@ namespace icarus {
 		Runs the emulator
 		*/
 		void run();
-		
-		// Setters
-
-
-		// Getters
 
 		/*
 		int getReturnValue()
