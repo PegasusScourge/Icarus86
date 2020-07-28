@@ -87,6 +87,7 @@ namespace icarus {
 			/*
 			SRC MICROCODE
 			*/
+			CurrentInstruction::MicrocodeInformation::Values& mcode_getNextSrc();
 			void mcode_toSrcFromReg(CurrentInstruction::MicrocodeInformation::Values& src, uint8_t sval);
 			void mcode_getSrcRegop();
 			void mcode_getSrcImm();
@@ -99,12 +100,19 @@ namespace icarus {
 			/*
 			FN MICROCODE
 			*/
+			void mcode_fnCallRel();
 			void mcode_fnRegop8X();
 			void mcode_fnCmp();
+			void mcode_fnDec();
 			/*
 			JMP MICROCODE
 			*/
 			void mcode_jmpCondRelativeShort(bool condition);
+			/*
+			MISC MICROCODE
+			*/
+			void mcode_stackPush(CurrentInstruction::MicrocodeInformation::Values& src);
+			void mcode_seSrcB();
 
 		public:
 			Processor_8086(icarus::memory::MMU& mmu, icarus::bus::Bus& dataBus, icarus::bus::Bus& addressBus);

@@ -15,6 +15,8 @@ Universal constexpr definitions that are useful throughout the program
 #define EXEC8086_DEBUG_PRINT
 // Prints the decode debug information
 #define DECODE8086_DEBUG_PRINT
+// Prints the MMU debug information
+#define MMU_DEBUG_PRINT
 
 namespace icarus {
 

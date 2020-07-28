@@ -256,24 +256,23 @@ void i::Icarus86::parseINI() {
 			size_t address = std::stoul(value);
 			i::COutSys::Println("[INI] Requested force load of file '" + path + "'", i::COutSys::LEVEL_INFO);
 
-			std::ifstream is(path, std::ios::binary);
-			std::istream_iterator<uint8_t> start(is), end;
-			std::vector<uint8_t> binaryContent(start, end);
+			std::ifstream is(path, std::ios::in | std::ios::binary);
+			std::vector<char> binaryContent((std::istreambuf_iterator<char>(is)), (std::istreambuf_iterator<char>()));
 			i::COutSys::Println("[INI] Got content of file: size=" + i::COutSys::ToHexStr(binaryContent.size(), true), i::COutSys::LEVEL_INFO);
 			i::COutSys::Print("[INI] Content dump:", i::COutSys::LEVEL_INFO);
 			for (size_t i = 0; i < binaryContent.size(); i++) {
-				if (i % 32 == 0) {
+				if (i % 16 == 0) {
 					i::COutSys::Println("");
 					i::COutSys::Print("[" + i::COutSys::ToHexStr(i) + "] ");
 				}
-				i::COutSys::Print(i::COutSys::ToHexStr(binaryContent[i]) + " ");
+				i::COutSys::Print(i::COutSys::ToHexStr((uint8_t)binaryContent[i]) + " ");
 			}
 			i::COutSys::Println("");
 			// Load the file
 			i::COutSys::Println("[INI] Loading file into memory ", i::COutSys::LEVEL_INFO);
 			m_addressBus.putData(0);
 			for (auto& v : binaryContent) {
-				m_dataBus.putData(v);
+				m_dataBus.putData((uint8_t)v);
 				m_mmu.writeByte(m_dataBus, m_addressBus);
 				m_addressBus.putData(m_addressBus.readData() + 1);
 			}
@@ -301,6 +300,8 @@ bool i::Icarus86::createProcessor() {
 }
 
 bool i::Icarus86::memoryTest(size_t startAddress, size_t size) {
+	return true; // TEMPORARY
+
 	size_t address = startAddress;
 	bool failure = false;
 	int tried = 0, failedBytes = 0;

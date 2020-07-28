@@ -90,8 +90,9 @@ unsigned int ip::Processor_8086::fetchDecode() {
 		instr = instr[(uint8_t)m_dataBus.readData()];
 	}
 
-	DECODE8086_DEBUG("Processor8086 DECODE information:");
-	DECODE8086_DEBUG("Instr code=" + icarus::COutSys::ToHexStr(instr.getCode()) + ", dBusCode=" + icarus::COutSys::ToHexStr(m_dataBus.readData()));
+	DECODE8086_DEBUG("**********************---- <DECODE> ----**********************");
+	DECODE8086_DEBUG("Instr code = " + icarus::COutSys::ToHexStr(instr.getCode()) + ", dBusCode = " + icarus::COutSys::ToHexStr(m_dataBus.readData()));
+	DECODE8086_DEBUG("AddressBus = " + icarus::COutSys::ToHexStr(m_addressBus.readData()));
 
 	if (!instr.isValid()) {
 		// Failed to get a valid instruction
@@ -114,6 +115,7 @@ unsigned int ip::Processor_8086::fetchDecode() {
 	DECODE8086_DEBUG("Has microcode");
 
 	// Get a ModRMByte if needed
+	m_cInstr.modRMByte.setByte(0);
 	if (instr.hasModRM()) {
 		DECODE8086_DEBUG("Has modrm");
 		m_addressBus.putData(ipVal + (++increment));
@@ -128,10 +130,10 @@ unsigned int ip::Processor_8086::fetchDecode() {
 	}
 
 	// Get displacment bytes if needed
+	m_cInstr.displacement = 0;
 	if (instr.numDisplacementBytes() > 0) {
 		DECODE8086_DEBUG("Has displacement");
 		m_addressBus.putData(ipVal + (++increment));
-		m_cInstr.displacement = 0;
 		m_cInstr.numDisplacementBytes = instr.numDisplacementBytes();
 		switch (instr.numDisplacementBytes()) {
 		case 2:
@@ -153,10 +155,10 @@ unsigned int ip::Processor_8086::fetchDecode() {
 	}
 
 	// Get immediate bytes if needed
+	m_cInstr.immediate = 0;
 	if (instr.numImmediateBytes() > 0) {
 		DECODE8086_DEBUG("Has immediate");
 		m_addressBus.putData(ipVal + (++increment));
-		m_cInstr.immediate = 0;
 		m_cInstr.numImmeditateBytes = instr.numImmediateBytes();
 		switch (instr.numImmediateBytes()) {
 		case 2:
@@ -181,6 +183,8 @@ unsigned int ip::Processor_8086::fetchDecode() {
 			return 0;
 		}
 	}
+	
+	DECODE8086_DEBUG("IP = " + COutSys::ToHexStr(m_registers[REGISTERS::R_IP].read()));
 
 	// Update the last instruction
 	LastInstruction_t lastInstr;
@@ -192,12 +196,15 @@ unsigned int ip::Processor_8086::fetchDecode() {
 	m_state.lastInstrs.push(lastInstr);
 	m_registers[REGISTERS::R_IP].put(ipVal + increment + 1);
 
+	DECODE8086_DEBUG("IP incremented to = " + COutSys::ToHexStr(m_registers[REGISTERS::R_IP].read()));
+	DECODE8086_DEBUG("**********************---- </DECODE> ----**********************");
+
 	return cyclesToWait;
 }
 
 void ip::Processor_8086::execute() {
 	// Print out the information
-	EXEC8086_DEBUG("Processor8086 execution information:");
+	EXEC8086_DEBUG("**********************---- <EXECUTE> ----**********************");
 	EXEC8086_DEBUG("code = " + icarus::COutSys::ToHexStr(m_cInstr.code));
 	EXEC8086_DEBUG("immediate = " + icarus::COutSys::ToHexStr(m_cInstr.immediate));
 	EXEC8086_DEBUG("displacement = " + icarus::COutSys::ToHexStr(m_cInstr.displacement));
@@ -213,6 +220,7 @@ void ip::Processor_8086::execute() {
 	for (auto& mcode : m_cInstr.microcode) {
 		mcode_execCode(mcode);
 	}
+	EXEC8086_DEBUG("**********************---- </EXECUTE> ----**********************");
 }
 
 void ip::Processor_8086::forceIP(uint64_t ip) {

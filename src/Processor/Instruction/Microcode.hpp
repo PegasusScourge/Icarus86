@@ -29,9 +29,13 @@ namespace icarus {
 					REG_8, // Switches to registers being interpreted as the 8 bit registers
 					REG_16, // Siwtches to registers being interpreted as the 16 bit registers
 
+					SE_SRC_B, // Sign extends SRC_B to match the byte length of SRC_A
+
 					SRC_REGOP, // A source is deduced from the REGOP
 					SRC_MODRM,  // A source is deduced from the MODRM
 					SRC_IMM, // A source is the immediate byte(s)
+
+					SRC_R_BX, // Source is register BX, not deduced
 
 					DST_REGOP, // Destination is deduced from the REGOP
 					DST_MODRM, // Destination is deduced from the MODRM
@@ -54,7 +58,10 @@ namespace icarus {
 					FN_MOV,
 					FN_XCHG,
 
+					FN_CALL_REL, // Call relative. SRC_A should have the relative address, relative to IP after fetchDecode. Push IP to stack first
+
 					FN_JZ, // Jump if Zero flag set, takes immediate byte as relative to PC for jump. Relative is SIGNED
+					FN_JNZ, // Jump is Zero flag not set, same as above otherwise
 
 					FN_APASS, // Passes srcA to dst and sets dstEnabled
 

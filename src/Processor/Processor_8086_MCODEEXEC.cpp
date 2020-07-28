@@ -56,6 +56,10 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 		mcode_getSrcImm();
 		break;
 
+	case Microcode::MicrocodeType::SRC_R_BX:
+		mcode_getNextSrc().v = m_registers[REGISTERS::R_BX].read();
+		break;
+
 		/*
 		DST
 		*/
@@ -89,8 +93,16 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 		FN
 		*/
 
+	case Microcode::MicrocodeType::FN_CALL_REL:
+		mcode_fnCallRel();
+		break;
+
 	case Microcode::MicrocodeType::FN_JZ:
 		mcode_jmpCondRelativeShort(m_registers[REGISTERS::R_FLAGS].getBit(FLAGS_ZF));
+		break;
+
+	case Microcode::MicrocodeType::FN_JNZ:
+		mcode_jmpCondRelativeShort(!m_registers[REGISTERS::R_FLAGS].getBit(FLAGS_ZF));
 		break;
 
 	case Microcode::MicrocodeType::FN_REGOP_8X:
@@ -101,6 +113,10 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 		mcode_fnCmp();
 		break;
 
+	case Microcode::MicrocodeType::FN_DEC:
+		mcode_fnDec();
+		break;
+
 	case Microcode::MicrocodeType::FN_APASS:
 		m_cInstr.mCodeI.dst = m_cInstr.mCodeI.srcA; m_cInstr.mCodeI.dstEnabled = true;
 		break;
@@ -108,6 +124,10 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 		/*
 		MISC
 		*/
+
+	case Microcode::MicrocodeType::SE_SRC_B:
+		mcode_seSrcB();
+		break;
 
 	case Microcode::MicrocodeType::NOP:
 		MCODE_DEBUG("NOP");
@@ -124,6 +144,14 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 /***********************************/
 // SRC MICROCODE
 /***********************************/
+
+Processor_8086::CurrentInstruction::MicrocodeInformation::Values& Processor_8086::mcode_getNextSrc() {
+	auto& src = (m_cInstr.mCodeI.srcAUsed ? m_cInstr.mCodeI.srcB : m_cInstr.mCodeI.srcA);
+	MCODE_DEBUG("SrcSelect, srcAUsed=" + std::to_string(m_cInstr.mCodeI.srcAUsed));
+	if (!m_cInstr.mCodeI.srcAUsed)
+		m_cInstr.mCodeI.srcAUsed = true;
+	return src;
+}
 
 void Processor_8086::mcode_toSrcFromReg(Processor_8086::CurrentInstruction::MicrocodeInformation::Values& src, uint8_t sval) {
 	MCODE_DEBUG("SVAL = " + std::to_string(sval));
@@ -218,10 +246,7 @@ void Processor_8086::mcode_toSrcFromReg(Processor_8086::CurrentInstruction::Micr
 void Processor_8086::mcode_getSrcImm() {
 	// We get the source from the immediate value.
 	// We simply copy
-	auto& src = (m_cInstr.mCodeI.srcAUsed ? m_cInstr.mCodeI.srcB : m_cInstr.mCodeI.srcA);
-	MCODE_DEBUG("SrcSelect, srcAUsed=" + std::to_string(m_cInstr.mCodeI.srcAUsed));
-	if (!m_cInstr.mCodeI.srcAUsed)
-		m_cInstr.mCodeI.srcAUsed = true;
+	auto& src = mcode_getNextSrc();
 
 	src.bytes = m_cInstr.numImmeditateBytes;
 	src.v = m_cInstr.immediate;
@@ -231,10 +256,7 @@ void Processor_8086::mcode_getSrcModRM() {
 	// We get the source from the ModRM values.
 	// This could be a memory address (mod 00 - 10 inclusive) or a register (mod 11)(16 bit or 8 bit register, see m_cInstr.mCodeI.regMode8Bit)
 	// If srcA is in use, we put in srcB
-	auto& src = (m_cInstr.mCodeI.srcAUsed ? m_cInstr.mCodeI.srcB : m_cInstr.mCodeI.srcA);
-	MCODE_DEBUG("SrcSelect, srcAUsed=" + std::to_string(m_cInstr.mCodeI.srcAUsed));
-	if (!m_cInstr.mCodeI.srcAUsed)
-		m_cInstr.mCodeI.srcAUsed = true;
+	auto& src = mcode_getNextSrc();
 
 	MCODE_DEBUG("MOD=" + std::to_string(m_cInstr.modRMByte.MOD()));
 
@@ -265,10 +287,7 @@ void Processor_8086::mcode_getSrcModRM() {
 void Processor_8086::mcode_getSrcRegop() {
 	// We get the source from the regop value. This will be a 16 bit or 8 bit register. m_cInstr.mCodeI.regMode8Bit declares it as 8 bit register
 	// If srcA is in use, we put in srcB
-	auto& src = (m_cInstr.mCodeI.srcAUsed ? m_cInstr.mCodeI.srcB : m_cInstr.mCodeI.srcA);
-	MCODE_DEBUG("SrcSelect, srcAUsed=" + std::to_string(m_cInstr.mCodeI.srcAUsed));
-	if (!m_cInstr.mCodeI.srcAUsed)
-		m_cInstr.mCodeI.srcAUsed = true;
+	auto& src = mcode_getNextSrc();
 
 	mcode_toSrcFromReg(src, m_cInstr.modRMByte.REGOP());
 }
@@ -482,6 +501,32 @@ void Processor_8086::mcode_fnCmp() {
 	R_F.putBit(FLAGS_CF, m_alu.carryBit());
 }
 
+void Processor_8086::mcode_fnDec() {
+	m_cInstr.mCodeI.dst.bytes = m_cInstr.mCodeI.srcA.bytes;
+	m_cInstr.mCodeI.dst.v = m_alu.decrement(m_cInstr.mCodeI.srcA.v);
+	m_cInstr.mCodeI.dstEnabled = true;
+
+	// Update the relevant flags
+	Register16& R_F = m_registers[REGISTERS::R_FLAGS];
+	R_F.putBit(FLAGS_OF, m_alu.overflowFlag());
+	R_F.putBit(FLAGS_SF, m_alu.negativeFlag()); // Sign flag = negative flag
+	R_F.putBit(FLAGS_ZF, m_alu.zeroFlag());
+	// R_F.putBit(FLAGS_AF, m_alu.adjustFlag()); TODO - Also Aux Carry flag
+	R_F.putBit(FLAGS_PF, m_alu.parityFlag());
+}
+
+void Processor_8086::mcode_fnCallRel() {
+	// Get the relative 16 offset from srcA
+	int16_t rel16 = (int16_t)m_cInstr.mCodeI.srcA.v;
+	// Push IP to the stack. We need to load srcB with the value first
+	m_cInstr.mCodeI.srcB.v = m_registers[REGISTERS::R_IP].read();
+	m_cInstr.mCodeI.srcB.bytes = 2;
+	mcode_stackPush(m_cInstr.mCodeI.srcB);
+	// Now add thd rel16 to IP
+	MCODE_DEBUG("[REL16] CALL to IP = " + COutSys::ToHexStr((m_registers[REGISTERS::R_IP].read() + rel16)));
+	m_registers[REGISTERS::R_IP].put(m_registers[REGISTERS::R_IP].read() + rel16);
+}
+
 /***********************************/
 // JMP MICROCODE
 /***********************************/
@@ -509,4 +554,43 @@ void Processor_8086::mcode_jmpCondRelativeShort(bool condition) {
 	else {
 		MCODE_DEBUG_ERR("srcA.bytes is of unknown value, unable to jump!");
 	}
+}
+
+/***********************************/
+// MISC MICROCODE
+/***********************************/
+
+void Processor_8086::mcode_seSrcB() {
+	MCODE_DEBUG("SE_SRC_B BEGIN: " + COutSys::ToHexStr(m_cInstr.mCodeI.srcB.v));
+	if (m_cInstr.mCodeI.srcA.bytes == 2 && m_cInstr.mCodeI.srcB.bytes == 1) {
+		m_cInstr.mCodeI.srcB.bytes = 2;
+		// Sign extend to 2 bytes.
+		if (m_cInstr.mCodeI.srcB.v & 0x80) {
+			// Sign bit is set:
+			m_cInstr.mCodeI.srcB.v |= 0xFF00; // Set the top byte to be all 1s
+		}
+		else {
+			// Sign bit is not set, do nothing
+		}
+		MCODE_DEBUG("SE_SRC_B RESULT: " + COutSys::ToHexStr(m_cInstr.mCodeI.srcB.v));
+	}
+}
+
+void Processor_8086::mcode_stackPush(CurrentInstruction::MicrocodeInformation::Values& src) {
+	MCODE_DEBUG("Stack push of v = " + COutSys::ToHexStr(src.v) + " (bytes = " + std::to_string(src.bytes) + "), SP = " + COutSys::ToHexStr(m_registers[REGISTERS::R_SP].read()));
+
+	// Decrement stack pointer
+	m_registers[REGISTERS::R_SP].put(m_registers[REGISTERS::R_SP].read() - src.bytes);
+	// Put the address bus to the value of SP
+	m_addressBus.putData(m_registers[REGISTERS::R_SP].read());
+	// Put the data onto the bus
+	m_dataBus.putData(src.v);
+	// If we have > 1 bytes, do writeBus, else do writeByte
+	if (src.bytes != 1) {
+		m_mmu.writeBus(m_dataBus, m_addressBus, icarus::memory::MMU::ReadType::BigEndian);
+	}
+	else {
+		m_mmu.writeByte(m_dataBus, m_addressBus);
+	}
+	MCODE_DEBUG("Push complete. SP = " + COutSys::ToHexStr(m_registers[REGISTERS::R_SP].read()));
 }
