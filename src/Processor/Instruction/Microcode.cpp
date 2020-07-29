@@ -59,6 +59,8 @@ Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 
 	else if (s.compare("FN_CALL_REL") == 0) { return Microcode::MicrocodeType::FN_CALL_REL; }
 
+	else if (s.compare("FN_RETN_NEAR") == 0) { return Microcode::MicrocodeType::FN_RETN_NEAR; }
+
 	else if (s.compare("FN_JZ") == 0) { return Microcode::MicrocodeType::FN_JZ; }
 	else if (s.compare("FN_JNZ") == 0) { return Microcode::MicrocodeType::FN_JNZ; }
 

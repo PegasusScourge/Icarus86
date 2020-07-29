@@ -66,6 +66,8 @@ namespace icarus {
 
 					FN_CALL_REL, // Call relative. SRC_A should have the relative address, relative to IP after fetchDecode. Push IP to stack first
 
+					FN_RETN_NEAR, // Return near. SRC_A should have the return IP 
+
 					FN_JZ, // Jump if Zero flag set, takes immediate byte as relative to PC for jump. Relative is SIGNED
 					FN_JNZ, // Jump is Zero flag not set, same as above otherwise
 

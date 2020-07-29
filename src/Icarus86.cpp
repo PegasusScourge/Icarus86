@@ -371,6 +371,10 @@ bool i::Icarus86::createProcessor() {
 }
 
 bool i::Icarus86::memoryTest(size_t startAddress, size_t size) {
+#ifdef MMU_DEBUG_PRINT
+	return true;
+#endif
+
 	size_t address = startAddress;
 	bool failure = false;
 	int tried = 0, failedBytes = 0;

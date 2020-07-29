@@ -103,6 +103,7 @@ namespace icarus {
 			FN MICROCODE
 			*/
 			void mcode_fnCallRel();
+			void mcode_fnRetnNear();
 			void mcode_fnRegop8X();
 			void mcode_fnCmp();
 			void mcode_fnInc();
@@ -115,6 +116,7 @@ namespace icarus {
 			MISC MICROCODE
 			*/
 			void mcode_stackPush(CurrentInstruction::MicrocodeInformation::Values& src);
+			void mcode_stackPop(CurrentInstruction::MicrocodeInformation::Values& src);
 			void mcode_seSrcB();
 
 		public:

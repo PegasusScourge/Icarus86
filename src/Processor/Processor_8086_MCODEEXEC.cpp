@@ -52,6 +52,14 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 		mcode_getSrcModRM();
 		break;
 
+	case Microcode::MicrocodeType::SRC_STACK_POP: 
+	{
+		auto& src = mcode_getNextSrc();
+		src.bytes = m_cInstr.mCodeI.regMode8Bit ? 1 : 2;
+		mcode_stackPop(src);
+	}
+		break;
+
 	case Microcode::MicrocodeType::SRC_IMM:
 		mcode_getSrcImm();
 		break;
@@ -117,6 +125,10 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 
 	case Microcode::MicrocodeType::FN_CALL_REL:
 		mcode_fnCallRel();
+		break;
+
+	case Microcode::MicrocodeType::FN_RETN_NEAR:
+		mcode_fnRetnNear();
 		break;
 
 	case Microcode::MicrocodeType::FN_JZ:
@@ -698,6 +710,13 @@ void Processor_8086::mcode_fnCallRel() {
 	m_registers[REGISTERS::R_IP].put(m_registers[REGISTERS::R_IP].read() + rel16);
 }
 
+void Processor_8086::mcode_fnRetnNear() {
+	// SRC_A has the IP we need to jump to
+	MCODE_DEBUG("RETN to = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcA.v));
+	m_registers[REGISTERS::R_IP].put(m_cInstr.mCodeI.srcA.v);
+	MCODE_DEBUG("RETN gave IP = " + COutSys::ToHexStr(m_registers[REGISTERS::R_IP].read()));
+}
+
 /***********************************/
 // JMP MICROCODE
 /***********************************/
@@ -758,10 +777,31 @@ void Processor_8086::mcode_stackPush(CurrentInstruction::MicrocodeInformation::V
 	m_dataBus.putData(src.v);
 	// If we have > 1 bytes, do writeBus, else do writeByte
 	if (src.bytes != 1) {
-		m_mmu.writeBus(m_dataBus, m_addressBus, icarus::memory::MMU::ReadType::BigEndian);
+		m_mmu.writeBus(m_dataBus, m_addressBus, icarus::memory::MMU::ReadType::LittleEndian);
 	}
 	else {
 		m_mmu.writeByte(m_dataBus, m_addressBus);
 	}
 	MCODE_DEBUG("Push complete. SP = " + COutSys::ToHexStr(m_registers[REGISTERS::R_SP].read()));
+}
+
+void Processor_8086::mcode_stackPop(CurrentInstruction::MicrocodeInformation::Values& src) {
+	MCODE_DEBUG("Stack pop, SP = " + COutSys::ToHexStr(m_registers[REGISTERS::R_SP].read()));
+
+	// Put the address bus to the value of SP
+	m_addressBus.putData(m_registers[REGISTERS::R_SP].read());
+
+	// If we have > 1 bytes, do fillBus, else do readByte
+	if (src.bytes != 1) {
+		m_mmu.fillBus(m_dataBus, m_addressBus, icarus::memory::MMU::ReadType::LittleEndian);
+	}
+	else {
+		m_mmu.readByte(m_dataBus, m_addressBus);
+	}
+
+	src.v = m_dataBus.readData();
+	// Increment stack pointer
+	m_registers[REGISTERS::R_SP].put(m_registers[REGISTERS::R_SP].read() + src.bytes);
+
+	MCODE_DEBUG("Pop complete. SP = " + COutSys::ToHexStr(m_registers[REGISTERS::R_SP].read()) + ", v = " + COutSys::ToHexStr(m_dataBus.readData()));
 }

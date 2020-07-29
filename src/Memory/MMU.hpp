@@ -111,7 +111,10 @@ namespace icarus {
 					for (; currentShift >= 0; currentShift--, address++) {
 						aBus.putData(address); // Put the new address
 						readByte(dBus, aBus);
-						dataToPush |= (dBus.readData() & 0xFF) << currentShift;
+						dataToPush |= (dBus.readData() & 0xFF) << (currentShift * 8);
+
+						MMU_DEBUG("shift = " + std::to_string(currentShift) + ", address = " +
+							icarus::COutSys::ToHexStr(aBus.readData()) + ", val_so_far = " + icarus::COutSys::ToHexStr(dataToPush));
 					}
 				}
 				else if (endianness == ReadType::LittleEndian) {
@@ -119,7 +122,10 @@ namespace icarus {
 					for (; currentShift < dataBusByteWidth; currentShift++, address++) {
 						aBus.putData(address); // Put the new address
 						readByte(dBus, aBus);
-						dataToPush |= (dBus.readData() & 0xFF) << currentShift;
+						dataToPush |= (dBus.readData() & 0xFF) << (currentShift * 8);
+
+						MMU_DEBUG("shift = " + std::to_string(currentShift) + ", address = " +
+							icarus::COutSys::ToHexStr(aBus.readData()) + ", val_so_far = " + icarus::COutSys::ToHexStr(dataToPush));
 					}
 				}
 				else {
@@ -145,7 +151,7 @@ namespace icarus {
 					currentShift = dataBusByteWidth - 1;
 					for (; currentShift >= 0; currentShift--, address++) {
 						aBus.putData(address); // Put the new address
-						dBus.putData((dBusData >> currentShift) & 0xFF);
+						dBus.putData((dBusData >> (currentShift * 8)) & 0xFF);
 						writeByte(dBus, aBus);
 					}
 				}
@@ -153,7 +159,7 @@ namespace icarus {
 					// No correction for LittleEndian
 					for (; currentShift < dataBusByteWidth; currentShift++, address++) {
 						aBus.putData(address); // Put the new address
-						dBus.putData((dBusData >> currentShift) & 0xFF);
+						dBus.putData((dBusData >> (currentShift * 8)) & 0xFF);
 						writeByte(dBus, aBus);
 					}
 				}
