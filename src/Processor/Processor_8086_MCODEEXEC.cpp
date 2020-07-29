@@ -155,6 +155,14 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 		mcode_fnDec();
 		break;
 
+	case Microcode::MicrocodeType::FN_XOR:
+		mcode_fnXOR();
+		break;
+
+	case Microcode::MicrocodeType::FN_OR:
+		mcode_fnOR();
+		break;
+
 	case Microcode::MicrocodeType::FN_APASS:
 		m_cInstr.mCodeI.dst = m_cInstr.mCodeI.srcA; m_cInstr.mCodeI.dstEnabled = true;
 		break;
@@ -696,6 +704,42 @@ void Processor_8086::mcode_fnInc() {
 	R_F.putBit(FLAGS_ZF, m_alu.zeroFlag());
 	// R_F.putBit(FLAGS_AF, m_alu.adjustFlag()); TODO - Also Aux Carry flag
 	R_F.putBit(FLAGS_PF, m_alu.parityFlag());
+}
+
+void Processor_8086::mcode_fnXOR() {
+	if (m_cInstr.mCodeI.srcA.bytes > 1 || m_cInstr.mCodeI.srcB.bytes > 1)
+		m_cInstr.mCodeI.dst.bytes = 2;
+	else
+		m_cInstr.mCodeI.dst.bytes = 1;
+
+	m_cInstr.mCodeI.dst.v = m_alu.binaryXOR(m_cInstr.mCodeI.srcA.v, m_cInstr.mCodeI.srcB.v);
+	m_cInstr.mCodeI.dstEnabled = true;
+
+	// Update the relevant flags
+	Register16& R_F = m_registers[REGISTERS::R_FLAGS];
+	R_F.putBit(FLAGS_SF, m_alu.negativeFlag()); // Sign flag = negative flag
+	R_F.putBit(FLAGS_ZF, m_alu.zeroFlag());
+	R_F.putBit(FLAGS_PF, m_alu.parityFlag());
+	R_F.clearBit(FLAGS_CF);
+	R_F.clearBit(FLAGS_OF);
+}
+
+void Processor_8086::mcode_fnOR() {
+	if (m_cInstr.mCodeI.srcA.bytes > 1 || m_cInstr.mCodeI.srcB.bytes > 1)
+		m_cInstr.mCodeI.dst.bytes = 2;
+	else
+		m_cInstr.mCodeI.dst.bytes = 1;
+
+	m_cInstr.mCodeI.dst.v = m_alu.binaryOR(m_cInstr.mCodeI.srcA.v, m_cInstr.mCodeI.srcB.v);
+	m_cInstr.mCodeI.dstEnabled = true;
+
+	// Update the relevant flags
+	Register16& R_F = m_registers[REGISTERS::R_FLAGS];
+	R_F.putBit(FLAGS_SF, m_alu.negativeFlag()); // Sign flag = negative flag
+	R_F.putBit(FLAGS_ZF, m_alu.zeroFlag());
+	R_F.putBit(FLAGS_PF, m_alu.parityFlag());
+	R_F.clearBit(FLAGS_CF);
+	R_F.clearBit(FLAGS_OF);
 }
 
 void Processor_8086::mcode_fnCallRel() {

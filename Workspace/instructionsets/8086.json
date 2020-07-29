@@ -6,7 +6,41 @@
 		"minor": 1
 	},
 	"icode": [
-		
+	
+		{
+			"mnemonic": "OR r/m16, r/16",
+			"hexcode": "09",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"REG_16",
+				"SRC_MODRM",
+				"SRC_REGOP",
+				"FN_OR",
+				"DST_MODRM"
+			]
+		},
+		{
+			"mnemonic": "XOR r/m16, r/16",
+			"hexcode": "31",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"REG_16",
+				"SRC_MODRM",
+				"SRC_REGOP",
+				"FN_XOR",
+				"DST_MODRM"
+			]
+		},
 		{
 			"mnemonic": "INC_AX",
 			"hexcode": "40",

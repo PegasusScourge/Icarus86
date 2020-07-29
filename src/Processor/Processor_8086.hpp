@@ -108,6 +108,8 @@ namespace icarus {
 			void mcode_fnCmp();
 			void mcode_fnInc();
 			void mcode_fnDec();
+			void mcode_fnXOR();
+			void mcode_fnOR();
 			/*
 			JMP MICROCODE
 			*/
