@@ -40,6 +40,7 @@ Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 
 	else if (s.compare("DST_R_AL") == 0) { return Microcode::MicrocodeType::DST_R_AL; }
 	else if (s.compare("DST_R_BX") == 0) { return Microcode::MicrocodeType::DST_R_BX; }
+	else if (s.compare("DST_R_CX") == 0) { return Microcode::MicrocodeType::DST_R_CX; }
 	else if (s.compare("DST_R_SP") == 0) { return Microcode::MicrocodeType::DST_R_SP; }
 	else if (s.compare("DST_R_DI") == 0) { return Microcode::MicrocodeType::DST_R_DI; }
 
@@ -63,6 +64,10 @@ Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 
 	else if (s.compare("FN_JZ") == 0) { return Microcode::MicrocodeType::FN_JZ; }
 	else if (s.compare("FN_JNZ") == 0) { return Microcode::MicrocodeType::FN_JNZ; }
+	else if (s.compare("FN_JC") == 0) { return Microcode::MicrocodeType::FN_JC; }
+	else if (s.compare("FN_JNC") == 0) { return Microcode::MicrocodeType::FN_JNC; }
+	else if (s.compare("FN_JBE") == 0) { return Microcode::MicrocodeType::FN_JBE; }
+	else if (s.compare("FN_JNBE") == 0) { return Microcode::MicrocodeType::FN_JNBE; }
 
 	else if (s.compare("FN_APASS") == 0) { return Microcode::MicrocodeType::FN_APASS; }
 

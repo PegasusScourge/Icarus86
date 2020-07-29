@@ -105,6 +105,13 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 			m_registers[REGISTERS::R_BX].put(m_cInstr.mCodeI.dst.v);
 		break;
 
+	case Microcode::MicrocodeType::DST_R_CX:
+		if (!m_cInstr.mCodeI.dstEnabled)
+			MCODE_DEBUG("!dstEnabled: not writing to destination");
+		else
+			m_registers[REGISTERS::R_CX].put(m_cInstr.mCodeI.dst.v);
+		break;
+
 	case Microcode::MicrocodeType::DST_R_SP:
 		if (!m_cInstr.mCodeI.dstEnabled)
 			MCODE_DEBUG("!dstEnabled: not writing to destination");
@@ -137,6 +144,22 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 
 	case Microcode::MicrocodeType::FN_JNZ:
 		mcode_jmpCondRelativeShort(!m_registers[REGISTERS::R_FLAGS].getBit(FLAGS_ZF));
+		break;
+
+	case Microcode::MicrocodeType::FN_JC:
+		mcode_jmpCondRelativeShort(m_registers[REGISTERS::R_FLAGS].getBit(FLAGS_CF));
+		break;
+
+	case Microcode::MicrocodeType::FN_JNC:
+		mcode_jmpCondRelativeShort(!m_registers[REGISTERS::R_FLAGS].getBit(FLAGS_CF));
+		break;
+
+	case Microcode::MicrocodeType::FN_JBE:
+		mcode_jmpCondRelativeShort(m_registers[REGISTERS::R_FLAGS].getBit(FLAGS_CF) || m_registers[REGISTERS::R_FLAGS].getBit(FLAGS_ZF));
+		break;
+
+	case Microcode::MicrocodeType::FN_JNBE:
+		mcode_jmpCondRelativeShort(!m_registers[REGISTERS::R_FLAGS].getBit(FLAGS_CF) && !m_registers[REGISTERS::R_FLAGS].getBit(FLAGS_ZF));
 		break;
 
 	case Microcode::MicrocodeType::FN_REGOP_8X:

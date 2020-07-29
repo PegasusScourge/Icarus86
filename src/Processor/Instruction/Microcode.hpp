@@ -47,6 +47,7 @@ namespace icarus {
 
 					DST_R_AL, // Destination is register AL, not deduced
 					DST_R_BX, // Destination is register BX, not deduced
+					DST_R_CX, // Destination is register CX, not deduced
 					DST_R_SP, // Destination is register SP, not deduced
 					DST_R_DI, // Destination is register DI, not deduced
 
@@ -70,6 +71,10 @@ namespace icarus {
 
 					FN_JZ, // Jump if Zero flag set, takes immediate byte as relative to PC for jump. Relative is SIGNED
 					FN_JNZ, // Jump is Zero flag not set, same as above otherwise
+					FN_JC, // Jump if carry flag is set
+					FN_JNC, // Jump if carry flag not set
+					FN_JBE, // Jump if carry or zero flag set
+					FN_JNBE, // Jump if carry and zero flag not set
 
 					FN_APASS, // Passes srcA to dst and sets dstEnabled
 

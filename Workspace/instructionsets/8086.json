@@ -42,6 +42,22 @@
 			]
 		},
 		{
+			"mnemonic": "CMP r/m16, r/16",
+			"hexcode": "39",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"REG_16",
+				"SRC_MODRM",
+				"SRC_REGOP",
+				"FN_CMP"
+			]
+		},
+		{
 			"mnemonic": "INC_AX",
 			"hexcode": "40",
 			"isPrefix": false,
@@ -530,6 +546,34 @@
 			]
 		},
 		{
+			"mnemonic": "JC",
+			"hexcode": "72",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_JC"
+			]
+		},
+		{
+			"mnemonic": "JNC",
+			"hexcode": "73",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_JNC"
+			]
+		},
+		{
 			"mnemonic": "JZ/JE",
 			"hexcode": "74",
 			"isPrefix": false,
@@ -555,6 +599,34 @@
 			"microcode": [
 				"SRC_IMM",
 				"FN_JNZ"
+			]
+		},
+		{
+			"mnemonic": "JBE",
+			"hexcode": "76",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_JBE"
+			]
+		},
+		{
+			"mnemonic": "JNBE",
+			"hexcode": "77",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_JNBE"
 			]
 		},
 		{
