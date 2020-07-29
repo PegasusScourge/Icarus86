@@ -111,6 +111,7 @@ void i::Icarus86::run() {
 			else if (evt.type == sf::Event::KeyPressed) {
 				// Key press events
 				switch (evt.key.code) {
+				case sf::Keyboard::Q:
 				case sf::Keyboard::Escape:
 					window.close();
 					break;
