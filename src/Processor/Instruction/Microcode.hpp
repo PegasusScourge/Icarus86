@@ -48,6 +48,7 @@ namespace icarus {
 					DST_R_AL, // Destination is register AL, not deduced
 					DST_R_BX, // Destination is register BX, not deduced
 					DST_R_SP, // Destination is register SP, not deduced
+					DST_R_DI, // Destination is register DI, not deduced
 
 					FN_ADD,
 					FN_ADC,

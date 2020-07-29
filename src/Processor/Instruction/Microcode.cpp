@@ -41,6 +41,7 @@ Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 	else if (s.compare("DST_R_AL") == 0) { return Microcode::MicrocodeType::DST_R_AL; }
 	else if (s.compare("DST_R_BX") == 0) { return Microcode::MicrocodeType::DST_R_BX; }
 	else if (s.compare("DST_R_SP") == 0) { return Microcode::MicrocodeType::DST_R_SP; }
+	else if (s.compare("DST_R_DI") == 0) { return Microcode::MicrocodeType::DST_R_DI; }
 
 	else if (s.compare("FN_ADD") == 0) { return Microcode::MicrocodeType::FN_ADD; }
 	else if (s.compare("FN_ADC") == 0) { return Microcode::MicrocodeType::FN_ADC; }

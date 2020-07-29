@@ -105,6 +105,7 @@ namespace icarus {
 			void mcode_fnCallRel();
 			void mcode_fnRegop8X();
 			void mcode_fnCmp();
+			void mcode_fnInc();
 			void mcode_fnDec();
 			/*
 			JMP MICROCODE

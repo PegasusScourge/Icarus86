@@ -447,6 +447,22 @@
 			]
 		},
 		{
+			"mnemonic": "MOV r/m16, r/16",
+			"hexcode": "89",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"REG_16",
+				"SRC_REGOP",
+				"FN_APASS",
+				"DST_MODRM"
+			]
+		},
+		{
 			"mnemonic": "MOV r/16, r/m16",
 			"hexcode": "8B",
 			"isPrefix": false,

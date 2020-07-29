@@ -104,6 +104,13 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 			m_registers[REGISTERS::R_SP].put(m_cInstr.mCodeI.dst.v);
 		break;
 
+	case Microcode::MicrocodeType::DST_R_DI:
+		if (!m_cInstr.mCodeI.dstEnabled)
+			MCODE_DEBUG("!dstEnabled: not writing to destination");
+		else
+			m_registers[REGISTERS::R_DI].put(m_cInstr.mCodeI.dst.v);
+		break;
+
 		/*
 		FN
 		*/
@@ -126,6 +133,10 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 		
 	case Microcode::MicrocodeType::FN_CMP:
 		mcode_fnCmp();
+		break;
+
+	case Microcode::MicrocodeType::FN_INC:
+		mcode_fnInc();
 		break;
 
 	case Microcode::MicrocodeType::FN_DEC:
@@ -650,6 +661,20 @@ void Processor_8086::mcode_fnCmp() {
 void Processor_8086::mcode_fnDec() {
 	m_cInstr.mCodeI.dst.bytes = m_cInstr.mCodeI.srcA.bytes;
 	m_cInstr.mCodeI.dst.v = m_alu.decrement(m_cInstr.mCodeI.srcA.v);
+	m_cInstr.mCodeI.dstEnabled = true;
+
+	// Update the relevant flags
+	Register16& R_F = m_registers[REGISTERS::R_FLAGS];
+	R_F.putBit(FLAGS_OF, m_alu.overflowFlag());
+	R_F.putBit(FLAGS_SF, m_alu.negativeFlag()); // Sign flag = negative flag
+	R_F.putBit(FLAGS_ZF, m_alu.zeroFlag());
+	// R_F.putBit(FLAGS_AF, m_alu.adjustFlag()); TODO - Also Aux Carry flag
+	R_F.putBit(FLAGS_PF, m_alu.parityFlag());
+}
+
+void Processor_8086::mcode_fnInc() {
+	m_cInstr.mCodeI.dst.bytes = m_cInstr.mCodeI.srcA.bytes;
+	m_cInstr.mCodeI.dst.v = m_alu.increment(m_cInstr.mCodeI.srcA.v);
 	m_cInstr.mCodeI.dstEnabled = true;
 
 	// Update the relevant flags
