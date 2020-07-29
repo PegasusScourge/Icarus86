@@ -89,6 +89,7 @@ namespace icarus {
 			*/
 			CurrentInstruction::MicrocodeInformation::Values& mcode_getNextSrc();
 			void mcode_toSrcFromReg(CurrentInstruction::MicrocodeInformation::Values& src, uint8_t sval);
+			void mcode_toSrcFromMem00(CurrentInstruction::MicrocodeInformation::Values& src, uint8_t sval);
 			void mcode_getSrcRegop();
 			void mcode_getSrcImm();
 			void mcode_getSrcModRM();
@@ -97,6 +98,7 @@ namespace icarus {
 			*/
 			void mcode_dstModRM();
 			void mcode_toDstFromReg(uint8_t sval);
+			void mcode_toDstFromMem00(uint8_t sval);
 			/*
 			FN MICROCODE
 			*/

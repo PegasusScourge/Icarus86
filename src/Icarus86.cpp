@@ -111,6 +111,10 @@ void i::Icarus86::run() {
 			else if (evt.type == sf::Event::KeyPressed) {
 				// Key press events
 				switch (evt.key.code) {
+				case sf::Keyboard::Escape:
+					window.close();
+					break;
+
 				case sf::Keyboard::P:
 					// Pause the running
 					m_runningProcessor = false;
@@ -130,6 +134,13 @@ void i::Icarus86::run() {
 					}
 					break;
 
+				case sf::Keyboard::F2:
+					if (!m_displayStatisticsDebounce) {
+						m_displayStatisticsDebounce = true;
+						m_displayStatistics = !m_displayStatistics;
+					}
+					break;
+
 				default:
 					break;
 				}
@@ -139,6 +150,10 @@ void i::Icarus86::run() {
 				switch (evt.key.code) {
 				case sf::Keyboard::S:
 					m_singleStepDebounce = false;
+					break;
+
+				case sf::Keyboard::F2:
+					m_displayStatisticsDebounce = false;
 					break;
 
 				default:
@@ -495,7 +510,7 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 		window.draw(text);
 	}
 
-	y = tempY; x += 400;
+	y = tempY; x += 500;
 
 	// Draw the lastDisplacements
 	text.setFillColor(sf::Color::Cyan);

@@ -114,6 +114,10 @@ unsigned int ip::Processor_8086::fetchDecode() {
 	}
 	DECODE8086_DEBUG("Has microcode");
 
+	// The number of displacement and immediate bytes can be modified by the ModRM value. So we cache here in order to increment
+	unsigned int numDispBytes = instr.numDisplacementBytes();
+	unsigned int numImmBytes = instr.numImmediateBytes();
+
 	// Get a ModRMByte if needed
 	m_cInstr.modRMByte.setByte(0);
 	if (instr.hasModRM()) {
@@ -127,15 +131,36 @@ unsigned int ip::Processor_8086::fetchDecode() {
 		}
 		m_cInstr.modRMByte.setByte((uint8_t)m_dataBus.readData());
 		DECODE8086_DEBUG("MODRM = " + icarus::COutSys::ToHexStr(m_dataBus.readData()));
+
+		// Now we need to detect if we have a modifying value that will necessitate adding disp or imm bytes.
+		if (numDispBytes == 0) {
+			if (m_cInstr.modRMByte.MOD() == 0b01) {
+				// We need to have one displacement byte!
+				numDispBytes++;
+				DECODE8086_DEBUG("MODRM indicated need for one displacement byte where instruction set doesn't, adding");
+			}
+			if (m_cInstr.modRMByte.MOD() == 0b10) {
+				// We need to have two displacement bytes!
+				numDispBytes += 2;
+				DECODE8086_DEBUG("MODRM indicated need for two displacement bytes where instruction set doesn't, adding");
+			}
+		}
+		if (numImmBytes == 0) {
+			if (m_cInstr.modRMByte.MOD() == 0b00 && m_cInstr.modRMByte.RM() == 0b110) {
+				// We need to have two immediate bytes!
+				numImmBytes += 2;
+				DECODE8086_DEBUG("MODRM indicated need for two immediate bytes where instruction set doesn't, adding");
+			}
+		}
 	}
 
 	// Get displacment bytes if needed
 	m_cInstr.displacement = 0;
-	if (instr.numDisplacementBytes() > 0) {
+	if (numDispBytes > 0) {
 		DECODE8086_DEBUG("Has displacement");
 		m_addressBus.putData(ipVal + (++increment));
-		m_cInstr.numDisplacementBytes = instr.numDisplacementBytes();
-		switch (instr.numDisplacementBytes()) {
+		m_cInstr.numDisplacementBytes = numDispBytes;
+		switch (numDispBytes) {
 		case 2:
 			m_mmu.readByte(m_dataBus, m_addressBus);
 			m_cInstr.displacement |= (m_dataBus.readData() << 8);
@@ -148,7 +173,7 @@ unsigned int ip::Processor_8086::fetchDecode() {
 		default:
 			// Error getting displacement bytes
 			icarus::COutSys::Println("Processor8086 failed to get displacement bytes (num=" + 
-				std::to_string(instr.numDisplacementBytes()) + ")", icarus::COutSys::LEVEL_ERR);
+				std::to_string(numDispBytes) + ")", icarus::COutSys::LEVEL_ERR);
 			triggerError();
 			return 0;
 		}
@@ -156,11 +181,11 @@ unsigned int ip::Processor_8086::fetchDecode() {
 
 	// Get immediate bytes if needed
 	m_cInstr.immediate = 0;
-	if (instr.numImmediateBytes() > 0) {
+	if (numImmBytes > 0) {
 		DECODE8086_DEBUG("Has immediate");
 		m_addressBus.putData(ipVal + (++increment));
-		m_cInstr.numImmeditateBytes = instr.numImmediateBytes();
-		switch (instr.numImmediateBytes()) {
+		m_cInstr.numImmeditateBytes = numImmBytes;
+		switch (numImmBytes) {
 		case 2:
 			DECODE8086_DEBUG("2 Byte");
 			m_mmu.readByte(m_dataBus, m_addressBus);
@@ -178,7 +203,7 @@ unsigned int ip::Processor_8086::fetchDecode() {
 		default:
 			// Error getting displacement bytes
 			icarus::COutSys::Println("Processor8086 failed to get immediate bytes (num=" +
-				std::to_string(instr.numImmediateBytes()) + ")", icarus::COutSys::LEVEL_ERR);
+				std::to_string(numImmBytes) + ")", icarus::COutSys::LEVEL_ERR);
 			triggerError();
 			return 0;
 		}

@@ -431,6 +431,38 @@
 			]
 		},
 		{
+			"mnemonic": "MOV r/m8, r/8",
+			"hexcode": "88",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"REG_8",
+				"SRC_REGOP",
+				"FN_APASS",
+				"DST_MODRM"
+			]
+		},
+		{
+			"mnemonic": "MOV r/16, r/m16",
+			"hexcode": "8B",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"REG_16",
+				"SRC_MODRM",
+				"FN_APASS",
+				"DST_REGOP"
+			]
+		},
+		{
 			"mnemonic": "MOV_AL",
 			"hexcode": "B0",
 			"isPrefix": false,

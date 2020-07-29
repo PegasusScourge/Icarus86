@@ -62,6 +62,7 @@ namespace icarus {
 
 		// Graphics display information
 		bool m_displayStatistics = true;
+		bool m_displayStatisticsDebounce = false;
 
 		/*
 		void parseINI()
