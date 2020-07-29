@@ -28,10 +28,15 @@ Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 	else if (s.compare("SRC_MODRM") == 0) { return Microcode::MicrocodeType::SRC_MODRM; }
 	else if (s.compare("SRC_IMM") == 0) { return Microcode::MicrocodeType::SRC_IMM; }
 
+	else if (s.compare("SRC_STACK_POP") == 0) { return Microcode::MicrocodeType::SRC_STACK_POP; }
+
 	else if (s.compare("SRC_R_BX") == 0) { return Microcode::MicrocodeType::SRC_R_BX; }
+	else if (s.compare("SRC_R_DI") == 0) { return Microcode::MicrocodeType::SRC_R_DI; }
 
 	else if (s.compare("DST_REGOP") == 0) { return Microcode::MicrocodeType::DST_REGOP; }
 	else if (s.compare("DST_MODRM") == 0) { return Microcode::MicrocodeType::DST_MODRM; }
+
+	else if (s.compare("DST_STACK_PUSH") == 0) { return Microcode::MicrocodeType::DST_STACK_PUSH; }
 
 	else if (s.compare("DST_R_AL") == 0) { return Microcode::MicrocodeType::DST_R_AL; }
 	else if (s.compare("DST_R_BX") == 0) { return Microcode::MicrocodeType::DST_R_BX; }

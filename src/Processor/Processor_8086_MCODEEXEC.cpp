@@ -60,12 +60,23 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 		mcode_getNextSrc().v = m_registers[REGISTERS::R_BX].read();
 		break;
 
+	case Microcode::MicrocodeType::SRC_R_DI:
+		mcode_getNextSrc().v = m_registers[REGISTERS::R_DI].read();
+		break;
+
 		/*
 		DST
 		*/
 
 	case Microcode::MicrocodeType::DST_MODRM:
 		mcode_dstModRM();
+		break;
+
+	case Microcode::MicrocodeType::DST_STACK_PUSH:
+		if (!m_cInstr.mCodeI.dstEnabled)
+			MCODE_DEBUG("!dstEnabled: not writing to destination");
+		else
+			mcode_stackPush(m_cInstr.mCodeI.dst);
 		break;
 
 	case Microcode::MicrocodeType::DST_R_AL:

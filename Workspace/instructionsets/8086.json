@@ -248,6 +248,126 @@
 			]
 		},
 		{
+			"mnemonic": "PUSH_AX",
+			"hexcode": "50",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_R_AX",
+				"FN_APASS",
+				"DST_STACK_PUSH"
+			]
+		},
+		{
+			"mnemonic": "PUSH_CX",
+			"hexcode": "51",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_R_CX",
+				"FN_APASS",
+				"DST_STACK_PUSH"
+			]
+		},
+		{
+			"mnemonic": "PUSH_DX",
+			"hexcode": "52",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_R_DX",
+				"FN_APASS",
+				"DST_STACK_PUSH"
+			]
+		},
+		{
+			"mnemonic": "PUSH_BX",
+			"hexcode": "53",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_R_BX",
+				"FN_APASS",
+				"DST_STACK_PUSH"
+			]
+		},
+		{
+			"mnemonic": "PUSH_SP",
+			"hexcode": "54",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_R_SP",
+				"FN_APASS",
+				"DST_STACK_PUSH"
+			]
+		},
+		{
+			"mnemonic": "PUSH_BP",
+			"hexcode": "55",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_R_BP",
+				"FN_APASS",
+				"DST_STACK_PUSH"
+			]
+		},
+		{
+			"mnemonic": "PUSH_SI",
+			"hexcode": "56",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_R_SI",
+				"FN_APASS",
+				"DST_STACK_PUSH"
+			]
+		},
+		{
+			"mnemonic": "PUSH_DI",
+			"hexcode": "57",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_R_DI",
+				"FN_APASS",
+				"DST_STACK_PUSH"
+			]
+		},
+		{
 			"mnemonic": "JZ/JE",
 			"hexcode": "74",
 			"isPrefix": false,

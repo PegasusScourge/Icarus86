@@ -52,6 +52,7 @@ namespace icarus {
 
 		bool m_runningProcessor = false;
 		bool m_singleStep = true;
+		bool m_singleStepDebounce = false;
 
 		// Memory Management Unit
 		icarus::memory::MMU m_mmu;
@@ -85,6 +86,8 @@ namespace icarus {
 		Displays the statistics on the screen
 		*/
 		void drawStatistics(sf::RenderWindow& window);
+
+		bool processorSingleStep();
 
 	public:
 		Icarus86();

@@ -111,6 +111,13 @@ void ipi::ICode::parseICodeEntry(nlohmann::json entry, uint64_t prefix) {
 		m_clockCost = 0;
 	}
 
+	if (entry["mnemonic"].is_string()) {
+		m_mnemonic = entry["mnemonic"].get<std::string>();
+	}
+	else {
+		m_mnemonic = "NONE";
+	}
+
 	// Get microcode
 	if (entry["microcode"].is_array()) {
 		// We have microcode
@@ -161,6 +168,10 @@ unsigned int ipi::ICode::numDisplacementBytes() {
 
 unsigned int ipi::ICode::numImmediateBytes() {
 	return m_immediateBytes;
+}
+
+std::string ipi::ICode::getMnemonic() {
+	return m_mnemonic;
 }
 
 uint8_t ipi::ICode::getCode() {

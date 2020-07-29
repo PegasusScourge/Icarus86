@@ -36,6 +36,7 @@ namespace icarus {
 				unsigned int m_clockCost = 0;
 				std::vector<ICode> m_childCodes;
 				std::vector<Microcode> m_microcode;
+				std::string m_mnemonic;
 
 				bool m_valid = false;
 
@@ -60,6 +61,8 @@ namespace icarus {
 
 				uint8_t getCode();
 				uint64_t getPrefix();
+
+				std::string getMnemonic();
 
 				std::vector<ICode>& getChildCodes();
 				std::vector<Microcode>& getMicrocode();

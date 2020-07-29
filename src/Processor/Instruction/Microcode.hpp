@@ -35,10 +35,15 @@ namespace icarus {
 					SRC_MODRM,  // A source is deduced from the MODRM
 					SRC_IMM, // A source is the immediate byte(s)
 
+					SRC_STACK_POP, // Pop from the stack into a SRC
+
 					SRC_R_BX, // Source is register BX, not deduced
+					SRC_R_DI, // Source is register DI, not deduced
 
 					DST_REGOP, // Destination is deduced from the REGOP
 					DST_MODRM, // Destination is deduced from the MODRM
+
+					DST_STACK_PUSH, // Destination is pushing to the stack
 
 					DST_R_AL, // Destination is register AL, not deduced
 					DST_R_BX, // Destination is register BX, not deduced

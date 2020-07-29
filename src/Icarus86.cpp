@@ -99,7 +99,7 @@ void i::Icarus86::run() {
 	// Processor
 	m_cyclesToWait = 0;
 
-	m_runningProcessor = true;
+	m_runningProcessor = false;
 	m_singleStep = false;
 	
 	while (window.isOpen()) {
@@ -108,47 +108,87 @@ void i::Icarus86::run() {
 			if (evt.type == sf::Event::Closed) {
 				window.close();
 			}
+			else if (evt.type == sf::Event::KeyPressed) {
+				// Key press events
+				switch (evt.key.code) {
+				case sf::Keyboard::P:
+					// Pause the running
+					m_runningProcessor = false;
+					break;
+
+				case sf::Keyboard::R:
+					// Start the processor
+					m_runningProcessor = true;
+					break;
+
+				case sf::Keyboard::S:
+					// Do a single step
+					if (!m_singleStepDebounce) {
+						m_runningProcessor = false;
+						m_singleStep = true;
+						m_singleStepDebounce = true;
+					}
+					break;
+
+				default:
+					break;
+				}
+			}
+			else if (evt.type == sf::Event::KeyReleased) {
+				// Key release events
+				switch (evt.key.code) {
+				case sf::Keyboard::S:
+					m_singleStepDebounce = false;
+					break;
+
+				default:
+					break;
+				}
+			}
 		}
 
 		m_gpu.update(m_dataBus, m_addressBus, m_mmu);
 
-		m_processorAccumulator += m_processorClock.getElapsedTime().asMicroseconds();
+		// We only increment the accumulator if we are running the processor
+		if (m_runningProcessor)
+			m_processorAccumulator += m_processorClock.getElapsedTime().asMicroseconds();
+
+		// Restart the clock
 		m_processorClock.restart();
 
+		// Prep for executing ticks, so we set the # this cycle to 0 to count
 		if (m_processorAccumulator >= m_microsPerClock)
 			m_cyclesPerTick = 0;
 
+		// Limit the ammount of cycles this tick
 		if (m_processorAccumulator >= m_microsPerClock * 2000)
 			m_processorAccumulator = m_microsPerClock * 2000;
 
+		// Stop the processor if we fail or HLT
 		if (m_processor->isHLT() || m_processor->isFailed())
 			m_runningProcessor = false;
 
-		while (m_processorAccumulator >= m_microsPerClock && m_runningProcessor) {
-			m_processorAccumulator -= m_microsPerClock;
-			
-			if (m_cyclesToWait > 0) {
-				m_cyclesToWait--;
-			}
-			else {
-				if (m_singleStep) {
-					m_runningProcessor = false;
-				}
+		// Single step, else run down the accumulator
+		if (m_singleStep && !m_processor->isFailed()) {
+			m_singleStep = false;
+			processorSingleStep();
+		}
+		else {
+			while (m_processorAccumulator >= m_microsPerClock && m_runningProcessor) {
+				m_processorAccumulator -= m_microsPerClock;
 
-				m_cyclesToWait = m_processor->fetchDecode();
-				if (m_processor->isFailed()) {
-					i::COutSys::Println("Icarus86 detected processor failure after fetchDecode()", i::COutSys::LEVEL_ERR);
-					break;
+				if (m_cyclesToWait > 0) {
+					m_cyclesToWait--;
 				}
-				m_processor->execute();
-				if (m_processor->isFailed()) {
-					i::COutSys::Println("Icarus86 detected processor failure after execute()", i::COutSys::LEVEL_ERR);
-					break;
+				else {
+					if (!processorSingleStep())
+						break;
 				}
+				m_cyclesPerTick++;
 			}
-			m_cyclesPerTick++;
 		}
 		
+		// Do rendering
 		if (m_renderClock.getElapsedTime().asMilliseconds() >= 10) {
 			m_renderClock.restart();
 
@@ -165,6 +205,20 @@ void i::Icarus86::run() {
 			window.display();
 		}
 	}
+}
+
+bool i::Icarus86::processorSingleStep() {
+	m_cyclesToWait = m_processor->fetchDecode();
+	if (m_processor->isFailed()) {
+		i::COutSys::Println("Icarus86 detected processor failure after fetchDecode()", i::COutSys::LEVEL_ERR);
+		return false;
+	}
+	m_processor->execute();
+	if (m_processor->isFailed()) {
+		i::COutSys::Println("Icarus86 detected processor failure after execute()", i::COutSys::LEVEL_ERR);
+		return false;
+	}
+	return true;
 }
 
 int i::Icarus86::getReturnValue() {
@@ -258,6 +312,7 @@ void i::Icarus86::parseINI() {
 
 			std::ifstream is(path, std::ios::in | std::ios::binary);
 			std::vector<char> binaryContent((std::istreambuf_iterator<char>(is)), (std::istreambuf_iterator<char>()));
+
 			i::COutSys::Println("[INI] Got content of file: size=" + i::COutSys::ToHexStr(binaryContent.size(), true), i::COutSys::LEVEL_INFO);
 			i::COutSys::Print("[INI] Content dump:", i::COutSys::LEVEL_INFO);
 			for (size_t i = 0; i < binaryContent.size(); i++) {
@@ -300,8 +355,6 @@ bool i::Icarus86::createProcessor() {
 }
 
 bool i::Icarus86::memoryTest(size_t startAddress, size_t size) {
-	return true; // TEMPORARY
-
 	size_t address = startAddress;
 	bool failure = false;
 	int tried = 0, failedBytes = 0;
@@ -437,12 +490,12 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 	for (int i = 0; i < pState.lastInstrs.size(); i++, y += 12) {
 		auto& iCode = pState.lastInstrs[i].iCode;
 		text.setString("[" + std::to_string(i) + "]: " + COutSys::ToHexStr(iCode.getCode()) + ", valid=" + std::to_string(iCode.isValid()) + 
-		", prefix=" + COutSys::ToHexStr(iCode.getPrefix()));
+		", prefix=" + COutSys::ToHexStr(iCode.getPrefix()) + " (" + iCode.getMnemonic() + ")");
 		text.setPosition(x, y);
 		window.draw(text);
 	}
 
-	y = tempY; x += 300;
+	y = tempY; x += 400;
 
 	// Draw the lastDisplacements
 	text.setFillColor(sf::Color::Cyan);
