@@ -247,7 +247,7 @@ void ip::Processor_8086::execute() {
 	for (auto& mcode : m_cInstr.microcode) {
 		mcode_execCode(mcode);
 	}
-	EXEC8086_DEBUG("**********************---- </EXECUTE> ----**********************");
+	EXEC8086_DEBUG("**********************---- </EXECUTE> ----**********************" + icarus::endl);
 }
 
 void ip::Processor_8086::forceIP(uint64_t ip) {

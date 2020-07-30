@@ -775,6 +775,19 @@
 			]
 		},
 		{
+			"mnemonic": "NOP",
+			"hexcode": "90",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"NOP"
+			]
+		},
+		{
 			"mnemonic": "MOV_AL",
 			"hexcode": "B0",
 			"isPrefix": false,

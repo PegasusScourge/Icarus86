@@ -65,15 +65,27 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 		break;
 
 	case Microcode::MicrocodeType::SRC_R_BX:
-		mcode_getNextSrc().v = m_registers[REGISTERS::R_BX].read();
+	{
+		auto& src = mcode_getNextSrc();
+		src.v = m_registers[REGISTERS::R_BX].read();
+		src.bytes = 2;
+	}
 		break;
 
 	case Microcode::MicrocodeType::SRC_R_CX:
-		mcode_getNextSrc().v = m_registers[REGISTERS::R_CX].read();
+	{
+		auto& src = mcode_getNextSrc();
+		src.v = m_registers[REGISTERS::R_CX].read();
+		src.bytes = 2;
+	}
 		break;
 
 	case Microcode::MicrocodeType::SRC_R_DI:
-		mcode_getNextSrc().v = m_registers[REGISTERS::R_DI].read();
+	{
+		auto& src = mcode_getNextSrc();
+		src.v = m_registers[REGISTERS::R_DI].read();
+		src.bytes = 2;
+	}
 		break;
 
 		/*
@@ -732,6 +744,10 @@ void Processor_8086::mcode_fnAdd(bool adc) {
 	else
 		m_cInstr.mCodeI.dst.bytes = 1;
 
+	// If we are ADC, we need to update the ALU carry bit
+	if (adc)
+		m_alu.setCarryBit(m_registers[REGISTERS::R_FLAGS].getBit(FLAGS_CF));
+
 	m_cInstr.mCodeI.dst.v = m_alu.add(m_cInstr.mCodeI.srcA.v, m_cInstr.mCodeI.srcB.v, adc);
 	m_cInstr.mCodeI.dstEnabled = true;
 
@@ -753,6 +769,10 @@ void Processor_8086::mcode_fnSub(bool sbb) {
 		m_cInstr.mCodeI.dst.bytes = 2;
 	else
 		m_cInstr.mCodeI.dst.bytes = 1;
+
+	// If we are SBB, we need to update the ALU carry bit
+	if (sbb)
+		m_alu.setCarryBit(m_registers[REGISTERS::R_FLAGS].getBit(FLAGS_CF));
 
 	m_cInstr.mCodeI.dst.v = m_alu.subtract(m_cInstr.mCodeI.srcA.v, m_cInstr.mCodeI.srcB.v, sbb);
 	m_cInstr.mCodeI.dstEnabled = true;

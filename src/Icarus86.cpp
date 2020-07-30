@@ -186,6 +186,10 @@ void i::Icarus86::run() {
 		if (m_processorAccumulator >= m_microsPerClock * 2000)
 			m_processorAccumulator = m_microsPerClock * 2000;
 
+		// Stop the processor if we fail or HLT
+		if (m_processor->isHLT() || m_processor->isFailed())
+			m_runningProcessor = false;
+
 		// Single step, else run down the accumulator
 		if (m_singleStep && !m_processor->isFailed()) {
 			m_singleStep = false;
@@ -204,7 +208,6 @@ void i::Icarus86::run() {
 				}
 				m_cyclesPerTick++;
 
-				// Stop the processor if we fail or HLT
 				if (m_processor->isHLT() || m_processor->isFailed())
 					m_runningProcessor = false;
 			}
