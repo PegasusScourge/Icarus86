@@ -261,6 +261,10 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 		m_cInstr.mCodeI.dst = m_cInstr.mCodeI.srcA; m_cInstr.mCodeI.dstEnabled = true;
 		break;
 
+	case Microcode::MicrocodeType::FN_BPASS:
+		m_cInstr.mCodeI.dst = m_cInstr.mCodeI.srcB; m_cInstr.mCodeI.dstEnabled = true;
+		break;
+
 		/*
 		MISC
 		*/
@@ -437,8 +441,10 @@ void Processor_8086::mcode_toSrcFromMem00(Processor_8086::CurrentInstruction::Mi
 
 	case 0b111: // [BX]
 		MCODE_DEBUG("SRC = MEM [BX]");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		src.bytes = 1;
+		m_addressBus.putData(m_registers[REGISTERS::R_BX].read());
+		m_mmu.readByte(m_dataBus, m_addressBus);
+		src.v = (uint8_t)m_dataBus.readData();
 		break;
 
 	default:

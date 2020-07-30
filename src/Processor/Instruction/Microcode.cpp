@@ -80,6 +80,7 @@ Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 	else if (s.compare("FN_JNS") == 0) { return Microcode::MicrocodeType::FN_JNS; }
 
 	else if (s.compare("FN_APASS") == 0) { return Microcode::MicrocodeType::FN_APASS; }
+	else if (s.compare("FN_BPASS") == 0) { return Microcode::MicrocodeType::FN_BPASS; }
 
 	else if (s.compare("FN_REGOP_8X") == 0) { return Microcode::MicrocodeType::FN_REGOP_8X; }
 	return Microcode::MicrocodeType::UDEF;

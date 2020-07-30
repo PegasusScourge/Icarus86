@@ -87,6 +87,7 @@ namespace icarus {
 					FN_JNS, // Jump if sign flag not set
 
 					FN_APASS, // Passes srcA to dst and sets dstEnabled
+					FN_BPASS, // Passes srcB to dst and sets dstEnabled
 
 					FN_REGOP_8X, // Opcode 81-83 regop function family as decided by the REGOP field of the ModRM byte. Decays to one of the FNs
 				};
