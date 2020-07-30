@@ -68,6 +68,10 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 		mcode_getNextSrc().v = m_registers[REGISTERS::R_BX].read();
 		break;
 
+	case Microcode::MicrocodeType::SRC_R_CX:
+		mcode_getNextSrc().v = m_registers[REGISTERS::R_CX].read();
+		break;
+
 	case Microcode::MicrocodeType::SRC_R_DI:
 		mcode_getNextSrc().v = m_registers[REGISTERS::R_DI].read();
 		break;
@@ -162,10 +166,34 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 		mcode_jmpCondRelativeShort(!m_registers[REGISTERS::R_FLAGS].getBit(FLAGS_CF) && !m_registers[REGISTERS::R_FLAGS].getBit(FLAGS_ZF));
 		break;
 
+	case Microcode::MicrocodeType::FN_JS:
+		mcode_jmpCondRelativeShort(m_registers[REGISTERS::R_FLAGS].getBit(FLAGS_SF));
+		break;
+
+	case Microcode::MicrocodeType::FN_JNS:
+		mcode_jmpCondRelativeShort(!m_registers[REGISTERS::R_FLAGS].getBit(FLAGS_SF));
+		break;
+
 	case Microcode::MicrocodeType::FN_REGOP_8X:
 		mcode_fnRegop8X();
 		break;
 		
+	case Microcode::MicrocodeType::FN_ADD:
+		mcode_fnAdd(false);
+		break;
+
+	case Microcode::MicrocodeType::FN_ADC:
+		mcode_fnAdd(true);
+		break;
+
+	case Microcode::MicrocodeType::FN_SUB:
+		mcode_fnSub(false);
+		break;
+
+	case Microcode::MicrocodeType::FN_SBB:
+		mcode_fnSub(true);
+		break;
+
 	case Microcode::MicrocodeType::FN_CMP:
 		mcode_fnCmp();
 		break;
@@ -186,6 +214,18 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 		mcode_fnOR();
 		break;
 
+	case Microcode::MicrocodeType::FN_AND:
+		mcode_fnAND();
+		break;
+
+	case Microcode::MicrocodeType::FN_CLC:
+		m_registers[REGISTERS::R_FLAGS].clearBit(FLAGS_CF);
+		break;
+
+	case Microcode::MicrocodeType::FN_STC:
+		m_registers[REGISTERS::R_FLAGS].setBit(FLAGS_CF);
+		break;
+
 	case Microcode::MicrocodeType::FN_APASS:
 		m_cInstr.mCodeI.dst = m_cInstr.mCodeI.srcA; m_cInstr.mCodeI.dstEnabled = true;
 		break;
@@ -196,6 +236,11 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 
 	case Microcode::MicrocodeType::SE_SRC_B:
 		mcode_seSrcB();
+		break;
+
+	case Microcode::MicrocodeType::HLT:
+		MCODE_DEBUG("HALT");
+		setHLT(true);
 		break;
 
 	case Microcode::MicrocodeType::NOP:
@@ -681,6 +726,50 @@ void Processor_8086::mcode_fnRegop8X() {
 	mcode_execCode(mcode);
 }
 
+void Processor_8086::mcode_fnAdd(bool adc) {
+	if (m_cInstr.mCodeI.srcA.bytes > 1 || m_cInstr.mCodeI.srcB.bytes > 1)
+		m_cInstr.mCodeI.dst.bytes = 2;
+	else
+		m_cInstr.mCodeI.dst.bytes = 1;
+
+	m_cInstr.mCodeI.dst.v = m_alu.add(m_cInstr.mCodeI.srcA.v, m_cInstr.mCodeI.srcB.v, adc);
+	m_cInstr.mCodeI.dstEnabled = true;
+
+	MCODE_DEBUG("srcA = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcA.v) + ", srcB = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcB.v));
+	MCODE_DEBUG("dst = " + COutSys::ToHexStr(m_cInstr.mCodeI.dst.v));
+
+	// Update the relevant flags
+	Register16& R_F = m_registers[REGISTERS::R_FLAGS];
+	R_F.putBit(FLAGS_OF, m_alu.overflowFlag());
+	R_F.putBit(FLAGS_SF, m_alu.negativeFlag()); // Sign flag = negative flag
+	R_F.putBit(FLAGS_ZF, m_alu.zeroFlag());
+	// R_F.putBit(FLAGS_AF, m_alu.adjustFlag()); TODO - Also Aux Carry flag
+	R_F.putBit(FLAGS_PF, m_alu.parityFlag());
+	R_F.putBit(FLAGS_CF, m_alu.carryBit());
+}
+
+void Processor_8086::mcode_fnSub(bool sbb) {
+	if (m_cInstr.mCodeI.srcA.bytes > 1 || m_cInstr.mCodeI.srcB.bytes > 1)
+		m_cInstr.mCodeI.dst.bytes = 2;
+	else
+		m_cInstr.mCodeI.dst.bytes = 1;
+
+	m_cInstr.mCodeI.dst.v = m_alu.subtract(m_cInstr.mCodeI.srcA.v, m_cInstr.mCodeI.srcB.v, sbb);
+	m_cInstr.mCodeI.dstEnabled = true;
+
+	MCODE_DEBUG("srcA = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcA.v) + ", srcB = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcB.v));
+	MCODE_DEBUG("dst = " + COutSys::ToHexStr(m_cInstr.mCodeI.dst.v));
+
+	// Update the relevant flags
+	Register16& R_F = m_registers[REGISTERS::R_FLAGS];
+	R_F.putBit(FLAGS_OF, m_alu.overflowFlag());
+	R_F.putBit(FLAGS_SF, m_alu.negativeFlag()); // Sign flag = negative flag
+	R_F.putBit(FLAGS_ZF, m_alu.zeroFlag());
+	// R_F.putBit(FLAGS_AF, m_alu.adjustFlag()); TODO - Also Aux Carry flag
+	R_F.putBit(FLAGS_PF, m_alu.parityFlag());
+	R_F.putBit(FLAGS_CF, m_alu.carryBit());
+}
+
 void Processor_8086::mcode_fnCmp() {
 	if (m_cInstr.mCodeI.srcA.bytes > 1 || m_cInstr.mCodeI.srcB.bytes > 1)
 		m_cInstr.mCodeI.dst.bytes = 2;
@@ -690,6 +779,9 @@ void Processor_8086::mcode_fnCmp() {
 	// We don't generate an output here as we are doing a compare. Do a subtract but lose the value
 	m_alu.subtract(m_cInstr.mCodeI.srcA.v, m_cInstr.mCodeI.srcB.v);
 	m_cInstr.mCodeI.dstEnabled = false; // Don't allow DST_X microcodes to output
+
+	MCODE_DEBUG("srcA = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcA.v) + ", srcB = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcB.v));
+	// MCODE_DEBUG("dst = " + COutSys::ToHexStr(m_cInstr.mCodeI.dst.v));
 
 	// Update the relevant flags
 	Register16& R_F = m_registers[REGISTERS::R_FLAGS];
@@ -706,6 +798,9 @@ void Processor_8086::mcode_fnDec() {
 	m_cInstr.mCodeI.dst.v = m_alu.decrement(m_cInstr.mCodeI.srcA.v);
 	m_cInstr.mCodeI.dstEnabled = true;
 
+	MCODE_DEBUG("srcA = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcA.v) + ", srcB = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcB.v));
+	MCODE_DEBUG("dst = " + COutSys::ToHexStr(m_cInstr.mCodeI.dst.v));
+
 	// Update the relevant flags
 	Register16& R_F = m_registers[REGISTERS::R_FLAGS];
 	R_F.putBit(FLAGS_OF, m_alu.overflowFlag());
@@ -719,6 +814,9 @@ void Processor_8086::mcode_fnInc() {
 	m_cInstr.mCodeI.dst.bytes = m_cInstr.mCodeI.srcA.bytes;
 	m_cInstr.mCodeI.dst.v = m_alu.increment(m_cInstr.mCodeI.srcA.v);
 	m_cInstr.mCodeI.dstEnabled = true;
+
+	MCODE_DEBUG("srcA = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcA.v) + ", srcB = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcB.v));
+	MCODE_DEBUG("dst = " + COutSys::ToHexStr(m_cInstr.mCodeI.dst.v));
 
 	// Update the relevant flags
 	Register16& R_F = m_registers[REGISTERS::R_FLAGS];
@@ -738,6 +836,9 @@ void Processor_8086::mcode_fnXOR() {
 	m_cInstr.mCodeI.dst.v = m_alu.binaryXOR(m_cInstr.mCodeI.srcA.v, m_cInstr.mCodeI.srcB.v);
 	m_cInstr.mCodeI.dstEnabled = true;
 
+	MCODE_DEBUG("srcA = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcA.v) + ", srcB = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcB.v));
+	MCODE_DEBUG("dst = " + COutSys::ToHexStr(m_cInstr.mCodeI.dst.v));
+
 	// Update the relevant flags
 	Register16& R_F = m_registers[REGISTERS::R_FLAGS];
 	R_F.putBit(FLAGS_SF, m_alu.negativeFlag()); // Sign flag = negative flag
@@ -756,6 +857,9 @@ void Processor_8086::mcode_fnOR() {
 	m_cInstr.mCodeI.dst.v = m_alu.binaryOR(m_cInstr.mCodeI.srcA.v, m_cInstr.mCodeI.srcB.v);
 	m_cInstr.mCodeI.dstEnabled = true;
 
+	MCODE_DEBUG("srcA = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcA.v) + ", srcB = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcB.v));
+	MCODE_DEBUG("dst = " + COutSys::ToHexStr(m_cInstr.mCodeI.dst.v));
+
 	// Update the relevant flags
 	Register16& R_F = m_registers[REGISTERS::R_FLAGS];
 	R_F.putBit(FLAGS_SF, m_alu.negativeFlag()); // Sign flag = negative flag
@@ -764,6 +868,28 @@ void Processor_8086::mcode_fnOR() {
 	R_F.clearBit(FLAGS_CF);
 	R_F.clearBit(FLAGS_OF);
 }
+
+void Processor_8086::mcode_fnAND() {
+	if (m_cInstr.mCodeI.srcA.bytes > 1 || m_cInstr.mCodeI.srcB.bytes > 1)
+		m_cInstr.mCodeI.dst.bytes = 2;
+	else
+		m_cInstr.mCodeI.dst.bytes = 1;
+
+	m_cInstr.mCodeI.dst.v = m_alu.binaryAND(m_cInstr.mCodeI.srcA.v, m_cInstr.mCodeI.srcB.v);
+	m_cInstr.mCodeI.dstEnabled = true;
+
+	MCODE_DEBUG("srcA = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcA.v) + ", srcB = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcB.v));
+	MCODE_DEBUG("dst = " + COutSys::ToHexStr(m_cInstr.mCodeI.dst.v));
+
+	// Update the relevant flags
+	Register16& R_F = m_registers[REGISTERS::R_FLAGS];
+	R_F.putBit(FLAGS_SF, m_alu.negativeFlag()); // Sign flag = negative flag
+	R_F.putBit(FLAGS_ZF, m_alu.zeroFlag());
+	R_F.putBit(FLAGS_PF, m_alu.parityFlag());
+	R_F.clearBit(FLAGS_CF);
+	R_F.clearBit(FLAGS_OF);
+}
+
 
 void Processor_8086::mcode_fnCallRel() {
 	// Get the relative 16 offset from srcA

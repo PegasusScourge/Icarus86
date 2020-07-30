@@ -25,6 +25,7 @@ namespace icarus {
 				enum class MicrocodeType {
 					UDEF = 0,
 					NOP,
+					HLT,
 
 					REG_8, // Switches to registers being interpreted as the 8 bit registers
 					REG_16, // Siwtches to registers being interpreted as the 16 bit registers
@@ -38,6 +39,7 @@ namespace icarus {
 					SRC_STACK_POP, // Pop from the stack into a SRC
 
 					SRC_R_BX, // Source is register BX, not deduced
+					SRC_R_CX, // Source is register CX, not deduced
 					SRC_R_DI, // Source is register DI, not deduced
 
 					DST_REGOP, // Destination is deduced from the REGOP
@@ -62,6 +64,9 @@ namespace icarus {
 					FN_INC,
 					FN_DEC,
 
+					FN_CLC, // Clear carry flag
+					FN_STC, // Set carry flag
+
 					FN_MOV,
 					FN_XCHG,
 
@@ -75,6 +80,8 @@ namespace icarus {
 					FN_JNC, // Jump if carry flag not set
 					FN_JBE, // Jump if carry or zero flag set
 					FN_JNBE, // Jump if carry and zero flag not set
+					FN_JS, // Jump if sign flag set
+					FN_JNS, // Jump if sign flag not set
 
 					FN_APASS, // Passes srcA to dst and sets dstEnabled
 

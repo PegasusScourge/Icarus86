@@ -105,6 +105,8 @@ unsigned int ip::Processor_8086::fetchDecode() {
 
 	m_cInstr.code = instr.getCode();
 
+	DECODE8086_DEBUG("Instr mnemonic: " + instr.getMnemonic());
+
 	// We have a valid instruction, now lets get the microcode
 	m_cInstr.microcode = instr.getMicrocode();
 	if (m_cInstr.microcode.size() == 0) {

@@ -95,7 +95,7 @@ void i::Icarus86::run() {
 	m_microsPerClock = (sf::Int64)(1000000.0f / (m_processor->getClockRateMHz() * 1000000.0f));
 
 	// Display
-	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Icarus86");
+	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Icarus86", sf::Style::Titlebar); // Don't give a close or resize option
 	tgui::Gui gui{ window };
 
 	tgui::Theme blackTheme{ "Theme.txt" };
@@ -186,10 +186,6 @@ void i::Icarus86::run() {
 		if (m_processorAccumulator >= m_microsPerClock * 2000)
 			m_processorAccumulator = m_microsPerClock * 2000;
 
-		// Stop the processor if we fail or HLT
-		if (m_processor->isHLT() || m_processor->isFailed())
-			m_runningProcessor = false;
-
 		// Single step, else run down the accumulator
 		if (m_singleStep && !m_processor->isFailed()) {
 			m_singleStep = false;
@@ -207,6 +203,10 @@ void i::Icarus86::run() {
 						break;
 				}
 				m_cyclesPerTick++;
+
+				// Stop the processor if we fail or HLT
+				if (m_processor->isHLT() || m_processor->isFailed())
+					m_runningProcessor = false;
 			}
 		}
 		

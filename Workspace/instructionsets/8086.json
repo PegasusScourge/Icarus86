@@ -8,6 +8,23 @@
 	"icode": [
 	
 		{
+			"mnemonic": "ADD r/m16, r/16",
+			"hexcode": "01",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"REG_16",
+				"SRC_MODRM",
+				"SRC_REGOP",
+				"FN_ADD",
+				"DST_MODRM"
+			]
+		},
+		{
 			"mnemonic": "OR r/m16, r/16",
 			"hexcode": "09",
 			"isPrefix": false,
@@ -21,6 +38,23 @@
 				"SRC_MODRM",
 				"SRC_REGOP",
 				"FN_OR",
+				"DST_MODRM"
+			]
+		},
+		{
+			"mnemonic": "SBB r/m16, r/16",
+			"hexcode": "19",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"REG_16",
+				"SRC_MODRM",
+				"SRC_REGOP",
+				"FN_SBB",
 				"DST_MODRM"
 			]
 		},
@@ -630,6 +664,34 @@
 			]
 		},
 		{
+			"mnemonic": "JS",
+			"hexcode": "78",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_JS"
+			]
+		},
+		{
+			"mnemonic": "JNS",
+			"hexcode": "79",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_JNS"
+			]
+		},
+		{
 			"mnemonic": "MULT",
 			"hexcode": "81",
 			"isPrefix": false,
@@ -979,6 +1041,45 @@
 			"microcode": [
 				"SRC_IMM",
 				"FN_CALL_REL"
+			]
+		},
+		{
+			"mnemonic": "HLT",
+			"hexcode": "F4",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"HLT"
+			]
+		},
+		{
+			"mnemonic": "CLC",
+			"hexcode": "F8",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"FN_CLC"
+			]
+		},
+		{
+			"mnemonic": "STC",
+			"hexcode": "F9",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"FN_STC"
 			]
 		}
 		

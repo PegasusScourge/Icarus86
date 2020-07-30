@@ -105,11 +105,14 @@ namespace icarus {
 			void mcode_fnCallRel();
 			void mcode_fnRetnNear();
 			void mcode_fnRegop8X();
+			void mcode_fnAdd(bool adc);
+			void mcode_fnSub(bool sbb);
 			void mcode_fnCmp();
 			void mcode_fnInc();
 			void mcode_fnDec();
 			void mcode_fnXOR();
 			void mcode_fnOR();
+			void mcode_fnAND();
 			/*
 			JMP MICROCODE
 			*/

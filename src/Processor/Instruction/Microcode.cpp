@@ -18,6 +18,7 @@ using namespace icarus::processor::instruction;
 
 Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 	if (s.compare("NOP") == 0) { return Microcode::MicrocodeType::NOP; }
+	else if (s.compare("HLT") == 0) { return Microcode::MicrocodeType::HLT; }
 
 	else if (s.compare("REG_8") == 0) { return Microcode::MicrocodeType::REG_8; }
 	else if (s.compare("REG_16") == 0) { return Microcode::MicrocodeType::REG_16; }
@@ -31,6 +32,7 @@ Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 	else if (s.compare("SRC_STACK_POP") == 0) { return Microcode::MicrocodeType::SRC_STACK_POP; }
 
 	else if (s.compare("SRC_R_BX") == 0) { return Microcode::MicrocodeType::SRC_R_BX; }
+	else if (s.compare("SRC_R_CX") == 0) { return Microcode::MicrocodeType::SRC_R_CX; }
 	else if (s.compare("SRC_R_DI") == 0) { return Microcode::MicrocodeType::SRC_R_DI; }
 
 	else if (s.compare("DST_REGOP") == 0) { return Microcode::MicrocodeType::DST_REGOP; }
@@ -55,6 +57,9 @@ Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 	else if (s.compare("FN_INC") == 0) { return Microcode::MicrocodeType::FN_INC; }
 	else if (s.compare("FN_DEC") == 0) { return Microcode::MicrocodeType::FN_DEC; }
 
+	else if (s.compare("FN_CLC") == 0) { return Microcode::MicrocodeType::FN_CLC; }
+	else if (s.compare("FN_STC") == 0) { return Microcode::MicrocodeType::FN_STC; }
+
 	else if (s.compare("FN_MOV") == 0) { return Microcode::MicrocodeType::FN_MOV; }
 	else if (s.compare("FN_XCHG") == 0) { return Microcode::MicrocodeType::FN_XCHG; }
 
@@ -68,6 +73,8 @@ Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 	else if (s.compare("FN_JNC") == 0) { return Microcode::MicrocodeType::FN_JNC; }
 	else if (s.compare("FN_JBE") == 0) { return Microcode::MicrocodeType::FN_JBE; }
 	else if (s.compare("FN_JNBE") == 0) { return Microcode::MicrocodeType::FN_JNBE; }
+	else if (s.compare("FN_JS") == 0) { return Microcode::MicrocodeType::FN_JS; }
+	else if (s.compare("FN_JNS") == 0) { return Microcode::MicrocodeType::FN_JNS; }
 
 	else if (s.compare("FN_APASS") == 0) { return Microcode::MicrocodeType::FN_APASS; }
 
