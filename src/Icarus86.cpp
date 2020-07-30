@@ -102,11 +102,22 @@ void i::Icarus86::run() {
 
 	tgui::Button::Ptr exitButton = tgui::Button::create();
 	exitButton->setRenderer(blackTheme.getRenderer("Button"));
-	exitButton->getSharedRenderer()->setFont(icarus::graphics::GPU::Font);
+	exitButton->getRenderer()->setFont(icarus::graphics::GPU::Font);
 	exitButton->setText("Exit");
-	exitButton->setPosition(500, 0);
+	exitButton->setPosition("90%", 0);
+	exitButton->setSize("10%", 20);
 	exitButton->connect(tgui::Signals::Button::Clicked, [&]() { window.close(); });
-	gui.add(exitButton);
+	gui.add(exitButton, "ExitButton");
+
+	tgui::CheckBox::Ptr statsBox = tgui::CheckBox::create();
+	statsBox->setRenderer(blackTheme.getRenderer("CheckBox"));
+	statsBox->getRenderer()->setFont(icarus::graphics::GPU::Font);
+	statsBox->setText("Show Statistics");
+	statsBox->setPosition("ExitButton.left - (ExitButton.width - width)", "ExitButton.bottom");
+	statsBox->connect(tgui::Signals::CheckBox::Unchecked, [&]() { m_displayStatistics = false; });
+	statsBox->connect(tgui::Signals::CheckBox::Checked, [&]() { m_displayStatistics = true; });
+	statsBox->setChecked(true);
+	gui.add(statsBox, "StatsBox");
 
 	// Processor
 	m_cyclesToWait = 0;
@@ -119,17 +130,9 @@ void i::Icarus86::run() {
 		while (window.pollEvent(evt)) {
 			gui.handleEvent(evt);
 
-			if (evt.type == sf::Event::Closed) {
-				window.close();
-			}
-			else if (evt.type == sf::Event::KeyPressed) {
+			if (evt.type == sf::Event::KeyPressed) {
 				// Key press events
 				switch (evt.key.code) {
-				case sf::Keyboard::Q:
-				case sf::Keyboard::Escape:
-					window.close();
-					break;
-
 				case sf::Keyboard::P:
 					// Pause the running
 					m_runningProcessor = false;
@@ -149,13 +152,6 @@ void i::Icarus86::run() {
 					}
 					break;
 
-				case sf::Keyboard::F2:
-					if (!m_displayStatisticsDebounce) {
-						m_displayStatisticsDebounce = true;
-						m_displayStatistics = !m_displayStatistics;
-					}
-					break;
-
 				default:
 					break;
 				}
@@ -165,10 +161,6 @@ void i::Icarus86::run() {
 				switch (evt.key.code) {
 				case sf::Keyboard::S:
 					m_singleStepDebounce = false;
-					break;
-
-				case sf::Keyboard::F2:
-					m_displayStatisticsDebounce = false;
 					break;
 
 				default:
