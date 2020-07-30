@@ -33,6 +33,7 @@ Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 
 	else if (s.compare("SRC_R_BX") == 0) { return Microcode::MicrocodeType::SRC_R_BX; }
 	else if (s.compare("SRC_R_CX") == 0) { return Microcode::MicrocodeType::SRC_R_CX; }
+	else if (s.compare("SRC_R_DX") == 0) { return Microcode::MicrocodeType::SRC_R_DX; }
 	else if (s.compare("SRC_R_DI") == 0) { return Microcode::MicrocodeType::SRC_R_DI; }
 
 	else if (s.compare("DST_REGOP") == 0) { return Microcode::MicrocodeType::DST_REGOP; }
@@ -41,6 +42,7 @@ Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 	else if (s.compare("DST_STACK_PUSH") == 0) { return Microcode::MicrocodeType::DST_STACK_PUSH; }
 
 	else if (s.compare("DST_R_AL") == 0) { return Microcode::MicrocodeType::DST_R_AL; }
+	else if (s.compare("DST_R_AX") == 0) { return Microcode::MicrocodeType::DST_R_AX; }
 	else if (s.compare("DST_R_BX") == 0) { return Microcode::MicrocodeType::DST_R_BX; }
 	else if (s.compare("DST_R_CX") == 0) { return Microcode::MicrocodeType::DST_R_CX; }
 	else if (s.compare("DST_R_SP") == 0) { return Microcode::MicrocodeType::DST_R_SP; }
@@ -67,6 +69,7 @@ Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 
 	else if (s.compare("FN_RETN_NEAR") == 0) { return Microcode::MicrocodeType::FN_RETN_NEAR; }
 
+	else if (s.compare("FN_JMP") == 0) { return Microcode::MicrocodeType::FN_JMP; }
 	else if (s.compare("FN_JZ") == 0) { return Microcode::MicrocodeType::FN_JZ; }
 	else if (s.compare("FN_JNZ") == 0) { return Microcode::MicrocodeType::FN_JNZ; }
 	else if (s.compare("FN_JC") == 0) { return Microcode::MicrocodeType::FN_JC; }

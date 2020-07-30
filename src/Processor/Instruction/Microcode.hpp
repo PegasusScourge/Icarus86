@@ -40,6 +40,7 @@ namespace icarus {
 
 					SRC_R_BX, // Source is register BX, not deduced
 					SRC_R_CX, // Source is register CX, not deduced
+					SRC_R_DX, // Source is register DX, not deduced
 					SRC_R_DI, // Source is register DI, not deduced
 
 					DST_REGOP, // Destination is deduced from the REGOP
@@ -48,6 +49,7 @@ namespace icarus {
 					DST_STACK_PUSH, // Destination is pushing to the stack
 
 					DST_R_AL, // Destination is register AL, not deduced
+					DST_R_AX, // Destination is register AX, not deduced
 					DST_R_BX, // Destination is register BX, not deduced
 					DST_R_CX, // Destination is register CX, not deduced
 					DST_R_SP, // Destination is register SP, not deduced
@@ -74,6 +76,7 @@ namespace icarus {
 
 					FN_RETN_NEAR, // Return near. SRC_A should have the return IP 
 
+					FN_JMP, // Jump
 					FN_JZ, // Jump if Zero flag set, takes immediate byte as relative to PC for jump. Relative is SIGNED
 					FN_JNZ, // Jump is Zero flag not set, same as above otherwise
 					FN_JC, // Jump if carry flag is set

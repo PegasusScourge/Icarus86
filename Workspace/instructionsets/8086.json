@@ -59,6 +59,23 @@
 			]
 		},
 		{
+			"mnemonic": "SUB r/m16, r/16",
+			"hexcode": "29",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"REG_16",
+				"SRC_MODRM",
+				"SRC_REGOP",
+				"FN_SUB",
+				"DST_MODRM"
+			]
+		},
+		{
 			"mnemonic": "XOR r/m16, r/16",
 			"hexcode": "31",
 			"isPrefix": false,
@@ -1054,6 +1071,20 @@
 			"microcode": [
 				"SRC_IMM",
 				"FN_CALL_REL"
+			]
+		},
+		{
+			"mnemonic": "JMP rel8",
+			"hexcode": "EB",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_JMP"
 			]
 		},
 		{

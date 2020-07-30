@@ -80,6 +80,14 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 	}
 		break;
 
+	case Microcode::MicrocodeType::SRC_R_DX:
+	{
+		auto& src = mcode_getNextSrc();
+		src.v = m_registers[REGISTERS::R_DX].read();
+		src.bytes = 2;
+	}
+	break;
+
 	case Microcode::MicrocodeType::SRC_R_DI:
 	{
 		auto& src = mcode_getNextSrc();
@@ -112,6 +120,13 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 			MCODE_DEBUG("!dstEnabled: not writing to destination");
 		else
 			m_registers[REGISTERS::R_AX].putLower(m_cInstr.mCodeI.dst.v);
+		break;
+
+	case Microcode::MicrocodeType::DST_R_AX:
+		if (!m_cInstr.mCodeI.dstEnabled)
+			MCODE_DEBUG("!dstEnabled: not writing to destination");
+		else
+			m_registers[REGISTERS::R_AX].put(m_cInstr.mCodeI.dst.v);
 		break;
 
 	case Microcode::MicrocodeType::DST_R_BX:
@@ -152,6 +167,10 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 
 	case Microcode::MicrocodeType::FN_RETN_NEAR:
 		mcode_fnRetnNear();
+		break;
+
+	case Microcode::MicrocodeType::FN_JMP: // Hijack the conditional jump and force
+		mcode_jmpCondRelativeShort(true);
 		break;
 
 	case Microcode::MicrocodeType::FN_JZ:
