@@ -14,6 +14,7 @@ Entry point to the emulator
 #include "Processor/Processor_8086.hpp"
 
 #include "SimpleIni/SimpleIni.h"
+#include "TGUI/TGUI.hpp"
 
 #include <iostream>
 #include <iterator>
@@ -95,6 +96,13 @@ void i::Icarus86::run() {
 
 	// Display
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Icarus86");
+	tgui::Gui gui{ window };
+
+	tgui::Button::Ptr exitButton = tgui::Button::create();
+	exitButton->setText("Exit");
+	exitButton->setPosition(500, 0);
+	exitButton->connect(tgui::Signals::Button::Clicked, [&]() { window.close(); });
+	gui.add(exitButton);
 
 	// Processor
 	m_cyclesToWait = 0;
@@ -105,6 +113,8 @@ void i::Icarus86::run() {
 	while (window.isOpen()) {
 		sf::Event evt;
 		while (window.pollEvent(evt)) {
+			gui.handleEvent(evt);
+
 			if (evt.type == sf::Event::Closed) {
 				window.close();
 			}
@@ -214,6 +224,8 @@ void i::Icarus86::run() {
 			gpuSprite.setTexture(m_gpu.getTexture().getTexture(), true);
 			gpuSprite.setPosition((WINDOW_WIDTH / 2.0f) - (m_gpu.getXWidth() / 2.0f), (WINDOW_HEIGHT / 2) - (m_gpu.getYWidth() / 2.0f));
 			window.draw(gpuSprite);
+
+			gui.draw();
 
 			if (m_displayStatistics)
 				drawStatistics(window);
