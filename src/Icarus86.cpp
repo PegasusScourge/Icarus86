@@ -98,7 +98,11 @@ void i::Icarus86::run() {
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Icarus86");
 	tgui::Gui gui{ window };
 
+	tgui::Theme blackTheme{ "Theme.txt" };
+
 	tgui::Button::Ptr exitButton = tgui::Button::create();
+	exitButton->setRenderer(blackTheme.getRenderer("Button"));
+	exitButton->getSharedRenderer()->setFont(icarus::graphics::GPU::Font);
 	exitButton->setText("Exit");
 	exitButton->setPosition(500, 0);
 	exitButton->connect(tgui::Signals::Button::Clicked, [&]() { window.close(); });
