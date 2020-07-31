@@ -11,22 +11,10 @@
 		"force_sp": 256,
 		"breakpoints": [
 			{
-				"byIP": false,
+				"byIP": true,
 				"byInstr": false,
-				"ip": 0,
+				"ip": "9A",
 				"instrhex": "FE"
-			},
-			{
-				"byIP": false,
-				"byInstr": false,
-				"ip": 0,
-				"instrhex": "43"
-			},
-			{
-				"byIP": false,
-				"byInstr": false,
-				"ip": 0,
-				"instrhex": "86"
 			}
 		]
 	},

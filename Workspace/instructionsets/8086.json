@@ -1164,6 +1164,21 @@
 			]
 		},
 		{
+			"mnemonic": "MOV r/m16 imm16",
+			"hexcode": "C7",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 2,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_MODRM"
+			]
+		},
+		{
 			"mnemonic": "CALL rel16",
 			"hexcode": "E8",
 			"isPrefix": false,

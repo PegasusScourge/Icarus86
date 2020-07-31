@@ -146,12 +146,10 @@ unsigned int ip::Processor_8086::fetchDecode() {
 				numDispBytes += 2;
 				DECODE8086_DEBUG("MODRM indicated need for two displacement bytes where instruction set doesn't, adding");
 			}
-		}
-		if (numImmBytes == 0) {
 			if (m_cInstr.modRMByte.MOD() == 0b00 && m_cInstr.modRMByte.RM() == 0b110) {
-				// We need to have two immediate bytes!
-				numImmBytes += 2;
-				DECODE8086_DEBUG("MODRM indicated need for two immediate bytes where instruction set doesn't, adding");
+				// We need to have two displacement bytes!
+				numDispBytes += 2;
+				DECODE8086_DEBUG("MODRM indicated need for two displacement bytes where instruction set doesn't, adding");
 			}
 		}
 	}
@@ -164,10 +162,15 @@ unsigned int ip::Processor_8086::fetchDecode() {
 		m_cInstr.numDisplacementBytes = numDispBytes;
 		switch (numDispBytes) {
 		case 2:
+			DECODE8086_DEBUG("2 Byte");
+			m_mmu.readByte(m_dataBus, m_addressBus);
+			m_cInstr.displacement |= m_dataBus.readData();
+			m_addressBus.putData(ipVal + (++increment));
 			m_mmu.readByte(m_dataBus, m_addressBus);
 			m_cInstr.displacement |= (m_dataBus.readData() << 8);
-			m_addressBus.putData(ipVal + (++increment));
+			break;
 		case 1:
+			DECODE8086_DEBUG("1 Byte");
 			m_mmu.readByte(m_dataBus, m_addressBus);
 			m_cInstr.displacement |= m_dataBus.readData();
 			break;

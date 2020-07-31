@@ -317,9 +317,15 @@ void i::Icarus86::parseCFG() {
 			i::COutSys::Println("<breakpoints>", i::COutSys::LEVEL_INFO);
 			for (auto& bp : pSpec["breakpoints"]) {
 				icarus::processor::Breakpoint breakpoint;
-				if (bp["byIP"].is_boolean() && bp["ip"].is_number()) {
+				if (bp["byIP"].is_boolean() && bp["ip"].is_string()) {
 					breakpoint.byAddress = bp["byIP"].get<bool>();
-					breakpoint.address = bp["ip"].get<uint64_t>();
+					std::string hex = bp["ip"].get<std::string>();
+					// Convert the code to hex number
+					size_t code;
+					std::stringstream ss;
+					ss << std::hex << hex;
+					ss >> code;
+					breakpoint.address = (uint64_t)code;
 					if (breakpoint.byAddress)
 						i::COutSys::Println("[CFG] Added breakpoint on IP = " + std::to_string(breakpoint.address), i::COutSys::LEVEL_INFO);
 				}
