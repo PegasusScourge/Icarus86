@@ -325,7 +325,12 @@ void i::Icarus86::parseCFG() {
 				if (bp["byInstr"].is_boolean() && bp["instrhex"].is_string()) {
 					breakpoint.byInstruction = bp["byInstr"].get<bool>();
 					std::string hex = bp["instrhex"].get<std::string>();
-					breakpoint.instruction = std::stoul(hex);
+					// Convert the code to hex number
+					size_t code;
+					std::stringstream ss;
+					ss << std::hex << hex;
+					ss >> code;
+					breakpoint.instruction = (uint8_t)code;
 					if (breakpoint.byInstruction)
 						i::COutSys::Println("[CFG] Added breakpoint on instrhex = " + hex, i::COutSys::LEVEL_INFO);
 				}

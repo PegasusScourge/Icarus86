@@ -266,7 +266,12 @@ namespace icarus {
 			*/
 			template <class T>
 			T binaryAND(T a, T b) {
-				return a & b;
+				T result = a & b;
+				setZeroFlag(result);
+				setOverflowFlag(result, a, b);
+				setNegativeFlag(result);
+				setParityFlag(result);
+				return result;
 			}
 
 			/*
@@ -275,7 +280,12 @@ namespace icarus {
 			*/
 			template <class T>
 			T binaryOR(T a, T b) {
-				return a | b;
+				T result = a | b;
+				setZeroFlag(result);
+				setOverflowFlag(result, a, b);
+				setNegativeFlag(result);
+				setParityFlag(result);
+				return result;
 			}
 
 			/*
@@ -284,7 +294,12 @@ namespace icarus {
 			*/
 			template <class T>
 			T binaryXOR(T a, T b) {
-				return a ^ b;
+				T result = a ^ b;
+				setZeroFlag(result);
+				setOverflowFlag(result, a, b);
+				setNegativeFlag(result);
+				setParityFlag(result);
+				return result;
 			}
 
 			/*
@@ -293,7 +308,11 @@ namespace icarus {
 			*/
 			template <class T>
 			T binaryNOT(T a) {
-				return ~a;
+				T result = ~a;
+				setZeroFlag(result);
+				setNegativeFlag(result);
+				setParityFlag(result);
+				return result;
 			}
 
 		};

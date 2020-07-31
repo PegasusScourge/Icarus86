@@ -12,9 +12,21 @@
 		"breakpoints": [
 			{
 				"byIP": false,
-				"byInstr": true,
+				"byInstr": false,
 				"ip": 0,
-				"instrhex": "01"
+				"instrhex": "FE"
+			},
+			{
+				"byIP": false,
+				"byInstr": false,
+				"ip": 0,
+				"instrhex": "43"
+			},
+			{
+				"byIP": false,
+				"byInstr": false,
+				"ip": 0,
+				"instrhex": "86"
 			}
 		]
 	},
