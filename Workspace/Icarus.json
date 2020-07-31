@@ -8,7 +8,15 @@
 		"type": "8086",
 		"clockMHz": 1,
 		"force_ip": 0,
-		"force_sp": 256
+		"force_sp": 256,
+		"breakpoints": [
+			{
+				"byIP": false,
+				"byInstr": true,
+				"ip": 0,
+				"instrhex": "01"
+			}
+		]
 	},
 	"memory": [
 		{

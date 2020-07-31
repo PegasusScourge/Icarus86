@@ -204,6 +204,11 @@ void i::Icarus86::run() {
 				else {
 					if (!processorSingleStep())
 						break;
+					if (m_processor->checkBreakpoint()) {
+						// Breakpoint triggered
+						i::COutSys::Println("BREAKPOINT TRIGGERED!", i::COutSys::LEVEL_INFO);
+						m_runningProcessor = false;
+					}
 				}
 				m_cyclesPerTick++;
 
@@ -305,6 +310,31 @@ void i::Icarus86::parseCFG() {
 			m_processor->forceSP(pSpec["force_sp"].get<unsigned long>());
 			i::COutSys::Println("[CFG] Requested forcedSP of " + std::to_string(pSpec["force_sp"].get<unsigned long>()), i::COutSys::LEVEL_INFO);
 		}
+
+		// Check for breakpoints
+		if (pSpec["breakpoints"].is_array()) {
+			i::COutSys::Println("<breakpoints>", i::COutSys::LEVEL_INFO);
+			for (auto& bp : pSpec["breakpoints"]) {
+				icarus::processor::Breakpoint breakpoint;
+				if (bp["byIP"].is_boolean() && bp["ip"].is_number()) {
+					breakpoint.byAddress = bp["byIP"].get<bool>();
+					breakpoint.address = bp["ip"].get<uint64_t>();
+					if (breakpoint.byAddress)
+						i::COutSys::Println("[CFG] Added breakpoint on IP = " + std::to_string(breakpoint.address), i::COutSys::LEVEL_INFO);
+				}
+				if (bp["byInstr"].is_boolean() && bp["instrhex"].is_string()) {
+					breakpoint.byInstruction = bp["byInstr"].get<bool>();
+					std::string hex = bp["instrhex"].get<std::string>();
+					breakpoint.instruction = std::stoul(hex);
+					if (breakpoint.byInstruction)
+						i::COutSys::Println("[CFG] Added breakpoint on instrhex = " + hex, i::COutSys::LEVEL_INFO);
+				}
+				if (breakpoint.byAddress || breakpoint.byInstruction) {
+					m_processor->addBreakpoint(breakpoint);
+				}
+			}
+			i::COutSys::Println("</breakpoints>", i::COutSys::LEVEL_INFO);
+		}
 	}
 	else {
 		i::COutSys::Println("[CFG] No processor declared!", i::COutSys::LEVEL_ERR);
@@ -378,7 +408,7 @@ void i::Icarus86::parseCFG() {
 		}
 	}
 
-	i::COutSys::Println("[CFG] Parsing CFGB file complete", i::COutSys::LEVEL_INFO);
+	i::COutSys::Println("[CFG] Parsing CFG file complete", i::COutSys::LEVEL_INFO);
 }
 
 bool i::Icarus86::createProcessor() {

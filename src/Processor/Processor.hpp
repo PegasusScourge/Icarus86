@@ -31,6 +31,14 @@ namespace icarus {
 			uint32_t imm;
 		} LastInstruction_t;
 
+		class Breakpoint {
+		public:
+			bool byAddress;
+			bool byInstruction;
+			uint64_t address;
+			uint8_t instruction;
+		};
+
 		class ProcessorState {
 		public:
 			std::vector<uint64_t> registerValues_num;
@@ -38,11 +46,6 @@ namespace icarus {
 			std::string* registerValues_names;
 			std::string flagsRegBin;
 			std::string flagsNames;
-
-			// icarus::CircularBuffer<uint64_t> lastIPs;
-			// icarus::CircularBuffer<icarus::processor::instruction::ICode> lastICodes;
-			// icarus::CircularBuffer<uint32_t> lastDisplacements;
-			// icarus::CircularBuffer<uint32_t> lastImmediates;
 			icarus::CircularBuffer<LastInstruction_t> lastInstrs;
 		};
 
@@ -54,6 +57,9 @@ namespace icarus {
 			bool m_failed = false;
 			// HLT flag
 			bool m_isHLT = false;
+
+			// Breakpoints
+			std::vector<Breakpoint> m_breakpoints;
 
 			virtual void onError() = 0;
 
@@ -125,6 +131,32 @@ namespace icarus {
 			ProcessorState& getProcessorState() {
 				onGetProcessorState();
 				return m_state;
+			}
+
+			/*
+			void addBreakpoint(Breakpoint bp)
+			Adds a breakpoint
+			*/
+			void addBreakpoint(Breakpoint bp) {
+				m_breakpoints.push_back(bp);
+			}
+
+			/*
+			bool checkBreakpoint()
+			Returns true if a breakpoint has been reached
+			*/
+			bool checkBreakpoint() {
+				for (auto& bp : m_breakpoints) {
+					if (bp.byAddress) {
+						if (m_state.lastInstrs[0].ip == bp.address)
+							return true;
+					}
+					else if (bp.byInstruction) {
+						if (m_state.lastInstrs[0].iCode.getCode() == bp.instruction)
+							return true;
+					}
+				}
+				return false;
 			}
 
 		};
