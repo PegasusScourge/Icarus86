@@ -64,10 +64,10 @@ namespace icarus {
 		bool m_displayStatistics = true;
 
 		/*
-		void parseINI()
-		Parses the INI file
+		void parseCFG()
+		Parses the CFG file
 		*/
-		void parseINI();
+		void parseCFG();
 
 		/*
 		bool createProcessor()

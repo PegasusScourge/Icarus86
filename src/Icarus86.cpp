@@ -13,7 +13,6 @@ Entry point to the emulator
 #include "COutSys.hpp"
 #include "Processor/Processor_8086.hpp"
 
-#include "SimpleIni/SimpleIni.h"
 #include "TGUI/TGUI.hpp"
 
 #include <iostream>
@@ -65,8 +64,8 @@ int main(int argc, char* argv[]) {
 i::Icarus86::Icarus86() {
 	m_requestedProcessorType = ProcessorRequestType::PTypeNONE;
 
-	// Load the ini file
-	parseINI();
+	// Load the cfg file
+	parseCFG();
 
 	if (!m_createdProcessor) {
 		i::COutSys::Println("Icarus86 failed to create processor", i::COutSys::LEVEL_INFO);
@@ -183,8 +182,8 @@ void i::Icarus86::run() {
 			m_cyclesPerTick = 0;
 
 		// Limit the ammount of cycles this tick
-		if (m_processorAccumulator >= m_microsPerClock * 2000)
-			m_processorAccumulator = m_microsPerClock * 2000;
+		if (m_processorAccumulator >= m_microsPerClock * 100)
+			m_processorAccumulator = m_microsPerClock * 100;
 
 		// Stop the processor if we fail or HLT
 		if (m_processor->isHLT() || m_processor->isFailed())
@@ -256,92 +255,109 @@ bool i::Icarus86::failure() {
 	return m_hasErrored || !m_intialized;
 }
 
-void i::Icarus86::parseINI() {
-	i::COutSys::Println("[INI] Parsing INI file", i::COutSys::LEVEL_INFO);
+void i::Icarus86::parseCFG() {
+	i::COutSys::Println("[CFG] Parsing Icarus.json cfg file", i::COutSys::LEVEL_INFO);
 
-	CSimpleIniA ini;
-	ini.SetUnicode();
-	SI_Error e = ini.LoadFile("Icarus.ini");
-	if (e != SI_OK) {
-		// Failed to read iniFile
-		i::COutSys::Println("[INI] Failed to read ini file 'Icarus.ini'", i::COutSys::LEVEL_ERR);
+	using namespace nlohmann;
+
+	json j;
+	std::ifstream stream("Icarus.json");
+	if (!stream.is_open()) {
+		// ERROR
+		icarus::COutSys::Println("[CFG] Could not open CFG!", icarus::COutSys::LEVEL_ERR);
 		return;
 	}
-	i::COutSys::Println("[INI] File loaded", i::COutSys::LEVEL_INFO);
-	
-	const char* value;
+	stream >> j;
+
+	// Check that we have the right header information
+	if (!j["icarus"].is_boolean() && j["icarus"].get<bool>()) {
+		// ERROR
+		icarus::COutSys::Println("[CFG] Header read error", icarus::COutSys::LEVEL_ERR);
+		return;
+	}
 
 	// Get the processor specification
-	value = ini.GetValue("processor", "type");
-	if (value) {
-		std::string v{ value };
-		if (v.compare("8086") == 0) {
-			i::COutSys::Println("[INI] Requested type of 8086 processor", i::COutSys::LEVEL_INFO);
-			m_requestedProcessorType = ProcessorRequestType::PType8086;
+	i::COutSys::Println("[CFG] Detecting processor spec...", i::COutSys::LEVEL_INFO);
+	if (j["processor"].is_object()) {
+		auto& pSpec = j["processor"];
+
+		if (pSpec["type"].is_string()) {
+			std::string v = pSpec["type"].get<std::string>();
+			if (v.compare("8086") == 0) {
+				i::COutSys::Println("[CFG] Requested type of 8086 processor", i::COutSys::LEVEL_INFO);
+				m_requestedProcessorType = ProcessorRequestType::PType8086;
+			}
+		}
+		if (!createProcessor())
+			return;
+
+		if (pSpec["clockMHz"].is_number()) {
+			m_processor->setClockRateMHz(pSpec["clockMHz"].get<float>());
+			i::COutSys::Println("[CFG] Requested clockMHz of " + std::to_string(pSpec["clockMHz"].get<float>()), i::COutSys::LEVEL_INFO);
+		}
+
+		if (pSpec["force_ip"].is_number()) {
+			m_processor->forceIP(pSpec["force_ip"].get<unsigned long>());
+			i::COutSys::Println("[CFG] Requested forcedIP of " + std::to_string(pSpec["force_ip"].get<unsigned long>()), i::COutSys::LEVEL_INFO);
+		}
+
+		if (pSpec["force_sp"].is_number()) {
+			m_processor->forceSP(pSpec["force_sp"].get<unsigned long>());
+			i::COutSys::Println("[CFG] Requested forcedSP of " + std::to_string(pSpec["force_sp"].get<unsigned long>()), i::COutSys::LEVEL_INFO);
 		}
 	}
-	if (!createProcessor())
-		return;
-
-	value = ini.GetValue("processor", "clockMHz");
-	if (value) {
-		m_processor->setClockRateMHz(std::stof(value));
-		i::COutSys::Println("[INI] Requested clockMHz of " + std::string(value), i::COutSys::LEVEL_INFO);
+	else {
+		i::COutSys::Println("[CFG] No processor declared!", i::COutSys::LEVEL_ERR);
 	}
 
-	value = ini.GetValue("processor", "force_ip");
-	if (value) {
-		m_processor->forceIP(std::stoul(value));
-		i::COutSys::Println("[INI] Requested forcedIP of " + std::string(value), i::COutSys::LEVEL_INFO);
-	}
+	i::COutSys::Println("[CFG] Detecting memory spec...", i::COutSys::LEVEL_INFO);
+	if (j["memory"].is_array()) {
+		auto& mSpec = j["memory"];
+		for (auto& block : mSpec) {
+			if (!block.is_object()) {
+				i::COutSys::Println("[CFG] Memory block creation failed: not object", i::COutSys::LEVEL_ERR);
+				continue;
+			}
 
-	value = ini.GetValue("processor", "force_sp");
-	if (value) {
-		m_processor->forceSP(std::stoul(value));
-		i::COutSys::Println("[INI] Requested forcedSP of " + std::string(value), i::COutSys::LEVEL_INFO);
-	}
+			if (!block["size"].is_number() || !block["startAddress"].is_number()) {
+				i::COutSys::Println("[CFG] Memory block creation failed: missing size and address spec", i::COutSys::LEVEL_ERR);
+				continue;
+			}
 
-	// Get memory specification
-	value = ini.GetValue("memory", "blocks");
-	if (value) {
-		int numberOfMemoryBlocks = std::stoi(value);
-		if (numberOfMemoryBlocks > 0) {
-			// We have memory blocks to decode
-			int currentMemoryBlock = 0;
-			std::string blockBase = "memory_block_";
-			const char* startAddress;
-			for (; currentMemoryBlock < numberOfMemoryBlocks; currentMemoryBlock++) {
-				std::string bName = blockBase + std::to_string(currentMemoryBlock);
-				value = ini.GetValue(bName.c_str(), "size"); startAddress = ini.GetValue(bName.c_str(), "startAddress");
-				if (value && startAddress) {
-					m_mmu.addMemoryBlock(std::stoul(startAddress), std::stoul(value));
-					i::COutSys::Println("[INI] Memory block '" + bName + "' created with address=" + std::string{ startAddress } + ", size=" + std::string{ value }, i::COutSys::LEVEL_INFO);
-				
-					if (!memoryTest(std::stoul(startAddress), std::stoul(value))) {
-						i::COutSys::Println("[INI] Memory block '" + bName + "'failed memory test!", i::COutSys::LEVEL_ERR);
-					}
-				}
-				else {
-					i::COutSys::Println("[INI] Memory block '" + bName + "' couldn't be found!", i::COutSys::LEVEL_WARN);
-				}
+			unsigned int size = block["size"]; 
+			unsigned int startAddress = block["startAddress"];
+			m_mmu.addMemoryBlock(startAddress, size);
+			i::COutSys::Println("[CFG] Memory block created with address=" + std::to_string(startAddress) + ", size=" + std::to_string(size), i::COutSys::LEVEL_INFO);
+
+			if (!memoryTest(startAddress, size)) {
+				i::COutSys::Println("[CFG] Memory block failed memory test!", i::COutSys::LEVEL_ERR);
 			}
 		}
 	}
+	else {
+		i::COutSys::Println("[CFG] No memory declared!", i::COutSys::LEVEL_ERR);
+	}
 
+	i::COutSys::Println("[CFG] Detecting force_load spec...", i::COutSys::LEVEL_INFO);
 	// Check if we need to force load something into memory
-	value = ini.GetValue("force_load", "path");
-	if (value) {
-		std::string path{ value };
-		value = ini.GetValue("force_load", "address");
-		if (value) {
-			size_t address = std::stoul(value);
-			i::COutSys::Println("[INI] Requested force load of file '" + path + "'", i::COutSys::LEVEL_INFO);
+	if (j["force_load"].is_object()) {
+		auto& fSpec = j["force_load"];
+		i::COutSys::Println("[CFG] Found force_load spec. Detecting components", i::COutSys::LEVEL_INFO);
+		if (!fSpec["address"].is_number() || !fSpec["path"].is_string()) {
+			i::COutSys::Print("[CFG] force_load configuration error", i::COutSys::LEVEL_ERR);
+		}
+		else {
+			i::COutSys::Println("[CFG] Getting force_load address", i::COutSys::LEVEL_INFO);
+			unsigned long address = fSpec["address"].get<unsigned long>();
+			i::COutSys::Println("[CFG] Getting force_load path", i::COutSys::LEVEL_INFO);
+			std::string path = fSpec["path"].get<std::string>();
+			i::COutSys::Println("[CFG] Requested force load of file '" + path + "'", i::COutSys::LEVEL_INFO);
 
 			std::ifstream is(path, std::ios::in | std::ios::binary);
 			std::vector<char> binaryContent((std::istreambuf_iterator<char>(is)), (std::istreambuf_iterator<char>()));
 
-			i::COutSys::Println("[INI] Got content of file: size=" + i::COutSys::ToHexStr(binaryContent.size(), true), i::COutSys::LEVEL_INFO);
-			i::COutSys::Print("[INI] Content dump:", i::COutSys::LEVEL_INFO);
+			i::COutSys::Println("[CFG] Got content of file: size=" + i::COutSys::ToHexStr(binaryContent.size(), true), i::COutSys::LEVEL_INFO);
+			i::COutSys::Print("[CFG] Content dump:", i::COutSys::LEVEL_INFO);
 			for (size_t i = 0; i < binaryContent.size(); i++) {
 				if (i % 16 == 0) {
 					i::COutSys::Println("");
@@ -351,18 +367,18 @@ void i::Icarus86::parseINI() {
 			}
 			i::COutSys::Println("");
 			// Load the file
-			i::COutSys::Println("[INI] Loading file into memory ", i::COutSys::LEVEL_INFO);
+			i::COutSys::Println("[CFG] Loading file into memory ", i::COutSys::LEVEL_INFO);
 			m_addressBus.putData(0);
 			for (auto& v : binaryContent) {
 				m_dataBus.putData((uint8_t)v);
 				m_mmu.writeByte(m_dataBus, m_addressBus);
 				m_addressBus.putData(m_addressBus.readData() + 1);
 			}
-			i::COutSys::Println("[INI] Loading complete", i::COutSys::LEVEL_INFO);
+			i::COutSys::Println("[CFG] Loading complete", i::COutSys::LEVEL_INFO);
 		}
 	}
 
-	i::COutSys::Println("[INI] Parsing INI file complete", i::COutSys::LEVEL_INFO);
+	i::COutSys::Println("[CFG] Parsing CFGB file complete", i::COutSys::LEVEL_INFO);
 }
 
 bool i::Icarus86::createProcessor() {
