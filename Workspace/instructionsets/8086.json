@@ -1213,6 +1213,22 @@
 			"microcode": [
 				"FN_STC"
 			]
+		},
+		{
+			"mnemonic": "INC/DEC r/m8",
+			"hexcode": "FE",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"REG_8",
+				"SRC_MODRM",
+				"FN_REGOP_FE",
+				"DST_MODRM"
+			]
 		}
 		
 	]

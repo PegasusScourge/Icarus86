@@ -52,6 +52,7 @@ namespace icarus {
 					DST_R_AX, // Destination is register AX, not deduced
 					DST_R_BX, // Destination is register BX, not deduced
 					DST_R_CX, // Destination is register CX, not deduced
+					DST_R_DX, // Destination is register DX, not deduced
 					DST_R_SP, // Destination is register SP, not deduced
 					DST_R_DI, // Destination is register DI, not deduced
 
@@ -90,6 +91,7 @@ namespace icarus {
 					FN_BPASS, // Passes srcB to dst and sets dstEnabled
 
 					FN_REGOP_8X, // Opcode 81-83 regop function family as decided by the REGOP field of the ModRM byte. Decays to one of the FNs
+					FN_REGOP_FE, // Opcode for FE regop fucntion family, decided by REGOP field of ModRM byte. Either 0=INC or 1=DEC
 				};
 
 				static MicrocodeType GetTypeFromString(std::string s);

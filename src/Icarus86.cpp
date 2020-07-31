@@ -182,8 +182,9 @@ void i::Icarus86::run() {
 			m_cyclesPerTick = 0;
 
 		// Limit the ammount of cycles this tick
-		if (m_processorAccumulator >= m_microsPerClock * 100)
-			m_processorAccumulator = m_microsPerClock * 100;
+		constexpr int maxCyclesPerTick = 20;
+		if (m_processorAccumulator >= m_microsPerClock * maxCyclesPerTick)
+			m_processorAccumulator = m_microsPerClock * maxCyclesPerTick;
 
 		// Stop the processor if we fail or HLT
 		if (m_processor->isHLT() || m_processor->isFailed())

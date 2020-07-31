@@ -105,6 +105,7 @@ namespace icarus {
 			void mcode_fnCallRel();
 			void mcode_fnRetnNear();
 			void mcode_fnRegop8X();
+			void mcode_fnRegopFE();
 			void mcode_fnAdd(bool adc);
 			void mcode_fnSub(bool sbb);
 			void mcode_fnCmp();

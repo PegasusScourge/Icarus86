@@ -143,6 +143,13 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 			m_registers[REGISTERS::R_CX].put(m_cInstr.mCodeI.dst.v);
 		break;
 
+	case Microcode::MicrocodeType::DST_R_DX:
+		if (!m_cInstr.mCodeI.dstEnabled)
+			MCODE_DEBUG("!dstEnabled: not writing to destination");
+		else
+			m_registers[REGISTERS::R_DX].put(m_cInstr.mCodeI.dst.v);
+		break;
+
 	case Microcode::MicrocodeType::DST_R_SP:
 		if (!m_cInstr.mCodeI.dstEnabled)
 			MCODE_DEBUG("!dstEnabled: not writing to destination");
@@ -207,6 +214,10 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 
 	case Microcode::MicrocodeType::FN_REGOP_8X:
 		mcode_fnRegop8X();
+		break;
+
+	case Microcode::MicrocodeType::FN_REGOP_FE:
+		mcode_fnRegopFE();
 		break;
 		
 	case Microcode::MicrocodeType::FN_ADD:
@@ -755,11 +766,38 @@ void Processor_8086::mcode_fnRegop8X() {
 	default:
 		// ERROR
 		MCODE_DEBUG_ERR("REGOP FN SELECT = ERROR");
+		triggerError();
 		break;
 	}
 
 	MCODE_DEBUG("Executing daughter FN");
 	Microcode mcode("FN_REGOP_8X_DAUGHTER", t);
+	mcode_execCode(mcode);
+}
+
+void Processor_8086::mcode_fnRegopFE() {
+	// Depending on the REGOP value, we need to do a different FN execution
+
+	Microcode::MicrocodeType t = Microcode::MicrocodeType::FN_INC;
+
+	switch (m_cInstr.modRMByte.REGOP()) {
+	case 0: // FN_ADD
+		MCODE_DEBUG("REGOP FN SELECT = FN_INC");
+		t = Microcode::MicrocodeType::FN_INC;
+		break;
+	case 1: // FN_OR
+		MCODE_DEBUG("REGOP FN SELECT = FN_DEC");
+		t = Microcode::MicrocodeType::FN_DEC;
+		break;
+	default:
+		// ERROR
+		MCODE_DEBUG_ERR("REGOP FN SELECT = ERROR");
+		triggerError();
+		break;
+	}
+
+	MCODE_DEBUG("Executing daughter FN");
+	Microcode mcode("FN_REGOP_FE_DAUGHTER", t);
 	mcode_execCode(mcode);
 }
 

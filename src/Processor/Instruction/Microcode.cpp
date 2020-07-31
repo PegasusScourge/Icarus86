@@ -45,6 +45,7 @@ Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 	else if (s.compare("DST_R_AX") == 0) { return Microcode::MicrocodeType::DST_R_AX; }
 	else if (s.compare("DST_R_BX") == 0) { return Microcode::MicrocodeType::DST_R_BX; }
 	else if (s.compare("DST_R_CX") == 0) { return Microcode::MicrocodeType::DST_R_CX; }
+	else if (s.compare("DST_R_DX") == 0) { return Microcode::MicrocodeType::DST_R_DX; }
 	else if (s.compare("DST_R_SP") == 0) { return Microcode::MicrocodeType::DST_R_SP; }
 	else if (s.compare("DST_R_DI") == 0) { return Microcode::MicrocodeType::DST_R_DI; }
 
@@ -83,6 +84,7 @@ Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 	else if (s.compare("FN_BPASS") == 0) { return Microcode::MicrocodeType::FN_BPASS; }
 
 	else if (s.compare("FN_REGOP_8X") == 0) { return Microcode::MicrocodeType::FN_REGOP_8X; }
+	else if (s.compare("FN_REGOP_FE") == 0) { return Microcode::MicrocodeType::FN_REGOP_FE; }
 	return Microcode::MicrocodeType::UDEF;
 }
 
