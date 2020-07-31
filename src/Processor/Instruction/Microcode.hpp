@@ -38,6 +38,7 @@ namespace icarus {
 
 					SRC_STACK_POP, // Pop from the stack into a SRC
 
+					SRC_R_AL, // Source is register AL, not deduced
 					SRC_R_BX, // Source is register BX, not deduced
 					SRC_R_CX, // Source is register CX, not deduced
 					SRC_R_DX, // Source is register DX, not deduced

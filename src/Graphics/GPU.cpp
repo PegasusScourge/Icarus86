@@ -29,9 +29,8 @@ ig::GPU::GPU() {
 	m_resMode = GPU::GPUResMode::MEMORY_TXT80x25;
 	m_colorMode = GPU::GPUColorMode::MONO;
 	m_memoryBase = 0x8000;
-
-	m_xWidth = 640;
-	m_yWidth = 400;
+	m_xWidth = 80 * ((float)FONT_PT / 1.7f);
+	m_yWidth = 25 * FONT_PT;
 
 	initialize();
 }
@@ -40,7 +39,8 @@ void ig::GPU::initialize() {
 	m_texture.create(m_xWidth, m_yWidth);
 	m_textObj.setFont(Font);
 	m_textObj.setCharacterSize(FONT_PT);
-	m_textObj.setString("01234567890123456789012345678901234567890123456789012345678901234567890123456789");
+	sf::String str = "01234567890123456789012345678901234567890123456789012345678901234567890123456789";
+	m_textObj.setString(str);
 }
 
 sf::RenderTexture& ig::GPU::getTexture() {

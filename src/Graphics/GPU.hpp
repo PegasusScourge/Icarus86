@@ -64,13 +64,14 @@ namespace icarus{
 
 					if (m_resMode == GPUResMode::MEMORY_TXT80x25 && m_colorMode == GPUColorMode::MONO) {
 						m_textObj.setFillColor(sf::Color::White);
-						float y = -2.0f;
+						float yPos = 0.0f;
 						uint8_t v = 0;
-						for (size_t i = 0; i < 25; i++) {
-							// Compile the string
-							std::string lineStr = "";
-							for (size_t y = 0; y < 80; y++) {
-								aBus.putData(m_memoryBase + (i * 80) + y);
+						for (size_t y = 0; y < 25; y++) {
+							std::string lineStr;
+							char c = ' ';
+							size_t x = 0;
+							for (size_t x = 0; x < 80; x++) {
+								aBus.putData(m_memoryBase + (y * 80) + x);
 								mmu.readByte(dBus, aBus);
 								v = (uint8_t)dBus.readData();
 								if (v < ' ' || v > '~')
@@ -78,7 +79,7 @@ namespace icarus{
 								lineStr += v;
 							}
 							m_textObj.setString(lineStr);
-							m_textObj.setPosition(0, y); y += m_textObj.getCharacterSize();
+							m_textObj.setPosition(0, yPos); yPos += m_textObj.getCharacterSize();
 							m_texture.draw(m_textObj);
 						}
 
@@ -93,7 +94,7 @@ namespace icarus{
 			}
 			
 		private:
-			static constexpr int FONT_PT = 16;
+			static constexpr int FONT_PT = 12;
 
 			void initialize();
 

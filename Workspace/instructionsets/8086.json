@@ -143,6 +143,22 @@
 			]
 		},
 		{
+			"mnemonic": "CMP AL, imm8",
+			"hexcode": "3C",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"REG_8",
+				"SRC_R_AL",
+				"SRC_IMM",
+				"FN_CMP"
+			]
+		},
+		{
 			"mnemonic": "INC_AX",
 			"hexcode": "40",
 			"isPrefix": false,

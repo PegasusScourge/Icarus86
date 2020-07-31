@@ -31,6 +31,7 @@ Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 
 	else if (s.compare("SRC_STACK_POP") == 0) { return Microcode::MicrocodeType::SRC_STACK_POP; }
 
+	else if (s.compare("SRC_R_AL") == 0) { return Microcode::MicrocodeType::SRC_R_AL; }
 	else if (s.compare("SRC_R_BX") == 0) { return Microcode::MicrocodeType::SRC_R_BX; }
 	else if (s.compare("SRC_R_CX") == 0) { return Microcode::MicrocodeType::SRC_R_CX; }
 	else if (s.compare("SRC_R_DX") == 0) { return Microcode::MicrocodeType::SRC_R_DX; }

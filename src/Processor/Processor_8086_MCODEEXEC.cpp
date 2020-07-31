@@ -64,6 +64,14 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 		mcode_getSrcImm();
 		break;
 
+	case Microcode::MicrocodeType::SRC_R_AL:
+	{
+		auto& src = mcode_getNextSrc();
+		src.v = m_registers[REGISTERS::R_AX].readLower();
+		src.bytes = 1;
+	}
+	break;
+
 	case Microcode::MicrocodeType::SRC_R_BX:
 	{
 		auto& src = mcode_getNextSrc();
