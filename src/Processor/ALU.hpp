@@ -184,7 +184,6 @@ namespace icarus {
 				T result = a + 1;
 
 				setZeroFlag(result);
-				setOverflowFlag(result, a, b);
 				setNegativeFlag(result);
 				setParityFlag(result);
 
@@ -200,7 +199,6 @@ namespace icarus {
 				T result = a - 1;
 
 				setZeroFlag(result);
-				setOverflowFlag(result, a, b);
 				setNegativeFlag(result);
 				setParityFlag(result);
 
