@@ -543,8 +543,7 @@ void Processor_8086::mcode_toSrcFromMem10(Processor_8086::CurrentInstruction::Mi
 
 	case 0b101: // [DI + sword]
 		MCODE_DEBUG("SRC = MEM [DI + sword]");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		m_addressBus.putData(m_registers[REGISTERS::R_DI].read() + m_cInstr.displacement);
 		break;
 
 	case 0b110: // [BP + sword]
@@ -555,8 +554,7 @@ void Processor_8086::mcode_toSrcFromMem10(Processor_8086::CurrentInstruction::Mi
 
 	case 0b111: // [BX + sword]
 		MCODE_DEBUG("SRC = MEM [BX + sword]");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		m_addressBus.putData(m_registers[REGISTERS::R_BX].read() + m_cInstr.displacement);
 		break;
 
 	default:
@@ -838,9 +836,9 @@ void Processor_8086::mcode_toDstFromMem10(uint8_t sval) {
 		break;
 
 	case 0b101: // [DI + sword]
-		MCODE_DEBUG("DST = MEM [DI + sword]");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		address = m_registers[REGISTERS::R_DI].read() + m_cInstr.displacement;
+		MCODE_DEBUG("DST = MEM [DI + sword], where DI + sword = " + COutSys::ToHexStr(address));
+		m_addressBus.putData(address);
 		break;
 
 	case 0b110: // [BP + sword]
@@ -850,9 +848,9 @@ void Processor_8086::mcode_toDstFromMem10(uint8_t sval) {
 		break;
 
 	case 0b111: // [BX + sword]
-		MCODE_DEBUG("DST = MEM [BX + sword]");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		address = m_registers[REGISTERS::R_BX].read() + m_cInstr.displacement;
+		MCODE_DEBUG("DST = MEM [BX + sword], where BX + sword = " + COutSys::ToHexStr(address));
+		m_addressBus.putData(address);
 		break;
 
 	default:

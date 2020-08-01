@@ -25,6 +25,23 @@
 			]
 		},
 		{
+			"mnemonic": "ADD AL, imm8",
+			"hexcode": "04",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_8",
+				"SRC_R_AL",
+				"SRC_IMM",
+				"FN_ADD",
+				"DST_R_AL"
+			]
+		},
+		{
 			"mnemonic": "OR r/m16, r/16",
 			"hexcode": "09",
 			"isPrefix": false,
@@ -783,7 +800,24 @@
 			]
 		},
 		{
-			"mnemonic": "MULT",
+			"mnemonic": "MANY",
+			"hexcode": "80",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_8",
+				"SRC_MODRM",
+				"SRC_IMM",
+				"FN_REGOP_8X",
+				"DST_MODRM"
+			]
+		},
+		{
+			"mnemonic": "MANY",
 			"hexcode": "81",
 			"isPrefix": false,
 			"hasModRM": true,
@@ -800,7 +834,7 @@
 			]
 		},
 		{
-			"mnemonic": "MULT",
+			"mnemonic": "MANY",
 			"hexcode": "83",
 			"isPrefix": false,
 			"hasModRM": true,
@@ -930,6 +964,63 @@
 			"childCodes": [],
 			"microcode": [
 				"NOP"
+			]
+		},
+		{
+			"mnemonic": "XCHG CX, AX",
+			"hexcode": "91",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_CX",
+				"SRC_R_AX",
+				"FN_APASS",
+				"DST_R_AX",
+				"FN_BPASS",
+				"DST_R_CX"
+			]
+		},
+		{
+			"mnemonic": "XCHG DX, AX",
+			"hexcode": "92",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_DX",
+				"SRC_R_AX",
+				"FN_APASS",
+				"DST_R_AX",
+				"FN_BPASS",
+				"DST_R_DX"
+			]
+		},
+		{
+			"mnemonic": "XCHG BX, AX",
+			"hexcode": "93",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_BX",
+				"SRC_R_AX",
+				"FN_APASS",
+				"DST_R_AX",
+				"FN_BPASS",
+				"DST_R_BX"
 			]
 		},
 		{
