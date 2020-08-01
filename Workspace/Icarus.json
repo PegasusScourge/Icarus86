@@ -13,7 +13,7 @@
 			{
 				"byIP": false,
 				"ip": "9A",
-				"byInstr": true,
+				"byInstr": false,
 				"instrhex": "B1"
 			}
 		]

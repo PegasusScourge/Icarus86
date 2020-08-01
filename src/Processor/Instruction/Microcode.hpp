@@ -39,6 +39,7 @@ namespace icarus {
 					SRC_STACK_POP, // Pop from the stack into a SRC
 
 					SRC_R_AL, // Source is register AL, not deduced
+					SRC_R_AX, // Source is register AX, not deduced
 					SRC_R_BX, // Source is register BX, not deduced
 					SRC_R_CX, // Source is register CX, not deduced
 					SRC_R_DX, // Source is register DX, not deduced
@@ -50,6 +51,7 @@ namespace icarus {
 					DST_STACK_PUSH, // Destination is pushing to the stack
 
 					DST_R_AL, // Destination is register AL, not deduced
+					DST_R_BL, // Destination is register BL, not deduced
 					DST_R_CL, // Destination is register CL, not deduced
 					DST_R_AX, // Destination is register AX, not deduced
 					DST_R_BX, // Destination is register BX, not deduced

@@ -72,6 +72,14 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 	}
 	break;
 
+	case Microcode::MicrocodeType::SRC_R_AX:
+	{
+		auto& src = mcode_getNextSrc();
+		src.v = m_registers[REGISTERS::R_AX].read();
+		src.bytes = 2;
+	}
+	break;
+
 	case Microcode::MicrocodeType::SRC_R_BX:
 	{
 		auto& src = mcode_getNextSrc();
@@ -128,6 +136,13 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 			MCODE_DEBUG("!dstEnabled: not writing to destination");
 		else
 			m_registers[REGISTERS::R_AX].putLower(m_cInstr.mCodeI.dst.v);
+		break;
+
+	case Microcode::MicrocodeType::DST_R_BL:
+		if (!m_cInstr.mCodeI.dstEnabled)
+			MCODE_DEBUG("!dstEnabled: not writing to destination");
+		else
+			m_registers[REGISTERS::R_BX].putLower(m_cInstr.mCodeI.dst.v);
 		break;
 
 	case Microcode::MicrocodeType::DST_R_CL:
