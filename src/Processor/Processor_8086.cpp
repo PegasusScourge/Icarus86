@@ -243,7 +243,7 @@ void ip::Processor_8086::execute() {
 	// We now have to execute the microcode instructions
 
 	// Init the mCodeI struct
-	m_cInstr.mCodeI.regMode8Bit = false;
+	m_cInstr.mCodeI.bitMode8Bit = false;
 	m_cInstr.mCodeI.srcAUsed = false;
 	m_cInstr.mCodeI.dstEnabled = false; // Disable dst writing by default
 

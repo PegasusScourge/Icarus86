@@ -57,7 +57,7 @@ namespace icarus {
 				uint16_t immediate;
 				uint8_t code;
 				struct MicrocodeInformation {
-					bool regMode8Bit; // If true, interpret registers as 8 bit regs. False = 16 bit regs
+					bool bitMode8Bit; // If true, interpret registers/memory locations as 8 bit. False = 16 bit
 					bool srcAUsed;
 					bool dstEnabled;
 					struct Values {

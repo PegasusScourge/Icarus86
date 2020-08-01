@@ -32,12 +32,12 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 		REG
 		*/
 
-	case Microcode::MicrocodeType::REG_8: // Switch to interpreting registers as the 8 bit registers
-		m_cInstr.mCodeI.regMode8Bit = true;
+	case Microcode::MicrocodeType::RMB_8: // Switch to interpreting registers as the 8 bit registers
+		m_cInstr.mCodeI.bitMode8Bit = true;
 		break;
 
-	case Microcode::MicrocodeType::REG_16: // Switch to interpreting registers as the 16 bit registers
-		m_cInstr.mCodeI.regMode8Bit = false;
+	case Microcode::MicrocodeType::RMB_16: // Switch to interpreting registers as the 16 bit registers
+		m_cInstr.mCodeI.bitMode8Bit = false;
 		break;
 
 		/*
@@ -55,7 +55,7 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 	case Microcode::MicrocodeType::SRC_STACK_POP: 
 	{
 		auto& src = mcode_getNextSrc();
-		src.bytes = m_cInstr.mCodeI.regMode8Bit ? 1 : 2;
+		src.bytes = m_cInstr.mCodeI.bitMode8Bit ? 1 : 2;
 		mcode_stackPop(src);
 	}
 		break;
@@ -128,6 +128,13 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 			MCODE_DEBUG("!dstEnabled: not writing to destination");
 		else
 			m_registers[REGISTERS::R_AX].putLower(m_cInstr.mCodeI.dst.v);
+		break;
+
+	case Microcode::MicrocodeType::DST_R_CL:
+		if (!m_cInstr.mCodeI.dstEnabled)
+			MCODE_DEBUG("!dstEnabled: not writing to destination");
+		else
+			m_registers[REGISTERS::R_CX].putLower(m_cInstr.mCodeI.dst.v);
 		break;
 
 	case Microcode::MicrocodeType::DST_R_AX:
@@ -307,6 +314,13 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 		break;
 
 	}
+
+	MCODE_DEBUG("    --- <mcode state> ---");
+	MCODE_DEBUG("    srcA.bytes  = " + std::to_string(m_cInstr.mCodeI.srcA.bytes) + " srcA.v = " + icarus::COutSys::ToHexStr(m_cInstr.mCodeI.srcA.v));
+	MCODE_DEBUG("    srcB.bytes  = " + std::to_string(m_cInstr.mCodeI.srcB.bytes) + " srcB.v = " + icarus::COutSys::ToHexStr(m_cInstr.mCodeI.srcB.v));
+	MCODE_DEBUG("    dst.bytes   = " + std::to_string(m_cInstr.mCodeI.dst.bytes) + " dst.v = " + icarus::COutSys::ToHexStr(m_cInstr.mCodeI.dst.v));
+	MCODE_DEBUG("    dst.enabled = " + std::to_string(m_cInstr.mCodeI.dstEnabled));
+	MCODE_DEBUG("    -- </mcode state> ---");
 }
 
 /***********************************/
@@ -324,7 +338,7 @@ Processor_8086::CurrentInstruction::MicrocodeInformation::Values& Processor_8086
 void Processor_8086::mcode_toSrcFromReg(Processor_8086::CurrentInstruction::MicrocodeInformation::Values& src, uint8_t sval) {
 	MCODE_DEBUG("SVAL = " + std::to_string(sval));
 	
-	if (m_cInstr.mCodeI.regMode8Bit) {
+	if (m_cInstr.mCodeI.bitMode8Bit) {
 		src.bytes = 1;
 		switch (sval) {
 		case 0: // Get register AL
@@ -412,6 +426,8 @@ void Processor_8086::mcode_toSrcFromReg(Processor_8086::CurrentInstruction::Micr
 }
 
 void Processor_8086::mcode_toSrcFromMem00(Processor_8086::CurrentInstruction::MicrocodeInformation::Values& src, uint8_t sval) {
+	src.bytes = m_cInstr.mCodeI.bitMode8Bit ? 1 : 2;
+	
 	switch (sval) {
 	case 0b000: // [BX + SI]
 		MCODE_DEBUG("SRC = MEM [BX + SI]");
@@ -452,18 +468,13 @@ void Processor_8086::mcode_toSrcFromMem00(Processor_8086::CurrentInstruction::Mi
 	case 0b110: // [sword]
 		MCODE_DEBUG("SRC = MEM [sword], where sword=" + COutSys::ToHexStr(m_cInstr.displacement));
 		// We need to read memory at the position of the immediate byte, and then put that in the src
-		src.bytes = 1;
 		m_addressBus.putData(m_cInstr.displacement);
-		m_mmu.readByte(m_dataBus, m_addressBus);
-		src.v = (uint8_t)m_dataBus.readData();
+		
 		break;
 
 	case 0b111: // [BX]
 		MCODE_DEBUG("SRC = MEM [BX]");
-		src.bytes = 1;
 		m_addressBus.putData(m_registers[REGISTERS::R_BX].read());
-		m_mmu.readByte(m_dataBus, m_addressBus);
-		src.v = (uint8_t)m_dataBus.readData();
 		break;
 
 	default:
@@ -471,9 +482,20 @@ void Processor_8086::mcode_toSrcFromMem00(Processor_8086::CurrentInstruction::Mi
 		MCODE_DEBUG_ERR("SRC = MEMORY_DECODE_ERROR");
 		break;
 	}
+
+	MCODE_DEBUG("READ from " + icarus::COutSys::ToHexStr(m_addressBus.readData()) + " of " + std::to_string(m_cInstr.mCodeI.dst.bytes) + " bytes");
+	if (src.bytes == 1) {
+		m_mmu.readByte(m_dataBus, m_addressBus);
+	}
+	else {
+		m_mmu.fillBus(m_dataBus, m_addressBus, icarus::memory::MMU::ReadType::LittleEndian);
+	}
+	src.v = m_dataBus.readData();
 }
 
 void Processor_8086::mcode_toSrcFromMem10(Processor_8086::CurrentInstruction::MicrocodeInformation::Values& src, uint8_t sval) {
+	src.bytes = m_cInstr.mCodeI.bitMode8Bit ? 1 : 2;
+	
 	switch (sval) {
 	case 0b000: // [BX + SI + sword]
 		MCODE_DEBUG("SRC = MEM [BX + SI + sword]");
@@ -483,10 +505,7 @@ void Processor_8086::mcode_toSrcFromMem10(Processor_8086::CurrentInstruction::Mi
 
 	case 0b001: // [BX + DI + sword]
 		MCODE_DEBUG("SRC = MEM [BX + DI + sword]");
-		src.bytes = 1;
 		m_addressBus.putData(m_registers[REGISTERS::R_BX].read() + m_registers[REGISTERS::R_DI].read() + m_cInstr.displacement);
-		m_mmu.readByte(m_dataBus, m_addressBus);
-		src.v = (uint8_t)m_dataBus.readData();
 		break;
 
 	case 0b010: // [BP + SI + sword]
@@ -530,6 +549,15 @@ void Processor_8086::mcode_toSrcFromMem10(Processor_8086::CurrentInstruction::Mi
 		MCODE_DEBUG_ERR("SRC = MEMORY_DECODE_ERROR");
 		break;
 	}
+
+	MCODE_DEBUG("READ from " + icarus::COutSys::ToHexStr(m_addressBus.readData()) + " of " + std::to_string(m_cInstr.mCodeI.dst.bytes) + " bytes");
+	if (src.bytes == 1) {
+		m_mmu.readByte(m_dataBus, m_addressBus);
+	}
+	else {
+		m_mmu.fillBus(m_dataBus, m_addressBus, icarus::memory::MMU::ReadType::LittleEndian);
+	}
+	src.v = m_dataBus.readData();
 }
 
 void Processor_8086::mcode_getSrcImm() {
@@ -595,7 +623,7 @@ void Processor_8086::mcode_toDstFromReg(uint8_t sval) {
 
 	MCODE_DEBUG("SVAL = " + std::to_string(sval));
 
-	if (m_cInstr.mCodeI.regMode8Bit) {
+	if (m_cInstr.mCodeI.bitMode8Bit) {
 		switch (sval) {
 		case 0: // Get register AL
 			MCODE_DEBUG("DST = REGISTER_AL");
@@ -743,8 +771,15 @@ void Processor_8086::mcode_toDstFromMem00(uint8_t sval) {
 		MCODE_DEBUG_ERR("DST = MEMORY_DECODE_ERROR");
 		break;
 	}
+
+	MCODE_DEBUG("WRITE to " + icarus::COutSys::ToHexStr(m_addressBus.readData()) + " of " + std::to_string(m_cInstr.mCodeI.dst.bytes) + " bytes");
 	m_dataBus.putData(m_cInstr.mCodeI.dst.v);
-	m_mmu.writeByte(m_dataBus, m_addressBus);
+	if (m_cInstr.mCodeI.dst.bytes == 2) {
+		m_mmu.writeBus(m_dataBus, m_addressBus, icarus::memory::MMU::ReadType::LittleEndian);
+	}
+	else {
+		m_mmu.writeByte(m_dataBus, m_addressBus);
+	}
 }
 
 void Processor_8086::mcode_toDstFromMem10(uint8_t sval) {
@@ -810,8 +845,15 @@ void Processor_8086::mcode_toDstFromMem10(uint8_t sval) {
 		MCODE_DEBUG_ERR("DST = MEMORY_DECODE_ERROR");
 		break;
 	}
+	MCODE_DEBUG("WRITE to " + icarus::COutSys::ToHexStr(m_addressBus.readData()) + " of " + std::to_string(m_cInstr.mCodeI.dst.bytes) + " bytes");
 	m_dataBus.putData(m_cInstr.mCodeI.dst.v);
-	m_mmu.writeByte(m_dataBus, m_addressBus);
+	if (m_cInstr.mCodeI.dst.bytes == 2) {
+		m_mmu.writeBus(m_dataBus, m_addressBus, icarus::memory::MMU::ReadType::LittleEndian);
+	}
+	else {
+		m_mmu.writeByte(m_dataBus, m_addressBus);
+	}
+		
 }
 
 void Processor_8086::mcode_dstModRM() {

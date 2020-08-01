@@ -27,8 +27,8 @@ namespace icarus {
 					NOP,
 					HLT,
 
-					REG_8, // Switches to registers being interpreted as the 8 bit registers
-					REG_16, // Siwtches to registers being interpreted as the 16 bit registers
+					RMB_8, // Switches to registers/memory locations being interpreted as the 8 bit registers
+					RMB_16, // Siwtches to registers/memory locations being interpreted as the 16 bit registers
 
 					SE_SRC_B, // Sign extends SRC_B to match the byte length of SRC_A
 
@@ -50,6 +50,7 @@ namespace icarus {
 					DST_STACK_PUSH, // Destination is pushing to the stack
 
 					DST_R_AL, // Destination is register AL, not deduced
+					DST_R_CL, // Destination is register CL, not deduced
 					DST_R_AX, // Destination is register AX, not deduced
 					DST_R_BX, // Destination is register BX, not deduced
 					DST_R_CX, // Destination is register CX, not deduced
