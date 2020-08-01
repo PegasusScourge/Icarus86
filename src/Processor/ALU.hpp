@@ -181,7 +181,14 @@ namespace icarus {
 			*/
 			template <class T>
 			T increment(T a) {
-				return a + 1;
+				T result = a + 1;
+
+				setZeroFlag(result);
+				setOverflowFlag(result, a, b);
+				setNegativeFlag(result);
+				setParityFlag(result);
+
+				return result;
 			}
 
 			/*
@@ -190,7 +197,14 @@ namespace icarus {
 			*/
 			template <class T>
 			T decrement(T a) {
-				return a - 1;
+				T result = a - 1;
+
+				setZeroFlag(result);
+				setOverflowFlag(result, a, b);
+				setNegativeFlag(result);
+				setParityFlag(result);
+
+				return result;
 			}
 
 			/*
