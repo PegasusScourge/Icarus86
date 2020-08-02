@@ -28,7 +28,7 @@ using namespace icarus::processor;
 // SRC MICROCODE
 /***********************************/
 
-Processor_8086::CurrentInstruction::MicrocodeInformation::Values& Processor_8086::mcode_getNextSrc() {
+Processor_8086::CurrentInstruction::MicrocodeInformation::Cache& Processor_8086::mcode_getNextSrc() {
 	auto& src = (m_cInstr.mCodeI.srcAUsed ? m_cInstr.mCodeI.srcB : m_cInstr.mCodeI.srcA);
 	MCODE_DEBUG("SrcSelect, srcAUsed=" + std::to_string(m_cInstr.mCodeI.srcAUsed));
 	if (!m_cInstr.mCodeI.srcAUsed)
@@ -36,7 +36,7 @@ Processor_8086::CurrentInstruction::MicrocodeInformation::Values& Processor_8086
 	return src;
 }
 
-void Processor_8086::mcode_toSrcFromReg(Processor_8086::CurrentInstruction::MicrocodeInformation::Values& src, uint8_t sval) {
+void Processor_8086::mcode_toSrcFromReg(Processor_8086::CurrentInstruction::MicrocodeInformation::Cache& src, uint8_t sval) {
 	MCODE_DEBUG("SVAL = " + std::to_string(sval));
 
 	if (m_cInstr.mCodeI.bitMode8Bit) {
@@ -126,7 +126,7 @@ void Processor_8086::mcode_toSrcFromReg(Processor_8086::CurrentInstruction::Micr
 	}
 }
 
-void Processor_8086::mcode_toSrcFromMem00(Processor_8086::CurrentInstruction::MicrocodeInformation::Values& src, uint8_t sval) {
+void Processor_8086::mcode_toSrcFromMem00(Processor_8086::CurrentInstruction::MicrocodeInformation::Cache& src, uint8_t sval) {
 	src.bytes = m_cInstr.mCodeI.bitMode8Bit ? 1 : 2;
 
 	switch (sval) {
@@ -194,7 +194,7 @@ void Processor_8086::mcode_toSrcFromMem00(Processor_8086::CurrentInstruction::Mi
 	src.v = m_dataBus.readData();
 }
 
-void Processor_8086::mcode_toSrcFromMem10(Processor_8086::CurrentInstruction::MicrocodeInformation::Values& src, uint8_t sval) {
+void Processor_8086::mcode_toSrcFromMem10(Processor_8086::CurrentInstruction::MicrocodeInformation::Cache& src, uint8_t sval) {
 	src.bytes = m_cInstr.mCodeI.bitMode8Bit ? 1 : 2;
 
 	switch (sval) {

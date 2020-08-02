@@ -60,7 +60,7 @@ namespace icarus {
 					bool bitMode8Bit; // If true, interpret registers/memory locations as 8 bit. False = 16 bit
 					bool srcAUsed;
 					bool dstEnabled;
-					struct Values {
+					struct Cache {
 						uint8_t bytes;
 						uint16_t v;
 					} srcA, srcB, dst;
@@ -87,10 +87,10 @@ namespace icarus {
 			/*
 			SRC MICROCODE
 			*/
-			CurrentInstruction::MicrocodeInformation::Values& mcode_getNextSrc();
-			void mcode_toSrcFromReg(CurrentInstruction::MicrocodeInformation::Values& src, uint8_t sval);
-			void mcode_toSrcFromMem00(CurrentInstruction::MicrocodeInformation::Values& src, uint8_t sval);
-			void mcode_toSrcFromMem10(CurrentInstruction::MicrocodeInformation::Values& src, uint8_t sval);
+			CurrentInstruction::MicrocodeInformation::Cache& mcode_getNextSrc();
+			void mcode_toSrcFromReg(CurrentInstruction::MicrocodeInformation::Cache& src, uint8_t sval);
+			void mcode_toSrcFromMem00(CurrentInstruction::MicrocodeInformation::Cache& src, uint8_t sval);
+			void mcode_toSrcFromMem10(CurrentInstruction::MicrocodeInformation::Cache& src, uint8_t sval);
 			void mcode_getSrcRegop();
 			void mcode_getSrcImm();
 			void mcode_getSrcModRM();
@@ -123,8 +123,8 @@ namespace icarus {
 			/*
 			MISC MICROCODE
 			*/
-			void mcode_stackPush(CurrentInstruction::MicrocodeInformation::Values& src);
-			void mcode_stackPop(CurrentInstruction::MicrocodeInformation::Values& src);
+			void mcode_stackPush(CurrentInstruction::MicrocodeInformation::Cache& src);
+			void mcode_stackPop(CurrentInstruction::MicrocodeInformation::Cache& src);
 			void mcode_seSrcB();
 
 		public:

@@ -387,7 +387,7 @@ void Processor_8086::mcode_seSrcB() {
 	}
 }
 
-void Processor_8086::mcode_stackPush(CurrentInstruction::MicrocodeInformation::Values& src) {
+void Processor_8086::mcode_stackPush(CurrentInstruction::MicrocodeInformation::Cache& src) {
 	MCODE_DEBUG("Stack push of v = " + COutSys::ToHexStr(src.v) + " (bytes = " + std::to_string(src.bytes) + "), SP = " + COutSys::ToHexStr(m_registers[REGISTERS::R_SP].read()));
 
 	// Decrement stack pointer
@@ -406,7 +406,7 @@ void Processor_8086::mcode_stackPush(CurrentInstruction::MicrocodeInformation::V
 	MCODE_DEBUG("Push complete. SP = " + COutSys::ToHexStr(m_registers[REGISTERS::R_SP].read()));
 }
 
-void Processor_8086::mcode_stackPop(CurrentInstruction::MicrocodeInformation::Values& src) {
+void Processor_8086::mcode_stackPop(CurrentInstruction::MicrocodeInformation::Cache& src) {
 	MCODE_DEBUG("Stack pop, SP = " + COutSys::ToHexStr(m_registers[REGISTERS::R_SP].read()));
 
 	// Put the address bus to the value of SP
