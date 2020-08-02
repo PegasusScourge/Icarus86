@@ -1,6 +1,6 @@
 /**************************************************************************
 
-Processor_8086.cpp
+P8086.cpp
 
 Created by Matthew Clarke
 
@@ -8,7 +8,7 @@ Implementation of the 8086 processor
 
  **************************************************************************/
 
-#include "Processor_8086.hpp"
+#include "P8086.hpp"
 
 #include "../COutSys.hpp"
 #include "../Constexprs.hpp"

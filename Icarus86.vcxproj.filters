@@ -48,9 +48,6 @@
     <ClCompile Include="src\COutSys.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Processor\Processor_8086.cpp">
-      <Filter>Source Files\Processor</Filter>
-    </ClCompile>
     <ClCompile Include="src\Memory\MMU.cpp">
       <Filter>Source Files\Memory</Filter>
     </ClCompile>
@@ -72,11 +69,14 @@
     <ClCompile Include="src\Graphics\GPU.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="src\Processor\Processor_8086_MCODEEXEC.cpp">
-      <Filter>Source Files\Processor</Filter>
-    </ClCompile>
     <ClCompile Include="src\LOutSys.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Processor\P8086.cpp">
+      <Filter>Source Files\Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Processor\P8086_MC.cpp">
+      <Filter>Source Files\Processor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -96,9 +96,6 @@
       <Filter>Header Files\Bus</Filter>
     </ClInclude>
     <ClInclude Include="src\Processor\Processor.hpp">
-      <Filter>Header Files\Processor</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Processor\Processor_8086.hpp">
       <Filter>Header Files\Processor</Filter>
     </ClInclude>
     <ClInclude Include="src\Processor\Register.hpp">
@@ -130,6 +127,9 @@
     </ClInclude>
     <ClInclude Include="src\LOutSys.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Processor\P8086.hpp">
+      <Filter>Header Files\Processor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

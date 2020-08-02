@@ -11,7 +11,7 @@ Entry point to the emulator
 #include "Icarus86.hpp"
 #include "Constexprs.hpp"
 #include "COutSys.hpp"
-#include "Processor/Processor_8086.hpp"
+#include "Processor/P8086.hpp"
 
 #include "TGUI/TGUI.hpp"
 

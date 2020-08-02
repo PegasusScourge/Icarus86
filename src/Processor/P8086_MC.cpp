@@ -1,6 +1,6 @@
 /**************************************************************************
 
-Processor_8086_MCODEEXEC.cpp
+P8086_MC.cpp
 
 Created by Matthew Clarke
 
@@ -8,7 +8,7 @@ Microcode execution functions definitions
 
  **************************************************************************/
 
-#include "Processor_8086.hpp"
+#include "P8086.hpp"
 
 #include "../COutSys.hpp"
 #include "../Constexprs.hpp"
