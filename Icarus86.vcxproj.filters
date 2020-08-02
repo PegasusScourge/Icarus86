@@ -78,6 +78,15 @@
     <ClCompile Include="src\Processor\P8086_MC.cpp">
       <Filter>Source Files\Processor</Filter>
     </ClCompile>
+    <ClCompile Include="src\Processor\P8086_MCsrc.cpp">
+      <Filter>Source Files\Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Processor\P8086_MCdst.cpp">
+      <Filter>Source Files\Processor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Processor\P8086_MCfn.cpp">
+      <Filter>Source Files\Processor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Icarus86.hpp">
