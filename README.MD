@@ -27,3 +27,8 @@ Requires 64-bit OS and the [Microsoft Visual C++ Redistributable](https://aka.ms
  - [ModR/M reference](http://www.logix.cz/michal/doc/i386/chp17-02.htm)
  - [Reading opcode notiation help](https://stackoverflow.com/questions/15017659/how-to-read-the-intel-opcode-notation)
  - [IBM P 51XX computer reference](https://ibm.retropc.se/index-2.html)
+ - [r/EmuDev 8086](https://www.reddit.com/r/EmuDev/search?q=8086&restrict_sr=1)
+ 
+### NASM compiling for x86-16 arch
+ 
+```nasm -f bin -o output.bin .\input.asm```

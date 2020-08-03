@@ -49,17 +49,29 @@ namespace icarus {
 
 			// Current instruction
 			struct CurrentInstruction {
+				// List of microcode instructions to execute
 				std::vector<icarus::processor::instruction::Microcode> microcode;
+				// Current ModRMByte
 				icarus::processor::instruction::ModRMByte modRMByte;
+				// The number of immediate bytes the instruction has
 				uint8_t numImmeditateBytes;
+				// The number of displacement bytes the instruction has
 				uint8_t numDisplacementBytes;
+				// Current displacement value
 				uint16_t displacement;
+				// Current immediate value
 				uint16_t immediate;
+				// Hex code of the instruction
 				uint8_t code;
+				// Information for the current microcode execution
 				struct MicrocodeInformation {
-					bool bitMode8Bit; // If true, interpret registers/memory locations as 8 bit. False = 16 bit
+					// If true, interpret registers/memory locations as 8 bit. False = 16 bit
+					bool bitMode8Bit;
+					// If true srcA is in use and new src selection should use srcB
 					bool srcAUsed;
+					// If true destination writes from dst are allowed
 					bool dstEnabled;
+					// Src and dst holdings
 					struct Cache {
 						uint8_t bytes;
 						uint16_t v;
@@ -80,7 +92,7 @@ namespace icarus {
 			/*
 			
 			MICROCODE EXECUTION FUNCTIONS
-			Definition is in Processor_8086_MCODEEXEC.cpp to keep code easier to read
+			Definition is in Processor_8086_MC[src/fn/dst].cpp to keep code easier to read
 			
 			*/
 			void mcode_execCode(instruction::Microcode mcode);
@@ -123,8 +135,8 @@ namespace icarus {
 			/*
 			MISC MICROCODE
 			*/
-			void mcode_stackPush(CurrentInstruction::MicrocodeInformation::Cache& src);
-			void mcode_stackPop(CurrentInstruction::MicrocodeInformation::Cache& src);
+			void mcode_stackPush(CurrentInstruction::MicrocodeInformation::Cache& c);
+			void mcode_stackPop(CurrentInstruction::MicrocodeInformation::Cache& c);
 			void mcode_seSrcB();
 
 		public:

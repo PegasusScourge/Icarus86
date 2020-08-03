@@ -387,17 +387,17 @@ void Processor_8086::mcode_seSrcB() {
 	}
 }
 
-void Processor_8086::mcode_stackPush(CurrentInstruction::MicrocodeInformation::Cache& src) {
-	MCODE_DEBUG("Stack push of v = " + COutSys::ToHexStr(src.v) + " (bytes = " + std::to_string(src.bytes) + "), SP = " + COutSys::ToHexStr(m_registers[REGISTERS::R_SP].read()));
+void Processor_8086::mcode_stackPush(CurrentInstruction::MicrocodeInformation::Cache& c) {
+	MCODE_DEBUG("Stack push of v = " + COutSys::ToHexStr(src.v) + " (bytes = " + std::to_string(c.bytes) + "), SP = " + COutSys::ToHexStr(m_registers[REGISTERS::R_SP].read()));
 
 	// Decrement stack pointer
-	m_registers[REGISTERS::R_SP].put(m_registers[REGISTERS::R_SP].read() - src.bytes);
+	m_registers[REGISTERS::R_SP].put(m_registers[REGISTERS::R_SP].read() - c.bytes);
 	// Put the address bus to the value of SP
 	m_addressBus.putData(m_registers[REGISTERS::R_SP].read());
 	// Put the data onto the bus
-	m_dataBus.putData(src.v);
+	m_dataBus.putData(c.v);
 	// If we have > 1 bytes, do writeBus, else do writeByte
-	if (src.bytes != 1) {
+	if (c.bytes != 1) {
 		m_mmu.writeBus(m_dataBus, m_addressBus, icarus::memory::MMU::ReadType::LittleEndian);
 	}
 	else {
@@ -406,23 +406,23 @@ void Processor_8086::mcode_stackPush(CurrentInstruction::MicrocodeInformation::C
 	MCODE_DEBUG("Push complete. SP = " + COutSys::ToHexStr(m_registers[REGISTERS::R_SP].read()));
 }
 
-void Processor_8086::mcode_stackPop(CurrentInstruction::MicrocodeInformation::Cache& src) {
+void Processor_8086::mcode_stackPop(CurrentInstruction::MicrocodeInformation::Cache& c) {
 	MCODE_DEBUG("Stack pop, SP = " + COutSys::ToHexStr(m_registers[REGISTERS::R_SP].read()));
 
 	// Put the address bus to the value of SP
 	m_addressBus.putData(m_registers[REGISTERS::R_SP].read());
 
 	// If we have > 1 bytes, do fillBus, else do readByte
-	if (src.bytes != 1) {
+	if (c.bytes != 1) {
 		m_mmu.fillBus(m_dataBus, m_addressBus, icarus::memory::MMU::ReadType::LittleEndian);
 	}
 	else {
 		m_mmu.readByte(m_dataBus, m_addressBus);
 	}
 
-	src.v = m_dataBus.readData();
+	c.v = m_dataBus.readData();
 	// Increment stack pointer
-	m_registers[REGISTERS::R_SP].put(m_registers[REGISTERS::R_SP].read() + src.bytes);
+	m_registers[REGISTERS::R_SP].put(m_registers[REGISTERS::R_SP].read() + c.bytes);
 
 	MCODE_DEBUG("Pop complete. SP = " + COutSys::ToHexStr(m_registers[REGISTERS::R_SP].read()) + ", v = " + COutSys::ToHexStr(m_dataBus.readData()));
 }
