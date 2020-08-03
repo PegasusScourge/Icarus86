@@ -382,12 +382,12 @@ void i::Icarus86::parseCFG() {
 	if (j["force_load"].is_object()) {
 		auto& fSpec = j["force_load"];
 		i::COutSys::Println("[CFG] Found force_load spec. Detecting components", i::COutSys::LEVEL_INFO);
-		if (!fSpec["address"].is_number() || !fSpec["path"].is_string()) {
+		if (!fSpec["address"].is_string() || !fSpec["path"].is_string()) {
 			i::COutSys::Print("[CFG] force_load configuration error", i::COutSys::LEVEL_ERR);
 		}
 		else {
 			i::COutSys::Println("[CFG] Getting force_load address", i::COutSys::LEVEL_INFO);
-			unsigned long address = fSpec["address"].get<unsigned long>();
+			unsigned long address = icarus::util::HexStrToNum(fSpec["address"].get<std::string>());
 			i::COutSys::Println("[CFG] Getting force_load path", i::COutSys::LEVEL_INFO);
 			std::string path = fSpec["path"].get<std::string>();
 			i::COutSys::Println("[CFG] Requested force load of file '" + path + "'", i::COutSys::LEVEL_INFO);
