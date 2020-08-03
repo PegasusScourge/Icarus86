@@ -97,6 +97,7 @@ namespace icarus {
 
 			virtual void forceIP(uint64_t ip) = 0;
 			virtual void forceSP(uint64_t sp) = 0;
+			virtual void forceSeg(uint64_t seg) = 0;
 
 			/*
 			virtual int fetchDecode()

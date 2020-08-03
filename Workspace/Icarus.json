@@ -7,8 +7,9 @@
 	"processor": {
 		"type": "8086",
 		"clockMHz": 1,
-		"force_ip": 0,
-		"force_sp": 256,
+		"force_ip": "0",
+		"force_sp": "100",
+		"force_seg": "10",
 		"breakpoints": [
 			{
 				"byIP": false,
@@ -26,6 +27,6 @@
 	],
 	"force_load": {
 		"path": "codegolf.bin",
-		"address": "0"
+		"address": "0010"
 	}
 }

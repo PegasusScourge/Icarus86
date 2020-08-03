@@ -277,6 +277,12 @@ void ip::Processor_8086::forceSP(uint64_t sp) {
 	m_registers[REGISTERS::R_SP].put(sp);
 }
 
+void ip::Processor_8086::forceSeg(uint64_t seg) {
+	m_registers[REGISTERS::R_CS].put(seg);
+	m_registers[REGISTERS::R_DS].put(seg);
+	m_registers[REGISTERS::R_ES].put(seg);
+	m_registers[REGISTERS::R_SS].put(seg);
+}
 
 /***********************************/
 // class Processor_8086 : private

@@ -165,6 +165,7 @@ namespace icarus {
 
 			void forceIP(uint64_t ip) override;
 			void forceSP(uint64_t sp) override;
+			void forceSeg(uint64_t seg) override;
 		};
 
 	}

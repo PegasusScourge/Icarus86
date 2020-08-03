@@ -298,19 +298,24 @@ void i::Icarus86::parseCFG() {
 		if (!createProcessor())
 			return;
 
-		if (pSpec["clockMHz"].is_number()) {
-			m_processor->setClockRateMHz(pSpec["clockMHz"].get<float>());
-			i::COutSys::Println("[CFG] Requested clockMHz of " + std::to_string(pSpec["clockMHz"].get<float>()), i::COutSys::LEVEL_INFO);
+		if (pSpec["clockMHz"].is_string()) {
+			m_processor->setClockRateMHz(icarus::util::HexStrToNum(pSpec["clockMHz"].get<std::string>()));
+			i::COutSys::Println("[CFG] Requested clockMHz of " + pSpec["clockMHz"].get<std::string>(), i::COutSys::LEVEL_INFO);
 		}
 
-		if (pSpec["force_ip"].is_number()) {
-			m_processor->forceIP(pSpec["force_ip"].get<unsigned long>());
-			i::COutSys::Println("[CFG] Requested forcedIP of " + std::to_string(pSpec["force_ip"].get<unsigned long>()), i::COutSys::LEVEL_INFO);
+		if (pSpec["force_ip"].is_string()) {
+			m_processor->forceIP(icarus::util::HexStrToNum(pSpec["force_ip"].get<std::string>()));
+			i::COutSys::Println("[CFG] Requested forcedIP of " + pSpec["force_ip"].get<std::string>(), i::COutSys::LEVEL_INFO);
 		}
 
-		if (pSpec["force_sp"].is_number()) {
-			m_processor->forceSP(pSpec["force_sp"].get<unsigned long>());
-			i::COutSys::Println("[CFG] Requested forcedSP of " + std::to_string(pSpec["force_sp"].get<unsigned long>()), i::COutSys::LEVEL_INFO);
+		if (pSpec["force_sp"].is_string()) {
+			m_processor->forceSP(icarus::util::HexStrToNum(pSpec["force_sp"].get<std::string>()));
+			i::COutSys::Println("[CFG] Requested forcedSP of " + pSpec["force_sp"].get<std::string>(), i::COutSys::LEVEL_INFO);
+		}
+
+		if (pSpec["force_seg"].is_string()) {
+			m_processor->forceSeg(icarus::util::HexStrToNum(pSpec["force_seg"].get<std::string>()));
+			i::COutSys::Println("[CFG] Requested forcedSegment of " + pSpec["force_seg"].get<std::string>(), i::COutSys::LEVEL_INFO);
 		}
 
 		// Check for breakpoints
