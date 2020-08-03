@@ -393,7 +393,7 @@ void Processor_8086::mcode_stackPush(CurrentInstruction::MicrocodeInformation::C
 	// Decrement stack pointer
 	m_registers[REGISTERS::R_SP].put(m_registers[REGISTERS::R_SP].read() - c.bytes);
 	// Put the address bus to the value of SP
-	m_addressBus.putData(m_registers[REGISTERS::R_SP].read());
+	m_addressBus.putData(getSegmentedAddress(SEGMENT::S_STACK,m_registers[REGISTERS::R_SP].read()));
 	// Put the data onto the bus
 	m_dataBus.putData(c.v);
 	// If we have > 1 bytes, do writeBus, else do writeByte
@@ -410,7 +410,7 @@ void Processor_8086::mcode_stackPop(CurrentInstruction::MicrocodeInformation::Ca
 	MCODE_DEBUG("Stack pop, SP = " + COutSys::ToHexStr(m_registers[REGISTERS::R_SP].read()));
 
 	// Put the address bus to the value of SP
-	m_addressBus.putData(m_registers[REGISTERS::R_SP].read());
+	m_addressBus.putData(getSegmentedAddress(SEGMENT::S_STACK,m_registers[REGISTERS::R_SP].read()));
 
 	// If we have > 1 bytes, do fillBus, else do readByte
 	if (c.bytes != 1) {

@@ -169,13 +169,13 @@ void Processor_8086::mcode_toSrcFromMem00(Processor_8086::CurrentInstruction::Mi
 	case 0b110: // [sword]
 		MCODE_DEBUG("SRC = MEM [sword], where sword=" + COutSys::ToHexStr(m_cInstr.displacement));
 		// We need to read memory at the position of the immediate byte, and then put that in the src
-		m_addressBus.putData(m_cInstr.displacement);
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA,m_cInstr.displacement));
 
 		break;
 
 	case 0b111: // [BX]
 		MCODE_DEBUG("SRC = MEM [BX]");
-		m_addressBus.putData(m_registers[REGISTERS::R_BX].read());
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA,m_registers[REGISTERS::R_BX].read()));
 		break;
 
 	default:
@@ -206,7 +206,7 @@ void Processor_8086::mcode_toSrcFromMem10(Processor_8086::CurrentInstruction::Mi
 
 	case 0b001: // [BX + DI + sword]
 		MCODE_DEBUG("SRC = MEM [BX + DI + sword]");
-		m_addressBus.putData(m_registers[REGISTERS::R_BX].read() + m_registers[REGISTERS::R_DI].read() + m_cInstr.displacement);
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA,m_registers[REGISTERS::R_BX].read() + m_registers[REGISTERS::R_DI].read() + m_cInstr.displacement));
 		break;
 
 	case 0b010: // [BP + SI + sword]
@@ -229,7 +229,7 @@ void Processor_8086::mcode_toSrcFromMem10(Processor_8086::CurrentInstruction::Mi
 
 	case 0b101: // [DI + sword]
 		MCODE_DEBUG("SRC = MEM [DI + sword]");
-		m_addressBus.putData(m_registers[REGISTERS::R_DI].read() + m_cInstr.displacement);
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA,m_registers[REGISTERS::R_DI].read() + m_cInstr.displacement));
 		break;
 
 	case 0b110: // [BP + sword]
@@ -240,7 +240,7 @@ void Processor_8086::mcode_toSrcFromMem10(Processor_8086::CurrentInstruction::Mi
 
 	case 0b111: // [BX + sword]
 		MCODE_DEBUG("SRC = MEM [BX + sword]");
-		m_addressBus.putData(m_registers[REGISTERS::R_BX].read() + m_cInstr.displacement);
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA,m_registers[REGISTERS::R_BX].read() + m_cInstr.displacement));
 		break;
 
 	default:

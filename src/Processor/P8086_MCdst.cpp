@@ -141,7 +141,7 @@ void Processor_8086::mcode_toDstFromMem00(uint8_t sval) {
 	case 0b001: // [BX + DI]
 		address = m_registers[REGISTERS::R_BX].read() + m_registers[REGISTERS::R_DI].read();
 		MCODE_DEBUG("DST = MEM [BX + DI], where BX + DI = " + COutSys::ToHexStr(address));
-		m_addressBus.putData(address);
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA,address));
 		break;
 
 	case 0b010: // [BP + SI]
@@ -171,7 +171,7 @@ void Processor_8086::mcode_toDstFromMem00(uint8_t sval) {
 	case 0b110: // [sword]
 		MCODE_DEBUG("DST = MEM [sword], where sword = " + COutSys::ToHexStr(m_cInstr.displacement));
 		// We need to write memory at the position of the displacement byte
-		m_addressBus.putData(m_cInstr.displacement);
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA,m_cInstr.displacement));
 		break;
 
 	case 0b111: // [BX]
@@ -215,7 +215,7 @@ void Processor_8086::mcode_toDstFromMem10(uint8_t sval) {
 	case 0b001: // [BX + DI + sword]
 		address = m_registers[REGISTERS::R_BX].read() + m_registers[REGISTERS::R_DI].read() + m_cInstr.displacement;
 		MCODE_DEBUG("DST = MEM [BX + DI + sword], where BX + DI + sword = " + COutSys::ToHexStr(address));
-		m_addressBus.putData(address);
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA,address));
 		break;
 
 	case 0b010: // [BP + SI + sword]
@@ -239,7 +239,7 @@ void Processor_8086::mcode_toDstFromMem10(uint8_t sval) {
 	case 0b101: // [DI + sword]
 		address = m_registers[REGISTERS::R_DI].read() + m_cInstr.displacement;
 		MCODE_DEBUG("DST = MEM [DI + sword], where DI + sword = " + COutSys::ToHexStr(address));
-		m_addressBus.putData(address);
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA,address));
 		break;
 
 	case 0b110: // [BP + sword]
@@ -251,7 +251,7 @@ void Processor_8086::mcode_toDstFromMem10(uint8_t sval) {
 	case 0b111: // [BX + sword]
 		address = m_registers[REGISTERS::R_BX].read() + m_cInstr.displacement;
 		MCODE_DEBUG("DST = MEM [BX + sword], where BX + sword = " + COutSys::ToHexStr(address));
-		m_addressBus.putData(address);
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA,address));
 		break;
 
 	default:

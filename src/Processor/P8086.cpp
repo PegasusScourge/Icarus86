@@ -36,7 +36,7 @@ namespace ipi = ip::instruction;
 // class Processor_8086 : public
 /***********************************/
 
-std::string ip::Processor_8086::REGISTER_NAMES[14] = { "AX", "BX", "CX", "DX", "SI", "DI", "BP", "SP", "IP", "FS", "CS", "DS", "ES", "SS" };
+std::string ip::Processor_8086::REGISTER_NAMES[14] = { "AX", "BX", "CX", "DX", "SI", "DI", "BP", "SP", "IP", "FR", "CS", "DS", "ES", "SS" };
 
 ip::Processor_8086::Processor_8086(icarus::memory::MMU& mmu, icarus::bus::Bus& dataBus, icarus::bus::Bus& addressBus) : m_mmu(mmu), m_dataBus(dataBus), m_addressBus(addressBus) {
 	m_name = "Intel 8086";
@@ -72,7 +72,7 @@ unsigned int ip::Processor_8086::fetchDecode() {
 	// Load the address bus with the address
 	unsigned int increment = 0;
 	uint16_t ipVal = m_registers[REGISTERS::R_IP].read();
-	m_addressBus.putData(ipVal);
+	m_addressBus.putData(getSegmentedAddress(SEGMENT::S_CODE,ipVal));
 	if (!m_mmu.tryReadByte(m_dataBus, m_addressBus)) {
 		// Failed to read a byte
 		triggerError();
@@ -82,7 +82,7 @@ unsigned int ip::Processor_8086::fetchDecode() {
 	ipi::ICode& instr = m_iSet[(uint8_t)m_dataBus.readData()];
 
 	while (instr.isValid() && instr.isPrefix()) {
-		m_addressBus.putData(ipVal + (++increment));
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_CODE,ipVal + (++increment)));
 		if (!m_mmu.tryReadByte(m_dataBus, m_addressBus)) {
 			// Failed to read a byte
 			icarus::COutSys::Println("Processor8086 failed to read byte", icarus::COutSys::LEVEL_ERR);
@@ -139,7 +139,7 @@ unsigned int ip::Processor_8086::fetchDecode() {
 	m_cInstr.modRMByte.setByte(0);
 	if (instr.hasModRM()) {
 		DECODE8086_DEBUG("Has modrm");
-		m_addressBus.putData(ipVal + (++increment));
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_CODE,ipVal + (++increment)));
 		if (!m_mmu.tryReadByte(m_dataBus, m_addressBus)) {
 			// Failed to read a byte
 			icarus::COutSys::Println("Processor8086 failed to read byte (for ModRM)", icarus::COutSys::LEVEL_ERR);
@@ -173,14 +173,14 @@ unsigned int ip::Processor_8086::fetchDecode() {
 	m_cInstr.displacement = 0;
 	if (numDispBytes > 0) {
 		DECODE8086_DEBUG("Has displacement");
-		m_addressBus.putData(ipVal + (++increment));
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_CODE,ipVal + (++increment)));
 		m_cInstr.numDisplacementBytes = numDispBytes;
 		switch (numDispBytes) {
 		case 2:
 			DECODE8086_DEBUG("2 Byte");
 			m_mmu.readByte(m_dataBus, m_addressBus);
 			m_cInstr.displacement |= m_dataBus.readData();
-			m_addressBus.putData(ipVal + (++increment));
+			m_addressBus.putData(getSegmentedAddress(SEGMENT::S_CODE,ipVal + (++increment)));
 			m_mmu.readByte(m_dataBus, m_addressBus);
 			m_cInstr.displacement |= (m_dataBus.readData() << 8);
 			break;
@@ -203,14 +203,14 @@ unsigned int ip::Processor_8086::fetchDecode() {
 	m_cInstr.immediate = 0;
 	if (numImmBytes > 0) {
 		DECODE8086_DEBUG("Has immediate");
-		m_addressBus.putData(ipVal + (++increment));
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_CODE,ipVal + (++increment)));
 		m_cInstr.numImmeditateBytes = numImmBytes;
 		switch (numImmBytes) {
 		case 2:
 			DECODE8086_DEBUG("2 Byte");
 			m_mmu.readByte(m_dataBus, m_addressBus);
 			m_cInstr.immediate |= m_dataBus.readData();
-			m_addressBus.putData(ipVal + (++increment));
+			m_addressBus.putData(getSegmentedAddress(SEGMENT::S_CODE,ipVal + (++increment)));
 			m_mmu.readByte(m_dataBus, m_addressBus);
 			m_cInstr.immediate |= (m_dataBus.readData() << 8);
 			break;
