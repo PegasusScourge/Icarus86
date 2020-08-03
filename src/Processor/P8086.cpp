@@ -12,6 +12,7 @@ Implementation of the 8086 processor
 
 #include "../COutSys.hpp"
 #include "../Constexprs.hpp"
+#include "../Util.hpp"
 #include "Instruction/ModRMByte.hpp"
 
 namespace ip = icarus::processor;
@@ -329,9 +330,9 @@ void ip::Processor_8086::onGetProcessorState() {
 	
 	std::vector<std::string> regs_s;
 	for (auto& r : m_registers) {
-		regs_s.push_back(COutSys::ToHexStr(r.read(), true));
+		regs_s.push_back(icarus::util::ToHexStr(r.read(), true));
 	}
 	m_state.registerValues_str = regs_s;
 
-	m_state.flagsRegBin = COutSys::ToBinaryStr(m_registers[REGISTERS::R_FLAGS].read());
+	m_state.flagsRegBin = icarus::util::ToBinaryStr(m_registers[REGISTERS::R_FLAGS].read());
 }

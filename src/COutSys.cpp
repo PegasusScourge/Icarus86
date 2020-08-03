@@ -10,6 +10,7 @@ Console Output System. Handles formating and displaying information to the conso
 
 #include "COutSys.hpp"
 #include "Constexprs.hpp"
+#include "Util.hpp"
 
 #include <iostream>
 #include <ctime>
@@ -27,16 +28,7 @@ void i::COutSys::Initialize(bool prependDate) {
 }
 
 void i::COutSys::PrintDate() {
-	time_t rawtime;
-	struct tm* timeinfo;
-	char buffer[80];
-
-	time(&rawtime);
-	timeinfo = localtime(&rawtime);
-
-	strftime(buffer, sizeof(buffer), "[%H:%M:%S] ", timeinfo);
-	std::string str(buffer);
-	cout << str;
+	cout << "[" << icarus::util::GetTimeStr() << "] ";
 }
 
 void i::COutSys::PrintLevel(int level) {

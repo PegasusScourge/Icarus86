@@ -11,6 +11,7 @@ Abract implementation of a instruction set
 #include "InstructionSet.hpp"
 
 #include "../../COutSys.hpp"
+#include "../../Util.hpp"
 
 #include <fstream>
 #include <sstream>
@@ -47,11 +48,7 @@ void ipi::ICode::parseICodeEntry(nlohmann::json entry, uint64_t prefix) {
 	icarus::COutSys::Print("iCode: hexcode_s=" + code_s + " ", icarus::COutSys::LEVEL_INFO);
 
 	// Convert the code to hex number
-	size_t code;
-	std::stringstream ss;
-	ss << std::hex << code_s;
-	ss >> code;
-	m_code = (uint8_t)code;
+	m_code = (uint8_t)icarus::util::HexStrToNum(code_s);
 	icarus::COutSys::Print("(#=" + std::to_string(m_code) + ")\t\t");
 
 	// Check for prefix
@@ -60,7 +57,7 @@ void ipi::ICode::parseICodeEntry(nlohmann::json entry, uint64_t prefix) {
 		icarus::COutSys::Print("[ PREFIX] Checking for child codes: ");
 		if (entry["childCodes"].is_array()) {
 			uint64_t newPrefix = (prefix << 8) & m_code;
-			icarus::COutSys::Println("[FOUND]. Parsing (newPrefix=" + icarus::COutSys::ToHexStr(newPrefix) + ")");
+			icarus::COutSys::Println("[FOUND]. Parsing (newPrefix=" + icarus::util::ToHexStr(newPrefix) + ")");
 			icarus::COutSys::Println("iCode: <children>", icarus::COutSys::LEVEL_INFO);
 			for (auto& iCode : entry["childCodes"]) {
 				m_childCodes.push_back(ICode(iCode, newPrefix));

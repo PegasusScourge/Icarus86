@@ -12,6 +12,7 @@ Entry point to the emulator
 #include "Constexprs.hpp"
 #include "COutSys.hpp"
 #include "Processor/P8086.hpp"
+#include "Util.hpp"
 
 #include "TGUI/TGUI.hpp"
 
@@ -321,11 +322,7 @@ void i::Icarus86::parseCFG() {
 					breakpoint.byAddress = bp["byIP"].get<bool>();
 					std::string hex = bp["ip"].get<std::string>();
 					// Convert the code to hex number
-					size_t code;
-					std::stringstream ss;
-					ss << std::hex << hex;
-					ss >> code;
-					breakpoint.address = (uint64_t)code;
+					breakpoint.address = (uint64_t)icarus::util::HexStrToNum(hex);
 					if (breakpoint.byAddress)
 						i::COutSys::Println("[CFG] Added breakpoint on IP = " + std::to_string(breakpoint.address), i::COutSys::LEVEL_INFO);
 				}
@@ -398,14 +395,14 @@ void i::Icarus86::parseCFG() {
 			std::ifstream is(path, std::ios::in | std::ios::binary);
 			std::vector<char> binaryContent((std::istreambuf_iterator<char>(is)), (std::istreambuf_iterator<char>()));
 
-			i::COutSys::Println("[CFG] Got content of file: size=" + i::COutSys::ToHexStr(binaryContent.size(), true), i::COutSys::LEVEL_INFO);
+			i::COutSys::Println("[CFG] Got content of file: size=" + icarus::util::ToHexStr(binaryContent.size(), true), i::COutSys::LEVEL_INFO);
 			i::COutSys::Print("[CFG] Content dump:", i::COutSys::LEVEL_INFO);
 			for (size_t i = 0; i < binaryContent.size(); i++) {
 				if (i % 16 == 0) {
 					i::COutSys::Println("");
-					i::COutSys::Print("[" + i::COutSys::ToHexStr(i) + "] ");
+					i::COutSys::Print("[" + i::util::ToHexStr(i) + "] ");
 				}
-				i::COutSys::Print(i::COutSys::ToHexStr((uint8_t)binaryContent[i]) + " ");
+				i::COutSys::Print(i::util::ToHexStr((uint8_t)binaryContent[i]) + " ");
 			}
 			i::COutSys::Println("");
 			// Load the file
@@ -545,10 +542,10 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 
 	// Draw the bus values
 	text.setFillColor(sf::Color::Cyan);
-	text.setString("Data Bus Value:    " + COutSys::ToHexStr(m_dataBus.readData(), true));
+	text.setString("Data Bus Value:    " + icarus::util::ToHexStr(m_dataBus.readData(), true));
 	text.setPosition(x, y); y += 14;
 	window.draw(text);
-	text.setString("Address Bus Value: " + COutSys::ToHexStr(m_addressBus.readData(), true));
+	text.setString("Address Bus Value: " + icarus::util::ToHexStr(m_addressBus.readData(), true));
 	text.setPosition(x, y); y += 14;
 	window.draw(text);
 
@@ -562,7 +559,7 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 
 	text.setFillColor(sf::Color::White);
 	for (int i = 0; i < pState.lastInstrs.size(); i++, y += 12) {
-		text.setString("[" + std::to_string(i) + "]: " + COutSys::ToHexStr(pState.lastInstrs[i].ip));
+		text.setString("[" + std::to_string(i) + "]: " + icarus::util::ToHexStr(pState.lastInstrs[i].ip));
 		text.setPosition(x, y);
 		window.draw(text);
 	}
@@ -578,8 +575,8 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 	text.setFillColor(sf::Color::White);
 	for (int i = 0; i < pState.lastInstrs.size(); i++, y += 12) {
 		auto& iCode = pState.lastInstrs[i].iCode;
-		text.setString("[" + std::to_string(i) + "]: " + COutSys::ToHexStr(iCode.getCode()) + ", valid=" + std::to_string(iCode.isValid()) + 
-		", prefix=" + COutSys::ToHexStr(iCode.getPrefix()) + " (" + iCode.getMnemonic() + ")");
+		text.setString("[" + std::to_string(i) + "]: " + icarus::util::ToHexStr(iCode.getCode()) + ", valid=" + std::to_string(iCode.isValid()) +
+		", prefix=" + icarus::util::ToHexStr(iCode.getPrefix()) + " (" + iCode.getMnemonic() + ")");
 		text.setPosition(x, y);
 		window.draw(text);
 	}
@@ -595,7 +592,7 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 	text.setFillColor(sf::Color::White);
 	for (int i = 0; i < pState.lastInstrs.size(); i++, y += 12) {
 		auto& lDisps = pState.lastInstrs[i].disp;
-		text.setString("[" + std::to_string(i) + "]: " + COutSys::ToHexStr(lDisps));
+		text.setString("[" + std::to_string(i) + "]: " + icarus::util::ToHexStr(lDisps));
 		text.setPosition(x, y);
 		window.draw(text);
 	}
@@ -611,7 +608,7 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 	text.setFillColor(sf::Color::White);
 	for (int i = 0; i < pState.lastInstrs.size(); i++, y += 12) {
 		auto& lImm = pState.lastInstrs[i].imm;
-		text.setString("[" + std::to_string(i) + "]: " + COutSys::ToHexStr(lImm));
+		text.setString("[" + std::to_string(i) + "]: " + icarus::util::ToHexStr(lImm));
 		text.setPosition(x, y);
 		window.draw(text);
 	}

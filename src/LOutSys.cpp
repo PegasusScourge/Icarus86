@@ -10,8 +10,7 @@ Logging Output System. Handles formating and output to log files
 
 #include "LOutSys.hpp"
 #include "Constexprs.hpp"
-
-#include <ctime>
+#include "Util.hpp"
 
 using icarus::endl;
 
@@ -28,16 +27,7 @@ i::LOutSys::~LOutSys() {
 }
 
 void i::LOutSys::printDate() {
-	time_t rawtime;
-	struct tm* timeinfo;
-	char buffer[80];
-
-	time(&rawtime);
-	timeinfo = localtime(&rawtime);
-
-	strftime(buffer, sizeof(buffer), "[%H:%M:%S] ", timeinfo);
-	std::string str(buffer);
-	output << str;
+	output << "[" << icarus::util::GetTimeStr() << "] ";
 }
 
 void i::LOutSys::printLevel(int level) {
