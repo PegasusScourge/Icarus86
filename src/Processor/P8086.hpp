@@ -47,6 +47,9 @@ namespace icarus {
 			enum REGISTERS { R_AX = 0, R_BX, R_CX, R_DX, R_SI, R_DI, R_BP, R_SP, R_IP, R_FLAGS, R_CS, R_DS, R_ES, R_SS };
 			static std::string REGISTER_NAMES[14];
 
+			// Segment information
+			enum SEGMENT { S_DATA, S_CODE, S_XTRA, S_STACK };
+
 			// Current instruction
 			struct CurrentInstruction {
 				// List of microcode instructions to execute
@@ -63,6 +66,11 @@ namespace icarus {
 				uint16_t immediate;
 				// Hex code of the instruction
 				uint8_t code;
+				// Segment register information
+				bool hasSegOverride;
+				bool usedSegOverride;
+				SEGMENT segOverride; // Segement override enum
+
 				// Information for the current microcode execution
 				struct MicrocodeInformation {
 					// If true, interpret registers/memory locations as 8 bit. False = 16 bit
@@ -84,6 +92,13 @@ namespace icarus {
 			Returns the resolved address of a segment-offset register pair
 			*/
 			uint32_t resolveAddress(uint16_t segment, uint16_t offset);
+
+			/*
+			uint32_t getSegmentedAddress(SEGMENT defaultSeg, uint16_t offset)
+			Takes into account segment overrides and converts the defaultSeg into a segment register, before using resolveAddress() to
+			return the actual memory address of the location
+			*/
+			uint32_t getSegmentedAddress(SEGMENT defaultSeg, uint16_t offset);
 
 			void onError() override;
 

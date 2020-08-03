@@ -61,6 +61,9 @@ ip::Processor_8086::Processor_8086(icarus::memory::MMU& mmu, icarus::bus::Bus& d
 	m_iSet = icarus::processor::instruction::InstructionSet(icarus::processor::instruction::InstructionPath + "8086.json");
 
 	m_alu.test();
+
+	m_cInstr.hasSegOverride = false;
+	m_cInstr.usedSegOverride = false;
 }
 
 unsigned int ip::Processor_8086::fetchDecode() {
@@ -104,6 +107,18 @@ unsigned int ip::Processor_8086::fetchDecode() {
 	DECODE8086_DEBUG("Instr valid");
 
 	m_cInstr.code = instr.getCode();
+	
+	// Check for segmenet override
+	if (m_cInstr.hasSegOverride && m_cInstr.usedSegOverride) {
+		// We have used the seg override, discard it now
+		m_cInstr.hasSegOverride = false;
+		m_cInstr.usedSegOverride = false;
+	}
+	else if (m_cInstr.hasSegOverride && !m_cInstr.usedSegOverride) {
+		// We have a seg override set up from the past instruction (which was a seg override),
+		// mark as used so we can discard it next time
+		m_cInstr.usedSegOverride = true;
+	}
 
 	DECODE8086_DEBUG("Instr mnemonic: " + instr.getMnemonic());
 
@@ -267,7 +282,38 @@ void ip::Processor_8086::forceSP(uint64_t sp) {
 /***********************************/
 
 uint32_t ip::Processor_8086::resolveAddress(uint16_t segment, uint16_t offset) {
-	return (segment * 0x10) + offset;
+	return (segment << 4) + offset;
+}
+
+uint32_t ip::Processor_8086::getSegmentedAddress(SEGMENT defaultSeg, uint16_t offset) {
+	SEGMENT seg = defaultSeg;
+	// Handle segment overrides
+	if (m_cInstr.hasSegOverride) {
+		if (defaultSeg == SEGMENT::S_DATA) {
+			// Data segment is overriden
+			seg = m_cInstr.segOverride;
+		}
+	}
+
+	// Get the value of the segment register
+	uint32_t sval = 0;
+	switch (seg) {
+	case SEGMENT::S_CODE:
+		sval = m_registers[REGISTERS::R_CS].read();
+		break;
+	case SEGMENT::S_XTRA:
+		sval = m_registers[REGISTERS::R_ES].read();
+		break;
+	case SEGMENT::S_STACK:
+		sval = m_registers[REGISTERS::R_SS].read();
+		break;
+	case SEGMENT::S_DATA:	// On default, we go for the data segment as thats more than likely where we will read data from, right?
+	default:				// Better than no default
+		sval = m_registers[REGISTERS::R_DS].read();
+		break;
+	}
+	// Return the resolved address
+	return resolveAddress(sval, offset);
 }
 
 void ip::Processor_8086::onError() {
