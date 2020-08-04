@@ -39,6 +39,7 @@ Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 	else if (s.compare("SRC_R_BX") == 0) { return Microcode::MicrocodeType::SRC_R_BX; }
 	else if (s.compare("SRC_R_CX") == 0) { return Microcode::MicrocodeType::SRC_R_CX; }
 	else if (s.compare("SRC_R_DX") == 0) { return Microcode::MicrocodeType::SRC_R_DX; }
+	else if (s.compare("SRC_R_BP") == 0) { return Microcode::MicrocodeType::SRC_R_BP; }
 	else if (s.compare("SRC_R_DI") == 0) { return Microcode::MicrocodeType::SRC_R_DI; }
 	else if (s.compare("SRC_R_DS") == 0) { return Microcode::MicrocodeType::SRC_R_DS; }
 	else if (s.compare("SRC_R_CS") == 0) { return Microcode::MicrocodeType::SRC_R_CS; }
@@ -59,6 +60,7 @@ Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 	else if (s.compare("DST_R_CX") == 0) { return Microcode::MicrocodeType::DST_R_CX; }
 	else if (s.compare("DST_R_DX") == 0) { return Microcode::MicrocodeType::DST_R_DX; }
 	else if (s.compare("DST_R_SP") == 0) { return Microcode::MicrocodeType::DST_R_SP; }
+	else if (s.compare("DST_R_BP") == 0) { return Microcode::MicrocodeType::DST_R_BP; }
 	else if (s.compare("DST_R_DI") == 0) { return Microcode::MicrocodeType::DST_R_DI; }
 	else if (s.compare("DST_R_DS") == 0) { return Microcode::MicrocodeType::DST_R_DS; }
 	else if (s.compare("DST_R_CS") == 0) { return Microcode::MicrocodeType::DST_R_CS; }
@@ -87,6 +89,9 @@ Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 	else if (s.compare("FN_CALL_REL") == 0) { return Microcode::MicrocodeType::FN_CALL_REL; }
 
 	else if (s.compare("FN_RETN_NEAR") == 0) { return Microcode::MicrocodeType::FN_RETN_NEAR; }
+
+	else if (s.compare("FN_INT") == 0) { return Microcode::MicrocodeType::FN_INT; }
+	else if (s.compare("FN_IRET") == 0) { return Microcode::MicrocodeType::FN_IRET; }
 
 	else if (s.compare("FN_JMP") == 0) { return Microcode::MicrocodeType::FN_JMP; }
 	else if (s.compare("FN_JMPF") == 0) { return Microcode::MicrocodeType::FN_JMPF; }

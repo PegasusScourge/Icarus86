@@ -177,9 +177,9 @@ void Processor_8086::mcode_toDstFromMem00(uint8_t sval) {
 
 	switch (sval) {
 	case 0b000: // [BX + SI]
-		MCODE_DEBUG("DST = MEM [BX + SI]");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		address = m_registers[REGISTERS::R_BX].read() + m_registers[REGISTERS::R_SI].read();
+		MCODE_DEBUG("DST = MEM [BX + SI], where BX + SI = " + icarus::util::ToHexStr(address));
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA, address));
 		break;
 
 	case 0b001: // [BX + DI]
@@ -189,27 +189,27 @@ void Processor_8086::mcode_toDstFromMem00(uint8_t sval) {
 		break;
 
 	case 0b010: // [BP + SI]
-		MCODE_DEBUG("DST = MEM [BP + SI]");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		address = m_registers[REGISTERS::R_BP].read() + m_registers[REGISTERS::R_SI].read();
+		MCODE_DEBUG("DST = MEM [BP + SI], where BP + SI = " + icarus::util::ToHexStr(address));
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA, address));
 		break;
 
 	case 0b011: // [BP + DI]
-		MCODE_DEBUG("DST = MEM [BP + DI]");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		address = m_registers[REGISTERS::R_BP].read() + m_registers[REGISTERS::R_DI].read();
+		MCODE_DEBUG("DST = MEM [BP + DI], where BP + DI = " + icarus::util::ToHexStr(address));
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA, address));
 		break;
 
 	case 0b100: // [SI]
-		MCODE_DEBUG("DST = MEM [SI]");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		address = m_registers[REGISTERS::R_SI].read();
+		MCODE_DEBUG("DST = MEM [SI], where SI = " + icarus::util::ToHexStr(address));
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA, address));
 		break;
 
 	case 0b101: // [DI]
-		MCODE_DEBUG("DST = MEM [DI]");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		address = m_registers[REGISTERS::R_DI].read();
+		MCODE_DEBUG("DST = MEM [DI], where DI = " + icarus::util::ToHexStr(address));
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA, address));
 		break;
 
 	case 0b110: // [sword]
@@ -252,9 +252,9 @@ void Processor_8086::mcode_toDstFromMem10(uint8_t sval) {
 
 	switch (sval) {
 	case 0b000: // [BX + SI + sword]
-		MCODE_DEBUG("DST = MEM [BX + SI + sword]");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		address = m_registers[REGISTERS::R_BX].read() + m_registers[REGISTERS::R_SI].read() + m_cInstr.displacement;
+		MCODE_DEBUG("DST = MEM [BX + SI + sword], where BX + SI + sword = " + icarus::util::ToHexStr(address));
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA, address));
 		break;
 
 	case 0b001: // [BX + DI + sword]
@@ -264,21 +264,21 @@ void Processor_8086::mcode_toDstFromMem10(uint8_t sval) {
 		break;
 
 	case 0b010: // [BP + SI + sword]
-		MCODE_DEBUG("DST = MEM [BP + SI + sword]");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		address = m_registers[REGISTERS::R_BP].read() + m_registers[REGISTERS::R_SI].read() + m_cInstr.displacement;
+		MCODE_DEBUG("DST = MEM [BP + SI + sword], where BP + SI + sword = " + icarus::util::ToHexStr(address));
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA, address));
 		break;
 
 	case 0b011: // [BP + DI + sword]
-		MCODE_DEBUG("DST = MEM [BP + DI + sword]");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		address = m_registers[REGISTERS::R_BP].read() + m_registers[REGISTERS::R_DI].read() + m_cInstr.displacement;
+		MCODE_DEBUG("DST = MEM [BP + DI + sword], where BP + DI + sword = " + icarus::util::ToHexStr(address));
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA, address));
 		break;
 
 	case 0b100: // [SI + sword]
-		MCODE_DEBUG("DST = MEM [SI + sword]");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		address = m_registers[REGISTERS::R_SI].read() + m_cInstr.displacement;
+		MCODE_DEBUG("DST = MEM [SI + sword], where SI + sword = " + icarus::util::ToHexStr(address));
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA, address));
 		break;
 
 	case 0b101: // [DI + sword]
@@ -288,9 +288,9 @@ void Processor_8086::mcode_toDstFromMem10(uint8_t sval) {
 		break;
 
 	case 0b110: // [BP + sword]
-		MCODE_DEBUG("DST = MEM [BP + sword]");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		address = m_registers[REGISTERS::R_BP].read() + m_cInstr.displacement;
+		MCODE_DEBUG("DST = MEM [BP + sword], where BP + sword = " + icarus::util::ToHexStr(address));
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA, address));
 		break;
 
 	case 0b111: // [BX + sword]

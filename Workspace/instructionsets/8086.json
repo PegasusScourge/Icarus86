@@ -1404,6 +1404,32 @@
 			]
 		},
 		{
+			"mnemonic": "INT imm8",
+			"hexcode": "CD",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"FN_INT"
+			]
+		},
+		{
+			"mnemonic": "IRET",
+			"hexcode": "CF",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"FN_IRET"
+			]
+		},
+		{
 			"mnemonic": "CALL rel16",
 			"hexcode": "E8",
 			"isPrefix": false,

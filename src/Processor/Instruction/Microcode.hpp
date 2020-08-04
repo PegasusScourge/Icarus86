@@ -46,6 +46,7 @@ namespace icarus {
 					SRC_R_BX, // Source is register BX, not deduced
 					SRC_R_CX, // Source is register CX, not deduced
 					SRC_R_DX, // Source is register DX, not deduced
+					SRC_R_BP, // Source is register BP, not deduced
 					SRC_R_DI, // Source is register DI, not deduced
 					SRC_R_DS, // Source is register DS, not deduced
 					SRC_R_CS, // Source is register CS, not deduced
@@ -66,6 +67,7 @@ namespace icarus {
 					DST_R_CX, // Destination is register CX, not deduced
 					DST_R_DX, // Destination is register DX, not deduced
 					DST_R_SP, // Destination is register SP, not deduced
+					DST_R_BP, // Destination is register SP, not deduced
 					DST_R_DI, // Destination is register DI, not deduced
 					DST_R_DS, // Destination is register DS, not deduced
 					DST_R_CS, // Destination is register CS, not deduced
@@ -94,6 +96,9 @@ namespace icarus {
 					FN_CALL_REL, // Call relative. SRC_A should have the relative address, relative to IP after fetchDecode. Push IP to stack first
 
 					FN_RETN_NEAR, // Return near. SRC_A should have the return IP 
+
+					FN_INT, // Execute an interrupt
+					FN_IRET, // Return from an interrupt
 
 					FN_JMP, // Jump
 					FN_JMPF, // Jump far. srcA (displacement) has the IP value, srcB (immediate) has the CS value

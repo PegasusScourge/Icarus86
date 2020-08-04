@@ -134,7 +134,11 @@ namespace icarus {
 			FN MICROCODE
 			*/
 			void mcode_fnCallRel();
+			void mcode_fnCallFarAbs();
 			void mcode_fnRetnNear();
+			void mcode_fnRetnFar();
+			void mcode_fnInt();
+			void mcode_fnIRet();
 			void mcode_fnRegop8X();
 			void mcode_fnRegopFE();
 			void mcode_fnAdd(bool adc);

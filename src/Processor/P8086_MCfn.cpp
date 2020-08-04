@@ -292,9 +292,84 @@ void Processor_8086::mcode_fnCallRel() {
 	m_registers[REGISTERS::R_IP].put(m_registers[REGISTERS::R_IP].read() + rel16);
 }
 
+void Processor_8086::mcode_fnCallFarAbs() {
+	// Get the seg absolute offset from srcA
+	uint16_t segOffset = m_cInstr.mCodeI.srcA.v;
+	// Get the segment from srcB
+	uint16_t seg = m_cInstr.mCodeI.srcB.v;
+	// Push CS to stack
+	m_cInstr.mCodeI.srcA.v = m_registers[REGISTERS::R_CS].read();
+	m_cInstr.mCodeI.srcA.bytes = 2;
+	mcode_stackPush(m_cInstr.mCodeI.srcA);
+	// Push IP to stack
+	m_cInstr.mCodeI.srcA.v = m_registers[REGISTERS::R_IP].read();
+	m_cInstr.mCodeI.srcA.bytes = 2;
+	mcode_stackPush(m_cInstr.mCodeI.srcA);
+	// Now we set IP and CS
+	MCODE_DEBUG("[FAR_ABS] CALL to CS:IP = " + icarus::util::ToHexStr(seg) + ":" + icarus::util::ToHexStr(segOffset));
+	m_registers[REGISTERS::R_IP].put(segOffset);
+	m_registers[REGISTERS::R_CS].put(seg);
+}
+
 void Processor_8086::mcode_fnRetnNear() {
 	// SRC_A has the IP we need to jump to
 	MCODE_DEBUG("RETN to = " + icarus::util::ToHexStr(m_cInstr.mCodeI.srcA.v));
 	m_registers[REGISTERS::R_IP].put(m_cInstr.mCodeI.srcA.v);
 	MCODE_DEBUG("RETN gave IP = " + icarus::util::ToHexStr(m_registers[REGISTERS::R_IP].read()));
+}
+
+void Processor_8086::mcode_fnRetnFar() {
+	// SRC_A has the IP we need to jump to
+	m_registers[REGISTERS::R_IP].put(m_cInstr.mCodeI.srcA.v);
+	// SRC_B has the CS we need to return to
+	m_registers[REGISTERS::R_CS].put(m_cInstr.mCodeI.srcB.v);
+	MCODE_DEBUG("RETN to CS:IP = " + icarus::util::ToHexStr(m_cInstr.mCodeI.srcB.v) + ":" + icarus::util::ToHexStr(m_cInstr.mCodeI.srcA.v));
+}
+
+void Processor_8086::mcode_fnInt() {
+	// Execute an interrupt
+	uint32_t intAddressBase = m_cInstr.immediate * 4; // Get the address in the IVT (segment 0) that we need to look at
+
+	// We now need to push the flags register to the stack
+	m_cInstr.mCodeI.srcA.v = m_registers[REGISTERS::R_FLAGS].read();
+	m_cInstr.mCodeI.srcA.bytes = 2;
+	mcode_stackPush(m_cInstr.mCodeI.srcA);
+
+	// Now set IE to 0
+	m_registers[REGISTERS::R_FLAGS].clearBit(FLAGS_IE);
+
+	m_addressBus.putData(intAddressBase);
+
+	// Now execute the far jump, loading srcA with intAddressBase (segOffset) and srcB with (intAddressBase + 2) (seg), both 2 byte
+	m_cInstr.mCodeI.srcA.bytes = 2;
+	m_mmu.fillBus(m_dataBus, m_addressBus, icarus::memory::MMU::ReadType::LittleEndian);
+	m_cInstr.mCodeI.srcA.v = m_dataBus.readData();
+
+	m_addressBus.putData(intAddressBase + 2);
+
+	m_cInstr.mCodeI.srcB.bytes = 2;
+	m_mmu.fillBus(m_dataBus, m_addressBus, icarus::memory::MMU::ReadType::LittleEndian);
+	m_cInstr.mCodeI.srcB.v = m_dataBus.readData();
+
+	mcode_fnCallFarAbs();
+}
+
+void Processor_8086::mcode_fnIRet() {
+	// We need to return from an interrupt. On the stack is, in order:
+	// IP
+	// CS
+	// FLAGS
+
+	// RetnFar takes srcA=IP, srcB=CS
+	m_cInstr.mCodeI.srcA.bytes = 2;
+	m_cInstr.mCodeI.srcB.bytes = 2;
+	mcode_stackPop(m_cInstr.mCodeI.srcA); // Free IP
+	mcode_stackPop(m_cInstr.mCodeI.srcB); // Free CS
+	// Call the retn function
+	mcode_fnRetnFar();
+
+	// Now pop FLAGS
+	mcode_stackPop(m_cInstr.mCodeI.srcA); // Free FLAGS
+	// Now put flags
+	m_registers[REGISTERS::R_FLAGS].put(m_cInstr.mCodeI.srcA.v);
 }

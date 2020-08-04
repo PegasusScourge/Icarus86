@@ -83,25 +83,40 @@ unsigned int ip::Processor_8086::fetchDecode() {
 	
 	DECODE8086_DEBUG("**********************---- <DECODE> ----**********************");
 
-	unsigned int cyclesToWait = 1;
-
-	// Load the address bus with the address
-	unsigned int increment = 0;
-	uint16_t ipVal = m_registers[REGISTERS::R_IP].read();
-	m_addressBus.putData(getSegmentedAddress(SEGMENT::S_CODE,ipVal));
-	if (!m_mmu.tryReadByte(m_dataBus, m_addressBus)) {
-		// Failed to read a byte
-		icarus::COutSys::Println("Processor8086 failed to read byte", icarus::COutSys::LEVEL_ERR);
-		triggerError();
-		return 0;
-	}
-
-	ipi::ICode& instr = m_iSet[(uint8_t)m_dataBus.readData()];
+	ipi::ICode instr = m_iSet[(uint8_t)m_dataBus.readData()];
 	unsigned int attempts = 1;
+	unsigned int cyclesToWait = 1;
+	int increment = 0;
+	uint16_t ipVal = 0;
 
-	while (instr.isValid() && instr.isPrefix()) {
-		attempts++;
-		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_CODE,ipVal + (++increment)));
+	// Do a check for interrupts
+	if (hasInterrruptRequests() && m_registers[REGISTERS::R_FLAGS].getBit(FLAGS_IE)) {
+		// Requests found, service the first request.
+		// We need to setup the ICode
+		constexpr uint8_t intHex = 0xCD; // Code for the interrupt
+		uint8_t intVector = getNextInterruptRequest();
+
+		DECODE8086_DEBUG("INTERRUPT REQUEST: INT " + icarus::util::ToHexStr(intVector, true));
+
+		// Load the instr
+		instr = m_iSet[intHex];
+		// Load the immediate 8 byte with intVector
+		m_cInstr.numImmeditateBytes = 1;
+		m_cInstr.immediate = intVector;
+
+		// Load the microcode
+		m_cInstr.microcode = instr.getMicrocode();
+
+		// IMPORTANT: set increment to -1 to counteract the IP increment at the end of this function
+		increment = -1;
+	}
+	else {
+
+		// No interrupt
+
+		// Load the address bus with the address
+		ipVal = m_registers[REGISTERS::R_IP].read();
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_CODE, ipVal));
 		if (!m_mmu.tryReadByte(m_dataBus, m_addressBus)) {
 			// Failed to read a byte
 			icarus::COutSys::Println("Processor8086 failed to read byte", icarus::COutSys::LEVEL_ERR);
@@ -109,146 +124,160 @@ unsigned int ip::Processor_8086::fetchDecode() {
 			return 0;
 		}
 
-		instr = instr[(uint8_t)m_dataBus.readData()];
-	}
+		instr = m_iSet[(uint8_t)m_dataBus.readData()];
 
-	DECODE8086_DEBUG("Instr code = " + icarus::util::ToHexStr(instr.getCode()) + ", dBusCode = " + icarus::util::ToHexStr(m_dataBus.readData()));
-	DECODE8086_DEBUG("AddressBus = " + icarus::util::ToHexStr(m_addressBus.readData()));
-	DECODE8086_DEBUG("(Instr attempts: " + std::to_string(attempts) + ")");
+		while (instr.isValid() && instr.isPrefix()) {
+			attempts++;
+			m_addressBus.putData(getSegmentedAddress(SEGMENT::S_CODE, ipVal + (++increment)));
+			if (!m_mmu.tryReadByte(m_dataBus, m_addressBus)) {
+				// Failed to read a byte
+				icarus::COutSys::Println("Processor8086 failed to read byte", icarus::COutSys::LEVEL_ERR);
+				triggerError();
+				return 0;
+			}
 
-	if (!instr.isValid()) {
-		// Failed to get a valid instruction
-		icarus::COutSys::Println("Processor8086 failed to get valid instr", icarus::COutSys::LEVEL_ERR);
-		triggerError();
-		return 0;
-	}
+			instr = instr[(uint8_t)m_dataBus.readData()];
+		}
 
-	DECODE8086_DEBUG("Instr valid");
+		DECODE8086_DEBUG("Instr code = " + icarus::util::ToHexStr(instr.getCode()) + ", dBusCode = " + icarus::util::ToHexStr(m_dataBus.readData()));
+		DECODE8086_DEBUG("AddressBus = " + icarus::util::ToHexStr(m_addressBus.readData()));
+		DECODE8086_DEBUG("(Instr attempts: " + std::to_string(attempts) + ")");
 
-	m_cInstr.code = instr.getCode();
-	
-	// Check for segmenet override
-	if (m_cInstr.hasSegOverride && m_cInstr.usedSegOverride) {
-		// We have used the seg override, discard it now
-		m_cInstr.hasSegOverride = false;
-		m_cInstr.usedSegOverride = false;
-	}
-	else if (m_cInstr.hasSegOverride && !m_cInstr.usedSegOverride) {
-		// We have a seg override set up from the past instruction (which was a seg override),
-		// mark as used so we can discard it next time
-		m_cInstr.usedSegOverride = true;
-	}
-
-	DECODE8086_DEBUG("Instr mnemonic: " + instr.getMnemonic());
-
-	// We have a valid instruction, now lets get the microcode
-	m_cInstr.microcode = instr.getMicrocode();
-	if (m_cInstr.microcode.size() == 0) {
-		// No microcode!
-		icarus::COutSys::Println("Processor8086 found no microcode in instr", icarus::COutSys::LEVEL_WARN);
-		return 0;
-	}
-	DECODE8086_DEBUG("Has microcode");
-
-	// The number of displacement and immediate bytes can be modified by the ModRM value. So we cache here in order to increment
-	unsigned int numDispBytes = instr.numDisplacementBytes();
-	unsigned int numImmBytes = instr.numImmediateBytes();
-
-	// Get a ModRMByte if needed
-	m_cInstr.modRMByte.setByte(0);
-	if (instr.hasModRM()) {
-		DECODE8086_DEBUG("Has modrm");
-		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_CODE,ipVal + (++increment)));
-		if (!m_mmu.tryReadByte(m_dataBus, m_addressBus)) {
-			// Failed to read a byte
-			icarus::COutSys::Println("Processor8086 failed to read byte (for ModRM)", icarus::COutSys::LEVEL_ERR);
+		if (!instr.isValid()) {
+			// Failed to get a valid instruction
+			icarus::COutSys::Println("Processor8086 failed to get valid instr", icarus::COutSys::LEVEL_ERR);
 			triggerError();
 			return 0;
 		}
-		m_cInstr.modRMByte.setByte((uint8_t)m_dataBus.readData());
-		DECODE8086_DEBUG("MODRM = " + icarus::util::ToHexStr(m_dataBus.readData()));
 
-		// Now we need to detect if we have a modifying value that will necessitate adding disp or imm bytes.
-		if (numDispBytes == 0) {
-			if (m_cInstr.modRMByte.MOD() == 0b01) {
-				// We need to have one displacement byte!
-				numDispBytes++;
-				DECODE8086_DEBUG("MODRM indicated need for one displacement byte where instruction set doesn't, adding");
-			}
-			if (m_cInstr.modRMByte.MOD() == 0b10) {
-				// We need to have two displacement bytes!
-				numDispBytes += 2;
-				DECODE8086_DEBUG("MODRM indicated need for two displacement bytes where instruction set doesn't, adding");
-			}
-			if (m_cInstr.modRMByte.MOD() == 0b00 && m_cInstr.modRMByte.RM() == 0b110) {
-				// We need to have two displacement bytes!
-				numDispBytes += 2;
-				DECODE8086_DEBUG("MODRM indicated need for two displacement bytes where instruction set doesn't, adding");
-			}
+		DECODE8086_DEBUG("Instr valid");
+
+		m_cInstr.code = instr.getCode();
+
+		// Check for segmenet override
+		if (m_cInstr.hasSegOverride && m_cInstr.usedSegOverride) {
+			// We have used the seg override, discard it now
+			m_cInstr.hasSegOverride = false;
+			m_cInstr.usedSegOverride = false;
 		}
-	}
+		else if (m_cInstr.hasSegOverride && !m_cInstr.usedSegOverride) {
+			// We have a seg override set up from the past instruction (which was a seg override),
+			// mark as used so we can discard it next time
+			m_cInstr.usedSegOverride = true;
+		}
 
-	// Get displacment bytes if needed
-	m_cInstr.displacement = 0;
-	if (numDispBytes > 0) {
-		DECODE8086_DEBUG("Has displacement");
-		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_CODE,ipVal + (++increment)));
-		m_cInstr.numDisplacementBytes = numDispBytes;
-		switch (numDispBytes) {
-		case 2:
-			DECODE8086_DEBUG("2 Byte");
-			m_mmu.readByte(m_dataBus, m_addressBus);
-			m_cInstr.displacement |= m_dataBus.readData();
-			m_addressBus.putData(getSegmentedAddress(SEGMENT::S_CODE,ipVal + (++increment)));
-			m_mmu.readByte(m_dataBus, m_addressBus);
-			m_cInstr.displacement |= (m_dataBus.readData() << 8);
-			break;
-		case 1:
-			DECODE8086_DEBUG("1 Byte");
-			m_mmu.readByte(m_dataBus, m_addressBus);
-			m_cInstr.displacement |= m_dataBus.readData();
-			break;
+		DECODE8086_DEBUG("Instr mnemonic: " + instr.getMnemonic());
 
-		default:
-			// Error getting displacement bytes
-			icarus::COutSys::Println("Processor8086 failed to get displacement bytes (num=" + 
-				std::to_string(numDispBytes) + ")", icarus::COutSys::LEVEL_ERR);
-			triggerError();
+		// We have a valid instruction, now lets get the microcode
+		m_cInstr.microcode = instr.getMicrocode();
+		if (m_cInstr.microcode.size() == 0) {
+			// No microcode!
+			icarus::COutSys::Println("Processor8086 found no microcode in instr", icarus::COutSys::LEVEL_WARN);
 			return 0;
 		}
-	}
+		DECODE8086_DEBUG("Has microcode");
 
-	// Get immediate bytes if needed
-	m_cInstr.immediate = 0;
-	if (numImmBytes > 0) {
-		DECODE8086_DEBUG("Has immediate");
-		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_CODE,ipVal + (++increment)));
-		m_cInstr.numImmeditateBytes = numImmBytes;
-		switch (numImmBytes) {
-		case 2:
-			DECODE8086_DEBUG("2 Byte");
-			m_mmu.readByte(m_dataBus, m_addressBus);
-			m_cInstr.immediate |= m_dataBus.readData();
-			m_addressBus.putData(getSegmentedAddress(SEGMENT::S_CODE,ipVal + (++increment)));
-			m_mmu.readByte(m_dataBus, m_addressBus);
-			m_cInstr.immediate |= (m_dataBus.readData() << 8);
-			break;
-		case 1:
-			DECODE8086_DEBUG("1 Byte");
-			m_mmu.readByte(m_dataBus, m_addressBus);
-			m_cInstr.immediate |= m_dataBus.readData();
-			break;
+		// The number of displacement and immediate bytes can be modified by the ModRM value. So we cache here in order to increment
+		unsigned int numDispBytes = instr.numDisplacementBytes();
+		unsigned int numImmBytes = instr.numImmediateBytes();
 
-		default:
-			// Error getting displacement bytes
-			icarus::COutSys::Println("Processor8086 failed to get immediate bytes (num=" +
-				std::to_string(numImmBytes) + ")", icarus::COutSys::LEVEL_ERR);
-			triggerError();
-			return 0;
+		// Get a ModRMByte if needed
+		m_cInstr.modRMByte.setByte(0);
+		if (instr.hasModRM()) {
+			DECODE8086_DEBUG("Has modrm");
+			m_addressBus.putData(getSegmentedAddress(SEGMENT::S_CODE, ipVal + (++increment)));
+			if (!m_mmu.tryReadByte(m_dataBus, m_addressBus)) {
+				// Failed to read a byte
+				icarus::COutSys::Println("Processor8086 failed to read byte (for ModRM)", icarus::COutSys::LEVEL_ERR);
+				triggerError();
+				return 0;
+			}
+			m_cInstr.modRMByte.setByte((uint8_t)m_dataBus.readData());
+			DECODE8086_DEBUG("MODRM = " + icarus::util::ToHexStr(m_dataBus.readData()));
+
+			// Now we need to detect if we have a modifying value that will necessitate adding disp or imm bytes.
+			if (numDispBytes == 0) {
+				if (m_cInstr.modRMByte.MOD() == 0b01) {
+					// We need to have one displacement byte!
+					numDispBytes++;
+					DECODE8086_DEBUG("MODRM indicated need for one displacement byte where instruction set doesn't, adding");
+				}
+				if (m_cInstr.modRMByte.MOD() == 0b10) {
+					// We need to have two displacement bytes!
+					numDispBytes += 2;
+					DECODE8086_DEBUG("MODRM indicated need for two displacement bytes where instruction set doesn't, adding");
+				}
+				if (m_cInstr.modRMByte.MOD() == 0b00 && m_cInstr.modRMByte.RM() == 0b110) {
+					// We need to have two displacement bytes!
+					numDispBytes += 2;
+					DECODE8086_DEBUG("MODRM indicated need for two displacement bytes where instruction set doesn't, adding");
+				}
+			}
 		}
+
+		// Get displacment bytes if needed
+		m_cInstr.displacement = 0;
+		if (numDispBytes > 0) {
+			DECODE8086_DEBUG("Has displacement");
+			m_addressBus.putData(getSegmentedAddress(SEGMENT::S_CODE, ipVal + (++increment)));
+			m_cInstr.numDisplacementBytes = numDispBytes;
+			switch (numDispBytes) {
+			case 2:
+				DECODE8086_DEBUG("2 Byte");
+				m_mmu.readByte(m_dataBus, m_addressBus);
+				m_cInstr.displacement |= m_dataBus.readData();
+				m_addressBus.putData(getSegmentedAddress(SEGMENT::S_CODE, ipVal + (++increment)));
+				m_mmu.readByte(m_dataBus, m_addressBus);
+				m_cInstr.displacement |= (m_dataBus.readData() << 8);
+				break;
+			case 1:
+				DECODE8086_DEBUG("1 Byte");
+				m_mmu.readByte(m_dataBus, m_addressBus);
+				m_cInstr.displacement |= m_dataBus.readData();
+				break;
+
+			default:
+				// Error getting displacement bytes
+				icarus::COutSys::Println("Processor8086 failed to get displacement bytes (num=" +
+					std::to_string(numDispBytes) + ")", icarus::COutSys::LEVEL_ERR);
+				triggerError();
+				return 0;
+			}
+		}
+
+		// Get immediate bytes if needed
+		m_cInstr.immediate = 0;
+		if (numImmBytes > 0) {
+			DECODE8086_DEBUG("Has immediate");
+			m_addressBus.putData(getSegmentedAddress(SEGMENT::S_CODE, ipVal + (++increment)));
+			m_cInstr.numImmeditateBytes = numImmBytes;
+			switch (numImmBytes) {
+			case 2:
+				DECODE8086_DEBUG("2 Byte");
+				m_mmu.readByte(m_dataBus, m_addressBus);
+				m_cInstr.immediate |= m_dataBus.readData();
+				m_addressBus.putData(getSegmentedAddress(SEGMENT::S_CODE, ipVal + (++increment)));
+				m_mmu.readByte(m_dataBus, m_addressBus);
+				m_cInstr.immediate |= (m_dataBus.readData() << 8);
+				break;
+			case 1:
+				DECODE8086_DEBUG("1 Byte");
+				m_mmu.readByte(m_dataBus, m_addressBus);
+				m_cInstr.immediate |= m_dataBus.readData();
+				break;
+
+			default:
+				// Error getting displacement bytes
+				icarus::COutSys::Println("Processor8086 failed to get immediate bytes (num=" +
+					std::to_string(numImmBytes) + ")", icarus::COutSys::LEVEL_ERR);
+				triggerError();
+				return 0;
+			}
+		}
+
+		DECODE8086_DEBUG("IP = " + icarus::util::ToHexStr(m_registers[REGISTERS::R_IP].read()));
+
 	}
-	
-	DECODE8086_DEBUG("IP = " + icarus::util::ToHexStr(m_registers[REGISTERS::R_IP].read()));
 
 	// Update the last instruction
 	LastInstruction_t lastInstr;
@@ -369,3 +398,4 @@ void ip::Processor_8086::onGetProcessorState() {
 
 	m_state.flagsRegBin = icarus::util::ToBinaryStr(m_registers[REGISTERS::R_FLAGS].read());
 }
+

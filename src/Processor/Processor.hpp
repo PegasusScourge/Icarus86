@@ -61,7 +61,16 @@ namespace icarus {
 			// Breakpoints
 			std::vector<Breakpoint> m_breakpoints;
 
+			// Interrupt schedules
+			std::vector<uint8_t> m_intCodeSchedule;
+
 			virtual void onError() = 0;
+
+			/*
+			virtual void onGetProcessorState()
+			Called when getProcessorState() is called
+			*/
+			virtual void onGetProcessorState() = 0;
 
 		protected:
 			// ALU
@@ -76,27 +85,21 @@ namespace icarus {
 			// Reset
 			bool m_isReset = true;
 
-			void triggerError() {
-				m_failed = true;
-				onError();
-			}
+			void triggerError();
 
-			/*
-			virtual void onGetProcessorState()
-			Called when getProcessorState() is called
-			*/
-			virtual void onGetProcessorState() = 0;
+			bool hasInterrruptRequests();
+			uint8_t getNextInterruptRequest();
 
 		public:
-			void setClockRateMHz(float clockRateMHz) { if (clockRateMHz <= 0) { return; } m_clockRateMHz = clockRateMHz; }
-			float getClockRateMHz() { return m_clockRateMHz; }
+			void setClockRateMHz(float clockRateMHz);
+			float getClockRateMHz();
 
-			std::string getName() { return m_name; }
+			std::string getName();
 
-			bool isFailed() { return m_failed; }
+			bool isFailed();
 
-			void setHLT(bool h) { m_isHLT = h; }
-			bool isHLT() { return m_isHLT; }
+			void setHLT(bool h);
+			bool isHLT();
 
 			virtual void forceIP(uint64_t ip) = 0;
 			virtual void forceSP(uint64_t sp) = 0;
@@ -132,36 +135,25 @@ namespace icarus {
 			ProcessorState& getProcessorState()
 			Returns the processor state. Calls onGetProcessorState() which can be overriden to provide functionality if needed
 			*/
-			ProcessorState& getProcessorState() {
-				onGetProcessorState();
-				return m_state;
-			}
+			ProcessorState& getProcessorState();
 
 			/*
 			void addBreakpoint(Breakpoint bp)
 			Adds a breakpoint
 			*/
-			void addBreakpoint(Breakpoint bp) {
-				m_breakpoints.push_back(bp);
-			}
+			void addBreakpoint(Breakpoint bp);
 
 			/*
 			bool checkBreakpoint()
 			Returns true if a breakpoint has been reached
 			*/
-			bool checkBreakpoint() {
-				for (auto& bp : m_breakpoints) {
-					if (bp.byAddress) {
-						if (m_state.lastInstrs[0].ip == bp.address)
-							return true;
-					}
-					else if (bp.byInstruction) {
-						if (m_state.lastInstrs[0].iCode.getCode() == bp.instruction)
-							return true;
-					}
-				}
-				return false;
-			}
+			bool checkBreakpoint();
+
+			/*
+			void requestInterrupt(uint8_t intCode)
+			Schedules an interrupt as if INT 0x(intCode) had been called
+			*/
+			void requestInterrupt(uint8_t intCode);
 
 		};
 

@@ -133,45 +133,38 @@ void Processor_8086::mcode_toSrcFromMem00(Processor_8086::CurrentInstruction::Mi
 	switch (sval) {
 	case 0b000: // [BX + SI]
 		MCODE_DEBUG("SRC = MEM [BX + SI]");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA, m_registers[REGISTERS::R_BX].read() + m_registers[REGISTERS::R_SI].read()));
 		break;
 
 	case 0b001: // [BX + DI]
 		MCODE_DEBUG("SRC = MEM [BX + DI]");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA, m_registers[REGISTERS::R_BX].read() + m_registers[REGISTERS::R_DI].read()));
 		break;
 
 	case 0b010: // [BP + SI]
 		MCODE_DEBUG("SRC = MEM [BP + SI]");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA, m_registers[REGISTERS::R_BP].read() + m_registers[REGISTERS::R_SI].read()));
 		break;
 
 	case 0b011: // [BP + DI]
 		MCODE_DEBUG("SRC = MEM [BP + DI]");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA, m_registers[REGISTERS::R_BP].read() + m_registers[REGISTERS::R_DI].read()));
 		break;
 
 	case 0b100: // [SI]
 		MCODE_DEBUG("SRC = MEM [SI]");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA, m_registers[REGISTERS::R_SI].read()));
 		break;
 
 	case 0b101: // [DI]
 		MCODE_DEBUG("SRC = MEM [DI]");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA, m_registers[REGISTERS::R_DI].read()));
 		break;
 
 	case 0b110: // [sword]
 		MCODE_DEBUG("SRC = MEM [sword], where sword=" + icarus::util::ToHexStr(m_cInstr.displacement));
 		// We need to read memory at the position of the immediate byte, and then put that in the src
 		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA,m_cInstr.displacement));
-
 		break;
 
 	case 0b111: // [BX]
@@ -201,8 +194,7 @@ void Processor_8086::mcode_toSrcFromMem10(Processor_8086::CurrentInstruction::Mi
 	switch (sval) {
 	case 0b000: // [BX + SI + sword]
 		MCODE_DEBUG("SRC = MEM [BX + SI + sword]");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA, m_registers[REGISTERS::R_BX].read() + m_registers[REGISTERS::R_SI].read() + m_cInstr.displacement));
 		break;
 
 	case 0b001: // [BX + DI + sword]
@@ -212,20 +204,17 @@ void Processor_8086::mcode_toSrcFromMem10(Processor_8086::CurrentInstruction::Mi
 
 	case 0b010: // [BP + SI + sword]
 		MCODE_DEBUG("SRC = MEM [BP + SI + sword]");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA, m_registers[REGISTERS::R_BP].read() + m_registers[REGISTERS::R_SI].read() + m_cInstr.displacement));
 		break;
 
 	case 0b011: // [BP + DI + sword]
-		MCODE_DEBUG("SRC = MEM [BP + DI + sword");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		MCODE_DEBUG("SRC = MEM [BP + DI + sword]");
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA, m_registers[REGISTERS::R_BP].read() + m_registers[REGISTERS::R_DI].read() + m_cInstr.displacement));
 		break;
 
 	case 0b100: // [SI + sword]
 		MCODE_DEBUG("SRC = MEM [SI + sword]");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA, m_registers[REGISTERS::R_SI].read() + m_cInstr.displacement));
 		break;
 
 	case 0b101: // [DI + sword]
@@ -234,9 +223,8 @@ void Processor_8086::mcode_toSrcFromMem10(Processor_8086::CurrentInstruction::Mi
 		break;
 
 	case 0b110: // [BP + sword]
-		MCODE_DEBUG("SRC = MEM [BP + sword], where sword=" + icarus::util::ToHexStr(m_cInstr.displacement));
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		MCODE_DEBUG("SRC = MEM [BP + sword]");
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA, m_registers[REGISTERS::R_BP].read() + m_cInstr.displacement));
 		break;
 
 	case 0b111: // [BX + sword]
@@ -293,8 +281,7 @@ void Processor_8086::mcode_getSrcModRM() {
 		break;
 	case 0b01: // Memory addressing + displacement8
 		MCODE_DEBUG("SRC = M+disp8");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		mcode_toSrcFromMem10(src, m_cInstr.modRMByte.RM()); // Disp8
 		break;
 	case 0b10: // Memory addressing + displacement16
 		MCODE_DEBUG("SRC = M+disp16");

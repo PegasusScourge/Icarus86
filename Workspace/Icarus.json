@@ -30,7 +30,7 @@
 		}
 	],
 	"force_load": {
-		"path": "bios_v1.bin",
+		"path": "bios.bin",
 		"address": "FC000"
 	}
 }
