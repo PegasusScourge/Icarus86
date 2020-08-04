@@ -73,6 +73,9 @@ namespace icarus {
 			// Processor state
 			ProcessorState m_state;
 
+			// Reset
+			bool m_isReset = true;
+
 			void triggerError() {
 				m_failed = true;
 				onError();

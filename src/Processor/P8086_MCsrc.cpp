@@ -12,6 +12,7 @@ Microcode execution functions definitions: microcode SRC instructions in this fi
 
 #include "../COutSys.hpp"
 #include "../Constexprs.hpp"
+#include "../Util.hpp"
 
 using namespace icarus::processor::instruction;
 using namespace icarus::processor;
@@ -167,7 +168,7 @@ void Processor_8086::mcode_toSrcFromMem00(Processor_8086::CurrentInstruction::Mi
 		break;
 
 	case 0b110: // [sword]
-		MCODE_DEBUG("SRC = MEM [sword], where sword=" + COutSys::ToHexStr(m_cInstr.displacement));
+		MCODE_DEBUG("SRC = MEM [sword], where sword=" + icarus::util::ToHexStr(m_cInstr.displacement));
 		// We need to read memory at the position of the immediate byte, and then put that in the src
 		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA,m_cInstr.displacement));
 
@@ -184,7 +185,7 @@ void Processor_8086::mcode_toSrcFromMem00(Processor_8086::CurrentInstruction::Mi
 		break;
 	}
 
-	MCODE_DEBUG("READ from " + icarus::COutSys::ToHexStr(m_addressBus.readData()) + " of " + std::to_string(m_cInstr.mCodeI.dst.bytes) + " bytes");
+	MCODE_DEBUG("READ from " + icarus::util::ToHexStr(m_addressBus.readData()) + " of " + std::to_string(m_cInstr.mCodeI.dst.bytes) + " bytes");
 	if (src.bytes == 1) {
 		m_mmu.readByte(m_dataBus, m_addressBus);
 	}
@@ -233,7 +234,7 @@ void Processor_8086::mcode_toSrcFromMem10(Processor_8086::CurrentInstruction::Mi
 		break;
 
 	case 0b110: // [BP + sword]
-		MCODE_DEBUG("SRC = MEM [BP + sword], where sword=" + COutSys::ToHexStr(m_cInstr.displacement));
+		MCODE_DEBUG("SRC = MEM [BP + sword], where sword=" + icarus::util::ToHexStr(m_cInstr.displacement));
 		MCODE_DEBUG_ERR("Not implemented!");
 		triggerError();
 		break;
@@ -249,7 +250,7 @@ void Processor_8086::mcode_toSrcFromMem10(Processor_8086::CurrentInstruction::Mi
 		break;
 	}
 
-	MCODE_DEBUG("READ from " + icarus::COutSys::ToHexStr(m_addressBus.readData()) + " of " + std::to_string(m_cInstr.mCodeI.dst.bytes) + " bytes");
+	MCODE_DEBUG("READ from " + icarus::util::ToHexStr(m_addressBus.readData()) + " of " + std::to_string(m_cInstr.mCodeI.dst.bytes) + " bytes");
 	if (src.bytes == 1) {
 		m_mmu.readByte(m_dataBus, m_addressBus);
 	}
@@ -266,6 +267,15 @@ void Processor_8086::mcode_getSrcImm() {
 
 	src.bytes = m_cInstr.numImmeditateBytes;
 	src.v = m_cInstr.immediate;
+}
+
+void Processor_8086::mcode_getSrcDisp() {
+	// We get the source from the displacement value.
+	// We simply copy
+	auto& src = mcode_getNextSrc();
+
+	src.bytes = m_cInstr.numDisplacementBytes;
+	src.v = m_cInstr.displacement;
 }
 
 void Processor_8086::mcode_getSrcModRM() {

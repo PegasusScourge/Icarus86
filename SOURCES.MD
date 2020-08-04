@@ -26,3 +26,7 @@
  - [BIOS data area](http://www.phatcode.net/res/236/files/html/bios_data_area.html)
  - [BIOS interrupt table, wikipedia](https://en.wikipedia.org/wiki/BIOS_interrupt_call)
  - [IVT layout](https://stanislavs.org/helppc/int_table.html)
+ - [OS Dev Wiki](https://wiki.osdev.org/Expanded_Main_Page)
+ - [I/O address space spec](http://bochs.sourceforge.net/techspec/PORTS.LST)
+ - [OS Dev IO Port spec](https://wiki.osdev.org/I/O_Ports)
+ - [Floppy controller spec](http://www.buchty.net/casio/files/82077.pdf)

@@ -363,13 +363,13 @@ void i::Icarus86::parseCFG() {
 				continue;
 			}
 
-			if (!block["size"].is_number() || !block["startAddress"].is_number()) {
+			if (!block["size"].is_string() || !block["startAddress"].is_string()) {
 				i::COutSys::Println("[CFG] Memory block creation failed: missing size and address spec", i::COutSys::LEVEL_ERR);
 				continue;
 			}
 
-			unsigned int size = block["size"]; 
-			unsigned int startAddress = block["startAddress"];
+			unsigned int size = icarus::util::HexStrToNum(block["size"].get<std::string>()); 
+			unsigned int startAddress = icarus::util::HexStrToNum(block["startAddress"].get<std::string>());
 			m_mmu.addMemoryBlock(startAddress, size);
 			i::COutSys::Println("[CFG] Memory block created with address=" + std::to_string(startAddress) + ", size=" + std::to_string(size), i::COutSys::LEVEL_INFO);
 
@@ -401,7 +401,7 @@ void i::Icarus86::parseCFG() {
 			std::vector<char> binaryContent((std::istreambuf_iterator<char>(is)), (std::istreambuf_iterator<char>()));
 
 			i::COutSys::Println("[CFG] Got content of file: size=" + icarus::util::ToHexStr(binaryContent.size(), true), i::COutSys::LEVEL_INFO);
-			i::COutSys::Print("[CFG] Content dump:", i::COutSys::LEVEL_INFO);
+			/*i::COutSys::Print("[CFG] Content dump:", i::COutSys::LEVEL_INFO);
 			for (size_t i = 0; i < binaryContent.size(); i++) {
 				if (i % 16 == 0) {
 					i::COutSys::Println("");
@@ -409,10 +409,10 @@ void i::Icarus86::parseCFG() {
 				}
 				i::COutSys::Print(i::util::ToHexStr((uint8_t)binaryContent[i]) + " ");
 			}
-			i::COutSys::Println("");
+			i::COutSys::Println("");*/
 			// Load the file
 			i::COutSys::Println("[CFG] Loading file into memory ", i::COutSys::LEVEL_INFO);
-			m_addressBus.putData(0);
+			m_addressBus.putData(address);
 			for (auto& v : binaryContent) {
 				m_dataBus.putData((uint8_t)v);
 				m_mmu.writeByte(m_dataBus, m_addressBus);
@@ -527,7 +527,7 @@ void i::Icarus86::drawStatistics(sf::RenderWindow& window) {
 	}
 
 	float tempY2 = y;
-	y = tempY; tempX = x; x += 200;
+	y = tempY; tempX = x; x += 650;
 
 	// Draw the flags 
 	text.setFillColor(sf::Color::Cyan);

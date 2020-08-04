@@ -25,9 +25,12 @@ Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 
 	else if (s.compare("SE_SRC_B") == 0) { return Microcode::MicrocodeType::SE_SRC_B; }
 
+	else if (s.compare("SEG_OVERRIDE_ES") == 0) { return Microcode::MicrocodeType::SEG_OVERRIDE_ES; }
+
 	else if (s.compare("SRC_REGOP") == 0) { return Microcode::MicrocodeType::SRC_REGOP; }
 	else if (s.compare("SRC_MODRM") == 0) { return Microcode::MicrocodeType::SRC_MODRM; }
 	else if (s.compare("SRC_IMM") == 0) { return Microcode::MicrocodeType::SRC_IMM; }
+	else if (s.compare("SRC_DISP") == 0) { return Microcode::MicrocodeType::SRC_DISP; }
 
 	else if (s.compare("SRC_STACK_POP") == 0) { return Microcode::MicrocodeType::SRC_STACK_POP; }
 
@@ -37,8 +40,13 @@ Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 	else if (s.compare("SRC_R_CX") == 0) { return Microcode::MicrocodeType::SRC_R_CX; }
 	else if (s.compare("SRC_R_DX") == 0) { return Microcode::MicrocodeType::SRC_R_DX; }
 	else if (s.compare("SRC_R_DI") == 0) { return Microcode::MicrocodeType::SRC_R_DI; }
+	else if (s.compare("SRC_R_DS") == 0) { return Microcode::MicrocodeType::SRC_R_DS; }
+	else if (s.compare("SRC_R_CS") == 0) { return Microcode::MicrocodeType::SRC_R_CS; }
+	else if (s.compare("SRC_R_ES") == 0) { return Microcode::MicrocodeType::SRC_R_ES; }
+	else if (s.compare("SRC_R_SS") == 0) { return Microcode::MicrocodeType::SRC_R_SS; }
 
 	else if (s.compare("DST_REGOP") == 0) { return Microcode::MicrocodeType::DST_REGOP; }
+	else if (s.compare("DST_REGOP_SREG") == 0) { return Microcode::MicrocodeType::DST_REGOP_SREG; }
 	else if (s.compare("DST_MODRM") == 0) { return Microcode::MicrocodeType::DST_MODRM; }
 
 	else if (s.compare("DST_STACK_PUSH") == 0) { return Microcode::MicrocodeType::DST_STACK_PUSH; }
@@ -52,6 +60,10 @@ Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 	else if (s.compare("DST_R_DX") == 0) { return Microcode::MicrocodeType::DST_R_DX; }
 	else if (s.compare("DST_R_SP") == 0) { return Microcode::MicrocodeType::DST_R_SP; }
 	else if (s.compare("DST_R_DI") == 0) { return Microcode::MicrocodeType::DST_R_DI; }
+	else if (s.compare("DST_R_DS") == 0) { return Microcode::MicrocodeType::DST_R_DS; }
+	else if (s.compare("DST_R_CS") == 0) { return Microcode::MicrocodeType::DST_R_CS; }
+	else if (s.compare("DST_R_ES") == 0) { return Microcode::MicrocodeType::DST_R_ES; }
+	else if (s.compare("DST_R_SS") == 0) { return Microcode::MicrocodeType::DST_R_SS; }
 
 	else if (s.compare("FN_ADD") == 0) { return Microcode::MicrocodeType::FN_ADD; }
 	else if (s.compare("FN_ADC") == 0) { return Microcode::MicrocodeType::FN_ADC; }
@@ -66,6 +78,8 @@ Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 
 	else if (s.compare("FN_CLC") == 0) { return Microcode::MicrocodeType::FN_CLC; }
 	else if (s.compare("FN_STC") == 0) { return Microcode::MicrocodeType::FN_STC; }
+	else if (s.compare("FN_CLI") == 0) { return Microcode::MicrocodeType::FN_CLI; }
+	else if (s.compare("FN_STI") == 0) { return Microcode::MicrocodeType::FN_STI; }
 
 	else if (s.compare("FN_MOV") == 0) { return Microcode::MicrocodeType::FN_MOV; }
 	else if (s.compare("FN_XCHG") == 0) { return Microcode::MicrocodeType::FN_XCHG; }
@@ -75,6 +89,7 @@ Microcode::MicrocodeType Microcode::GetTypeFromString(std::string s) {
 	else if (s.compare("FN_RETN_NEAR") == 0) { return Microcode::MicrocodeType::FN_RETN_NEAR; }
 
 	else if (s.compare("FN_JMP") == 0) { return Microcode::MicrocodeType::FN_JMP; }
+	else if (s.compare("FN_JMPF") == 0) { return Microcode::MicrocodeType::FN_JMPF; }
 	else if (s.compare("FN_JZ") == 0) { return Microcode::MicrocodeType::FN_JZ; }
 	else if (s.compare("FN_JNZ") == 0) { return Microcode::MicrocodeType::FN_JNZ; }
 	else if (s.compare("FN_JC") == 0) { return Microcode::MicrocodeType::FN_JC; }

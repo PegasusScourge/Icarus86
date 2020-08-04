@@ -12,6 +12,7 @@ Microcode execution functions definitions: microcode DST instructions in this fi
 
 #include "../COutSys.hpp"
 #include "../Constexprs.hpp"
+#include "../Util.hpp"
 
 using namespace icarus::processor::instruction;
 using namespace icarus::processor;
@@ -115,6 +116,49 @@ void Processor_8086::mcode_toDstFromReg(uint8_t sval) {
 		default:
 			// ERROR
 			MCODE_DEBUG_ERR("DST = REGISTER_ERROR");
+			triggerError();
+			break;
+		}
+		// Put our dst.v
+		m_registers[reg].put(m_cInstr.mCodeI.dst.v);
+	}
+}
+
+void Processor_8086::mcode_toDstFromSReg(uint8_t sval) {
+	if (!m_cInstr.mCodeI.dstEnabled) {
+		// Not allowed to write to dst
+		MCODE_DEBUG("!dstEnabled: not writing to destination");
+		return;
+	}
+
+	MCODE_DEBUG("SVAL = " + std::to_string(sval));
+
+	if (m_cInstr.mCodeI.bitMode8Bit) {
+		MCODE_DEBUG_ERR("DST = 8 bit! Forbidden in Sreg mode!");
+		triggerError();
+	}
+	else {
+		REGISTERS reg = REGISTERS::R_ES;
+		switch (sval) {
+		case 0: // Get register ES
+			MCODE_DEBUG("DST = REGISTER_ES");
+			reg = REGISTERS::R_ES;
+			break;
+		case 2: // Get register SS
+			MCODE_DEBUG("DST = REGISTER_SS");
+			reg = REGISTERS::R_SS;
+			// We are writing to SS, so disable interrupts
+			m_registers[REGISTERS::R_FLAGS].clearBit(FLAGS_IE);
+			break;
+		case 3: // Get register DS
+			MCODE_DEBUG("DST = REGISTER_DS");
+			reg = REGISTERS::R_DS;
+			break;
+		case 1: // Get register CS
+		default:
+			// ERROR
+			MCODE_DEBUG_ERR("DST = SEG_REGISTER_ERROR");
+			triggerError();
 			break;
 		}
 		// Put our dst.v
@@ -140,7 +184,7 @@ void Processor_8086::mcode_toDstFromMem00(uint8_t sval) {
 
 	case 0b001: // [BX + DI]
 		address = m_registers[REGISTERS::R_BX].read() + m_registers[REGISTERS::R_DI].read();
-		MCODE_DEBUG("DST = MEM [BX + DI], where BX + DI = " + COutSys::ToHexStr(address));
+		MCODE_DEBUG("DST = MEM [BX + DI], where BX + DI = " + icarus::util::ToHexStr(address));
 		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA,address));
 		break;
 
@@ -169,24 +213,25 @@ void Processor_8086::mcode_toDstFromMem00(uint8_t sval) {
 		break;
 
 	case 0b110: // [sword]
-		MCODE_DEBUG("DST = MEM [sword], where sword = " + COutSys::ToHexStr(m_cInstr.displacement));
+		MCODE_DEBUG("DST = MEM [sword], where sword = " + icarus::util::ToHexStr(m_cInstr.displacement));
 		// We need to write memory at the position of the displacement byte
 		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA,m_cInstr.displacement));
 		break;
 
 	case 0b111: // [BX]
-		MCODE_DEBUG("DST = MEM [BX]");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		address = m_registers[REGISTERS::R_BX].read();
+		MCODE_DEBUG("DST = MEM [BX], where BX = " + icarus::util::ToHexStr(address));
+		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA, address));
 		break;
 
 	default:
 		// ERROR
 		MCODE_DEBUG_ERR("DST = MEMORY_DECODE_ERROR");
+		triggerError();
 		break;
 	}
 
-	MCODE_DEBUG("WRITE to " + icarus::COutSys::ToHexStr(m_addressBus.readData()) + " of " + std::to_string(m_cInstr.mCodeI.dst.bytes) + " bytes");
+	MCODE_DEBUG("WRITE to " + icarus::util::ToHexStr(m_addressBus.readData()) + " of " + std::to_string(m_cInstr.mCodeI.dst.bytes) + " bytes");
 	m_dataBus.putData(m_cInstr.mCodeI.dst.v);
 	if (m_cInstr.mCodeI.dst.bytes == 2) {
 		m_mmu.writeBus(m_dataBus, m_addressBus, icarus::memory::MMU::ReadType::LittleEndian);
@@ -214,7 +259,7 @@ void Processor_8086::mcode_toDstFromMem10(uint8_t sval) {
 
 	case 0b001: // [BX + DI + sword]
 		address = m_registers[REGISTERS::R_BX].read() + m_registers[REGISTERS::R_DI].read() + m_cInstr.displacement;
-		MCODE_DEBUG("DST = MEM [BX + DI + sword], where BX + DI + sword = " + COutSys::ToHexStr(address));
+		MCODE_DEBUG("DST = MEM [BX + DI + sword], where BX + DI + sword = " + icarus::util::ToHexStr(address));
 		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA,address));
 		break;
 
@@ -238,7 +283,7 @@ void Processor_8086::mcode_toDstFromMem10(uint8_t sval) {
 
 	case 0b101: // [DI + sword]
 		address = m_registers[REGISTERS::R_DI].read() + m_cInstr.displacement;
-		MCODE_DEBUG("DST = MEM [DI + sword], where DI + sword = " + COutSys::ToHexStr(address));
+		MCODE_DEBUG("DST = MEM [DI + sword], where DI + sword = " + icarus::util::ToHexStr(address));
 		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA,address));
 		break;
 
@@ -250,16 +295,17 @@ void Processor_8086::mcode_toDstFromMem10(uint8_t sval) {
 
 	case 0b111: // [BX + sword]
 		address = m_registers[REGISTERS::R_BX].read() + m_cInstr.displacement;
-		MCODE_DEBUG("DST = MEM [BX + sword], where BX + sword = " + COutSys::ToHexStr(address));
+		MCODE_DEBUG("DST = MEM [BX + sword], where BX + sword = " + icarus::util::ToHexStr(address));
 		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_DATA,address));
 		break;
 
 	default:
 		// ERROR
 		MCODE_DEBUG_ERR("DST = MEMORY_DECODE_ERROR");
+		triggerError();
 		break;
 	}
-	MCODE_DEBUG("WRITE to " + icarus::COutSys::ToHexStr(m_addressBus.readData()) + " of " + std::to_string(m_cInstr.mCodeI.dst.bytes) + " bytes");
+	MCODE_DEBUG("WRITE to " + icarus::util::ToHexStr(m_addressBus.readData()) + " of " + std::to_string(m_cInstr.mCodeI.dst.bytes) + " bytes");
 	m_dataBus.putData(m_cInstr.mCodeI.dst.v);
 	if (m_cInstr.mCodeI.dst.bytes == 2) {
 		m_mmu.writeBus(m_dataBus, m_addressBus, icarus::memory::MMU::ReadType::LittleEndian);
@@ -287,12 +333,11 @@ void Processor_8086::mcode_dstModRM() {
 		MCODE_DEBUG("DST = M");
 		mcode_toDstFromMem00(m_cInstr.modRMByte.RM());
 		break;
-	case 0b01: // Memory addressing + displacement8
+	case 0b01: // Memory addressing + displacement
 		MCODE_DEBUG("DST = M+disp8");
-		MCODE_DEBUG_ERR("Not implemented!");
-		triggerError();
+		mcode_toDstFromMem10(m_cInstr.modRMByte.RM());
 		break;
-	case 0b10: // Memory addressing + displacement16
+	case 0b10: // Memory addressing + displacement
 		MCODE_DEBUG("DST = M+disp16");
 		mcode_toDstFromMem10(m_cInstr.modRMByte.RM());
 		break;
@@ -303,6 +348,7 @@ void Processor_8086::mcode_dstModRM() {
 	default:
 		// ERROR
 		MCODE_DEBUG_ERR("DST = MOD_ERROR");
+		triggerError();
 		break;
 	}
 }

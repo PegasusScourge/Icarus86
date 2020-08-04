@@ -120,12 +120,14 @@ namespace icarus {
 			void mcode_toSrcFromMem10(CurrentInstruction::MicrocodeInformation::Cache& src, uint8_t sval);
 			void mcode_getSrcRegop();
 			void mcode_getSrcImm();
+			void mcode_getSrcDisp();
 			void mcode_getSrcModRM();
 			/*
 			DST MICROCODE
 			*/
 			void mcode_dstModRM();
 			void mcode_toDstFromReg(uint8_t sval);
+			void mcode_toDstFromSReg(uint8_t sval);
 			void mcode_toDstFromMem00(uint8_t sval);
 			void mcode_toDstFromMem10(uint8_t sval);
 			/*
@@ -147,6 +149,7 @@ namespace icarus {
 			JMP MICROCODE
 			*/
 			void mcode_jmpCondRelativeShort(bool condition);
+			void mcode_jmpFar();
 			/*
 			MISC MICROCODE
 			*/

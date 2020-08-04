@@ -12,6 +12,7 @@ Microcode execution functions definitions: microcode FN instructions in this fil
 
 #include "../COutSys.hpp"
 #include "../Constexprs.hpp"
+#include "../Util.hpp"
 
 using namespace icarus::processor::instruction;
 using namespace icarus::processor;
@@ -119,8 +120,8 @@ void Processor_8086::mcode_fnAdd(bool adc) {
 	m_cInstr.mCodeI.dst.v = m_alu.add(m_cInstr.mCodeI.srcA.v, m_cInstr.mCodeI.srcB.v, adc);
 	m_cInstr.mCodeI.dstEnabled = true;
 
-	MCODE_DEBUG("srcA = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcA.v) + ", srcB = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcB.v));
-	MCODE_DEBUG("dst = " + COutSys::ToHexStr(m_cInstr.mCodeI.dst.v));
+	MCODE_DEBUG("srcA = " + icarus::util::ToHexStr(m_cInstr.mCodeI.srcA.v) + ", srcB = " + icarus::util::ToHexStr(m_cInstr.mCodeI.srcB.v));
+	MCODE_DEBUG("dst = " + icarus::util::ToHexStr(m_cInstr.mCodeI.dst.v));
 
 	// Update the relevant flags
 	Register16& R_F = m_registers[REGISTERS::R_FLAGS];
@@ -145,8 +146,8 @@ void Processor_8086::mcode_fnSub(bool sbb) {
 	m_cInstr.mCodeI.dst.v = m_alu.subtract(m_cInstr.mCodeI.srcA.v, m_cInstr.mCodeI.srcB.v, sbb);
 	m_cInstr.mCodeI.dstEnabled = true;
 
-	MCODE_DEBUG("srcA = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcA.v) + ", srcB = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcB.v));
-	MCODE_DEBUG("dst = " + COutSys::ToHexStr(m_cInstr.mCodeI.dst.v));
+	MCODE_DEBUG("srcA = " + icarus::util::ToHexStr(m_cInstr.mCodeI.srcA.v) + ", srcB = " + icarus::util::ToHexStr(m_cInstr.mCodeI.srcB.v));
+	MCODE_DEBUG("dst = " + icarus::util::ToHexStr(m_cInstr.mCodeI.dst.v));
 
 	// Update the relevant flags
 	Register16& R_F = m_registers[REGISTERS::R_FLAGS];
@@ -168,8 +169,8 @@ void Processor_8086::mcode_fnCmp() {
 	m_alu.subtract(m_cInstr.mCodeI.srcA.v, m_cInstr.mCodeI.srcB.v);
 	m_cInstr.mCodeI.dstEnabled = false; // Don't allow DST_X microcodes to output
 
-	MCODE_DEBUG("srcA = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcA.v) + ", srcB = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcB.v));
-	// MCODE_DEBUG("dst = " + COutSys::ToHexStr(m_cInstr.mCodeI.dst.v));
+	MCODE_DEBUG("srcA = " + icarus::util::ToHexStr(m_cInstr.mCodeI.srcA.v) + ", srcB = " + icarus::util::ToHexStr(m_cInstr.mCodeI.srcB.v));
+	// MCODE_DEBUG("dst = " + icarus::util::ToHexStr(m_cInstr.mCodeI.dst.v));
 
 	// Update the relevant flags
 	Register16& R_F = m_registers[REGISTERS::R_FLAGS];
@@ -186,8 +187,8 @@ void Processor_8086::mcode_fnDec() {
 	m_cInstr.mCodeI.dst.v = m_alu.decrement(m_cInstr.mCodeI.srcA.v);
 	m_cInstr.mCodeI.dstEnabled = true;
 
-	MCODE_DEBUG("srcA = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcA.v) + ", srcB = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcB.v));
-	MCODE_DEBUG("dst = " + COutSys::ToHexStr(m_cInstr.mCodeI.dst.v));
+	MCODE_DEBUG("srcA = " + icarus::util::ToHexStr(m_cInstr.mCodeI.srcA.v) + ", srcB = " + icarus::util::ToHexStr(m_cInstr.mCodeI.srcB.v));
+	MCODE_DEBUG("dst = " + icarus::util::ToHexStr(m_cInstr.mCodeI.dst.v));
 
 	// Update the relevant flags
 	Register16& R_F = m_registers[REGISTERS::R_FLAGS];
@@ -203,8 +204,8 @@ void Processor_8086::mcode_fnInc() {
 	m_cInstr.mCodeI.dst.v = m_alu.increment(m_cInstr.mCodeI.srcA.v);
 	m_cInstr.mCodeI.dstEnabled = true;
 
-	MCODE_DEBUG("srcA = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcA.v) + ", srcB = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcB.v));
-	MCODE_DEBUG("dst = " + COutSys::ToHexStr(m_cInstr.mCodeI.dst.v));
+	MCODE_DEBUG("srcA = " + icarus::util::ToHexStr(m_cInstr.mCodeI.srcA.v) + ", srcB = " + icarus::util::ToHexStr(m_cInstr.mCodeI.srcB.v));
+	MCODE_DEBUG("dst = " + icarus::util::ToHexStr(m_cInstr.mCodeI.dst.v));
 
 	// Update the relevant flags
 	Register16& R_F = m_registers[REGISTERS::R_FLAGS];
@@ -224,8 +225,8 @@ void Processor_8086::mcode_fnXOR() {
 	m_cInstr.mCodeI.dst.v = m_alu.binaryXOR(m_cInstr.mCodeI.srcA.v, m_cInstr.mCodeI.srcB.v);
 	m_cInstr.mCodeI.dstEnabled = true;
 
-	MCODE_DEBUG("srcA = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcA.v) + ", srcB = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcB.v));
-	MCODE_DEBUG("dst = " + COutSys::ToHexStr(m_cInstr.mCodeI.dst.v));
+	MCODE_DEBUG("srcA = " + icarus::util::ToHexStr(m_cInstr.mCodeI.srcA.v) + ", srcB = " + icarus::util::ToHexStr(m_cInstr.mCodeI.srcB.v));
+	MCODE_DEBUG("dst = " + icarus::util::ToHexStr(m_cInstr.mCodeI.dst.v));
 
 	// Update the relevant flags
 	Register16& R_F = m_registers[REGISTERS::R_FLAGS];
@@ -245,8 +246,8 @@ void Processor_8086::mcode_fnOR() {
 	m_cInstr.mCodeI.dst.v = m_alu.binaryOR(m_cInstr.mCodeI.srcA.v, m_cInstr.mCodeI.srcB.v);
 	m_cInstr.mCodeI.dstEnabled = true;
 
-	MCODE_DEBUG("srcA = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcA.v) + ", srcB = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcB.v));
-	MCODE_DEBUG("dst = " + COutSys::ToHexStr(m_cInstr.mCodeI.dst.v));
+	MCODE_DEBUG("srcA = " + icarus::util::ToHexStr(m_cInstr.mCodeI.srcA.v) + ", srcB = " + icarus::util::ToHexStr(m_cInstr.mCodeI.srcB.v));
+	MCODE_DEBUG("dst = " + icarus::util::ToHexStr(m_cInstr.mCodeI.dst.v));
 
 	// Update the relevant flags
 	Register16& R_F = m_registers[REGISTERS::R_FLAGS];
@@ -266,8 +267,8 @@ void Processor_8086::mcode_fnAND() {
 	m_cInstr.mCodeI.dst.v = m_alu.binaryAND(m_cInstr.mCodeI.srcA.v, m_cInstr.mCodeI.srcB.v);
 	m_cInstr.mCodeI.dstEnabled = true;
 
-	MCODE_DEBUG("srcA = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcA.v) + ", srcB = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcB.v));
-	MCODE_DEBUG("dst = " + COutSys::ToHexStr(m_cInstr.mCodeI.dst.v));
+	MCODE_DEBUG("srcA = " + icarus::util::ToHexStr(m_cInstr.mCodeI.srcA.v) + ", srcB = " + icarus::util::ToHexStr(m_cInstr.mCodeI.srcB.v));
+	MCODE_DEBUG("dst = " + icarus::util::ToHexStr(m_cInstr.mCodeI.dst.v));
 
 	// Update the relevant flags
 	Register16& R_F = m_registers[REGISTERS::R_FLAGS];
@@ -287,13 +288,13 @@ void Processor_8086::mcode_fnCallRel() {
 	m_cInstr.mCodeI.srcB.bytes = 2;
 	mcode_stackPush(m_cInstr.mCodeI.srcB);
 	// Now add thd rel16 to IP
-	MCODE_DEBUG("[REL16] CALL to IP = " + COutSys::ToHexStr((m_registers[REGISTERS::R_IP].read() + rel16)));
+	MCODE_DEBUG("[REL16] CALL to IP = " + icarus::util::ToHexStr((m_registers[REGISTERS::R_IP].read() + rel16)));
 	m_registers[REGISTERS::R_IP].put(m_registers[REGISTERS::R_IP].read() + rel16);
 }
 
 void Processor_8086::mcode_fnRetnNear() {
 	// SRC_A has the IP we need to jump to
-	MCODE_DEBUG("RETN to = " + COutSys::ToHexStr(m_cInstr.mCodeI.srcA.v));
+	MCODE_DEBUG("RETN to = " + icarus::util::ToHexStr(m_cInstr.mCodeI.srcA.v));
 	m_registers[REGISTERS::R_IP].put(m_cInstr.mCodeI.srcA.v);
-	MCODE_DEBUG("RETN gave IP = " + COutSys::ToHexStr(m_registers[REGISTERS::R_IP].read()));
+	MCODE_DEBUG("RETN gave IP = " + icarus::util::ToHexStr(m_registers[REGISTERS::R_IP].read()));
 }

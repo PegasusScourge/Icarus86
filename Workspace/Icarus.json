@@ -7,9 +7,9 @@
 	"processor": {
 		"type": "8086",
 		"clockMHz": 1,
-		"force_ip": "0",
-		"force_sp": "100",
-		"force_seg": "10",
+		"nforce_ip": "0",
+		"nforce_sp": "100",
+		"nforce_seg": "10",
 		"breakpoints": [
 			{
 				"byIP": false,
@@ -21,12 +21,16 @@
 	},
 	"memory": [
 		{
-			"startAddress": 0,
-			"size": 65535
+			"startAddress": "0",
+			"size": "FFFF"
+		},
+		{
+			"startAddress": "FC000",
+			"size": "3FF5"
 		}
 	],
 	"force_load": {
-		"path": "codegolf.bin",
-		"address": "0010"
+		"path": "bios_v1.bin",
+		"address": "FC000"
 	}
 }

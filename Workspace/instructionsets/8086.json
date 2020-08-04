@@ -42,6 +42,38 @@
 			]
 		},
 		{
+			"mnemonic": "PUSH_ES",
+			"hexcode": "06",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_ES",
+				"FN_APASS",
+				"DST_STACK_PUSH"
+			]
+		},
+		{
+			"mnemonic": "POP_ES",
+			"hexcode": "07",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_STACK_POP",
+				"FN_APASS",
+				"DST_R_ES"
+			]
+		},
+		{
 			"mnemonic": "OR r/m16, r/16",
 			"hexcode": "09",
 			"isPrefix": false,
@@ -76,6 +108,38 @@
 			]
 		},
 		{
+			"mnemonic": "PUSH_DS",
+			"hexcode": "1E",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_DS",
+				"FN_APASS",
+				"DST_STACK_PUSH"
+			]
+		},
+		{
+			"mnemonic": "POP_DS",
+			"hexcode": "1F",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_STACK_POP",
+				"FN_APASS",
+				"DST_R_DS"
+			]
+		},
+		{
 			"mnemonic": "AND r/m8, r/8",
 			"hexcode": "20",
 			"isPrefix": false,
@@ -107,6 +171,19 @@
 				"SRC_REGOP",
 				"FN_AND",
 				"DST_MODRM"
+			]
+		},
+		{
+			"mnemonic": "SEG OVERRIDE ES",
+			"hexcode": "26",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SEG_OVERRIDE_ES"
 			]
 		},
 		{
@@ -954,6 +1031,22 @@
 			]
 		},
 		{
+			"mnemonic": "MOV Sreg, r/m16",
+			"hexcode": "8E",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_MODRM",
+				"FN_APASS",
+				"DST_REGOP_SREG"
+			]
+		},
+		{
 			"mnemonic": "NOP",
 			"hexcode": "90",
 			"isPrefix": false,
@@ -1326,6 +1419,22 @@
 			]
 		},
 		{
+			"mnemonic": "JMPF ptr16:16",
+			"hexcode": "EA",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 2,
+			"displacementBytes": 2,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_DISP",
+				"SRC_IMM",
+				"FN_JMPF"
+			]
+		},
+		{
 			"mnemonic": "JMP rel8",
 			"hexcode": "EB",
 			"isPrefix": false,
@@ -1377,6 +1486,32 @@
 			"childCodes": [],
 			"microcode": [
 				"FN_STC"
+			]
+		},
+		{
+			"mnemonic": "CLI",
+			"hexcode": "FA",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"FN_CLI"
+			]
+		},
+		{
+			"mnemonic": "STI",
+			"hexcode": "FB",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"FN_STI"
 			]
 		},
 		{

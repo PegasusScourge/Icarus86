@@ -55,7 +55,7 @@ namespace icarus {
 			Writes a byte to the address
 			*/
 			void writeByte(icarus::bus::Bus& dBus, icarus::bus::Bus& aBus) {
-				MMU_DEBUG("address = " + icarus::COutSys::ToHexStr(aBus.readData()));
+				MMU_DEBUG("address = " + icarus::util::ToHexStr(aBus.readData()));
 				for (auto& block : memoryBlocks) {
 					block.tryByteWrite(aBus.readData(), dBus.readData());
 				}
@@ -68,7 +68,7 @@ namespace icarus {
 				uint8_t v = 0;
 				for (auto& block : memoryBlocks) {
 					if (block.tryByteRead(aBus.readData(), &v)) {
-						// MMU_DEBUG("address = " + icarus::COutSys::ToHexStr(aBus.readData()));
+						// MMU_DEBUG("address = " + icarus::util::ToHexStr(aBus.readData()));
 						dBus.putData(v);
 						return;
 					}
@@ -84,7 +84,7 @@ namespace icarus {
 				bool readSuccess = false;
 				for (auto& block : memoryBlocks) {
 					if (block.tryByteRead(aBus.readData(), &v)) {
-						MMU_DEBUG("address = " + icarus::COutSys::ToHexStr(aBus.readData()));
+						MMU_DEBUG("address = " + icarus::util::ToHexStr(aBus.readData()));
 						dBus.putData(v);
 						readSuccess = true;
 						break;
@@ -98,7 +98,7 @@ namespace icarus {
 			Fills the dBus with bytes read from memory starting at the address given by aBus.
 			*/
 			void fillBus(icarus::bus::Bus& dBus, icarus::bus::Bus& aBus, ReadType endianness) {
-				MMU_DEBUG("address = " + icarus::COutSys::ToHexStr(aBus.readData()));
+				MMU_DEBUG("address = " + icarus::util::ToHexStr(aBus.readData()));
 				uint32_t address = aBus.readData();
 				uint32_t dataToPush = 0;
 
@@ -114,7 +114,7 @@ namespace icarus {
 						dataToPush |= (dBus.readData() & 0xFF) << (currentShift * 8);
 
 						MMU_DEBUG("shift = " + std::to_string(currentShift) + ", address = " +
-							icarus::COutSys::ToHexStr(aBus.readData()) + ", val_so_far = " + icarus::COutSys::ToHexStr(dataToPush));
+							icarus::util::ToHexStr(aBus.readData()) + ", val_so_far = " + icarus::util::ToHexStr(dataToPush));
 					}
 				}
 				else if (endianness == ReadType::LittleEndian) {
@@ -125,7 +125,7 @@ namespace icarus {
 						dataToPush |= (dBus.readData() & 0xFF) << (currentShift * 8);
 
 						MMU_DEBUG("shift = " + std::to_string(currentShift) + ", address = " +
-							icarus::COutSys::ToHexStr(aBus.readData()) + ", val_so_far = " + icarus::COutSys::ToHexStr(dataToPush));
+							icarus::util::ToHexStr(aBus.readData()) + ", val_so_far = " + icarus::util::ToHexStr(dataToPush));
 					}
 				}
 				else {
@@ -140,7 +140,7 @@ namespace icarus {
 			Writes the content of dBus to memory starting at address given in aBus. Writes according to endianness
 			*/
 			void writeBus(icarus::bus::Bus& dBus, icarus::bus::Bus& aBus, ReadType endianness) {
-				MMU_DEBUG("address = " + icarus::COutSys::ToHexStr(aBus.readData()));
+				MMU_DEBUG("address = " + icarus::util::ToHexStr(aBus.readData()));
 				uint32_t address = aBus.readData();
 				uint32_t dBusData = dBus.readData();
 				size_t dataBusByteWidth = dBus.getBitWidth() / 8;

@@ -12,6 +12,7 @@ Microcode execution functions definitions: containts JMP, MISC and the mcode_exe
 
 #include "../COutSys.hpp"
 #include "../Constexprs.hpp"
+#include "../Util.hpp"
 
 using namespace icarus::processor::instruction;
 using namespace icarus::processor;
@@ -64,6 +65,10 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 		mcode_getSrcImm();
 		break;
 
+	case Microcode::MicrocodeType::SRC_DISP:
+		mcode_getSrcDisp();
+		break;
+
 	case Microcode::MicrocodeType::SRC_R_AL:
 	{
 		auto& src = mcode_getNextSrc();
@@ -112,6 +117,22 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 	}
 		break;
 
+	case Microcode::MicrocodeType::SRC_R_DS:
+	{
+		auto& src = mcode_getNextSrc();
+		src.v = m_registers[REGISTERS::R_DS].read();
+		src.bytes = 2;
+	}
+	break;
+
+	case Microcode::MicrocodeType::SRC_R_ES:
+	{
+		auto& src = mcode_getNextSrc();
+		src.v = m_registers[REGISTERS::R_ES].read();
+		src.bytes = 2;
+	}
+	break;
+
 		/*
 		DST
 		*/
@@ -122,6 +143,10 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 
 	case Microcode::MicrocodeType::DST_REGOP:
 		mcode_toDstFromReg(m_cInstr.modRMByte.REGOP());
+		break;
+
+	case Microcode::MicrocodeType::DST_REGOP_SREG:
+		mcode_toDstFromSReg(m_cInstr.modRMByte.REGOP());
 		break;
 
 	case Microcode::MicrocodeType::DST_STACK_PUSH:
@@ -194,6 +219,20 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 			m_registers[REGISTERS::R_DI].put(m_cInstr.mCodeI.dst.v);
 		break;
 
+	case Microcode::MicrocodeType::DST_R_DS:
+		if (!m_cInstr.mCodeI.dstEnabled)
+			MCODE_DEBUG("!dstEnabled: not writing to destination");
+		else
+			m_registers[REGISTERS::R_DS].put(m_cInstr.mCodeI.dst.v);
+		break;
+
+	case Microcode::MicrocodeType::DST_R_ES:
+		if (!m_cInstr.mCodeI.dstEnabled)
+			MCODE_DEBUG("!dstEnabled: not writing to destination");
+		else
+			m_registers[REGISTERS::R_ES].put(m_cInstr.mCodeI.dst.v);
+		break;
+
 		/*
 		FN
 		*/
@@ -208,6 +247,10 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 
 	case Microcode::MicrocodeType::FN_JMP: // Hijack the conditional jump and force
 		mcode_jmpCondRelativeShort(true);
+		break;
+
+	case Microcode::MicrocodeType::FN_JMPF: // Hijack the conditional jump and force
+		mcode_jmpFar();
 		break;
 
 	case Microcode::MicrocodeType::FN_JZ:
@@ -298,6 +341,14 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 		m_registers[REGISTERS::R_FLAGS].setBit(FLAGS_CF);
 		break;
 
+	case Microcode::MicrocodeType::FN_CLI:
+		m_registers[REGISTERS::R_FLAGS].clearBit(FLAGS_IE);
+		break;
+
+	case Microcode::MicrocodeType::FN_STI:
+		m_registers[REGISTERS::R_FLAGS].setBit(FLAGS_IE);
+		break;
+
 	case Microcode::MicrocodeType::FN_APASS:
 		m_cInstr.mCodeI.dst = m_cInstr.mCodeI.srcA; m_cInstr.mCodeI.dstEnabled = true;
 		break;
@@ -312,6 +363,11 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 
 	case Microcode::MicrocodeType::SE_SRC_B:
 		mcode_seSrcB();
+		break;
+
+	case Microcode::MicrocodeType::SEG_OVERRIDE_ES:
+		m_cInstr.hasSegOverride = true;
+		m_cInstr.segOverride = SEGMENT::S_XTRA;
 		break;
 
 	case Microcode::MicrocodeType::HLT:
@@ -331,9 +387,9 @@ void Processor_8086::mcode_execCode(Microcode mcode) {
 	}
 
 	MCODE_DEBUG("    --- <mcode state> ---");
-	MCODE_DEBUG("    srcA.bytes  = " + std::to_string(m_cInstr.mCodeI.srcA.bytes) + " srcA.v = " + icarus::COutSys::ToHexStr(m_cInstr.mCodeI.srcA.v));
-	MCODE_DEBUG("    srcB.bytes  = " + std::to_string(m_cInstr.mCodeI.srcB.bytes) + " srcB.v = " + icarus::COutSys::ToHexStr(m_cInstr.mCodeI.srcB.v));
-	MCODE_DEBUG("    dst.bytes   = " + std::to_string(m_cInstr.mCodeI.dst.bytes) + " dst.v = " + icarus::COutSys::ToHexStr(m_cInstr.mCodeI.dst.v));
+	MCODE_DEBUG("    srcA.bytes  = " + std::to_string(m_cInstr.mCodeI.srcA.bytes) + " srcA.v = " + icarus::util::ToHexStr(m_cInstr.mCodeI.srcA.v));
+	MCODE_DEBUG("    srcB.bytes  = " + std::to_string(m_cInstr.mCodeI.srcB.bytes) + " srcB.v = " + icarus::util::ToHexStr(m_cInstr.mCodeI.srcB.v));
+	MCODE_DEBUG("    dst.bytes   = " + std::to_string(m_cInstr.mCodeI.dst.bytes) + " dst.v = " + icarus::util::ToHexStr(m_cInstr.mCodeI.dst.v));
 	MCODE_DEBUG("    dst.enabled = " + std::to_string(m_cInstr.mCodeI.dstEnabled));
 	MCODE_DEBUG("    -- </mcode state> ---");
 }
@@ -352,14 +408,14 @@ void Processor_8086::mcode_jmpCondRelativeShort(bool condition) {
 		// Relative 8 jump
 		int8_t rel8 = (int8_t)m_cInstr.mCodeI.srcA.v;
 		// Execute jump by adding rel8 to IP
-		MCODE_DEBUG("[REL8 ] Jumping to IP = " + COutSys::ToHexStr((m_registers[REGISTERS::R_IP].read() + rel8)));
+		MCODE_DEBUG("[REL8 ] Jumping to IP = " + icarus::util::ToHexStr((m_registers[REGISTERS::R_IP].read() + rel8)));
 		m_registers[REGISTERS::R_IP].put(m_registers[REGISTERS::R_IP].read() + rel8);
 	}
 	else if (m_cInstr.mCodeI.srcA.bytes == 2) {
 		// Relative 16 jump
 		int16_t rel16 = (int16_t)m_cInstr.mCodeI.srcA.v;
 		// Execute jump by adding rel16 to IP
-		MCODE_DEBUG("[REL16] Jumping to IP = " + COutSys::ToHexStr((m_registers[REGISTERS::R_IP].read() + rel16)));
+		MCODE_DEBUG("[REL16] Jumping to IP = " + icarus::util::ToHexStr((m_registers[REGISTERS::R_IP].read() + rel16)));
 		m_registers[REGISTERS::R_IP].put(m_registers[REGISTERS::R_IP].read() + rel16);
 	}
 	else {
@@ -367,12 +423,20 @@ void Processor_8086::mcode_jmpCondRelativeShort(bool condition) {
 	}
 }
 
+void Processor_8086::mcode_jmpFar() {
+	m_registers[REGISTERS::R_IP].put(m_cInstr.mCodeI.srcA.v);
+	m_registers[REGISTERS::R_CS].put(m_cInstr.mCodeI.srcB.v);
+
+	MCODE_DEBUG("[JMPF] Jumping to CS:IP = " + icarus::util::ToHexStr(m_registers[REGISTERS::R_CS].read()) + ":" + 
+		icarus::util::ToHexStr(m_registers[REGISTERS::R_IP].read()));
+}
+
 /***********************************/
 // MISC MICROCODE
 /***********************************/
 
 void Processor_8086::mcode_seSrcB() {
-	MCODE_DEBUG("SE_SRC_B BEGIN: " + COutSys::ToHexStr(m_cInstr.mCodeI.srcB.v));
+	MCODE_DEBUG("SE_SRC_B BEGIN: " + icarus::util::ToHexStr(m_cInstr.mCodeI.srcB.v));
 	if (m_cInstr.mCodeI.srcA.bytes == 2 && m_cInstr.mCodeI.srcB.bytes == 1) {
 		m_cInstr.mCodeI.srcB.bytes = 2;
 		// Sign extend to 2 bytes.
@@ -383,12 +447,12 @@ void Processor_8086::mcode_seSrcB() {
 		else {
 			// Sign bit is not set, do nothing
 		}
-		MCODE_DEBUG("SE_SRC_B RESULT: " + COutSys::ToHexStr(m_cInstr.mCodeI.srcB.v));
+		MCODE_DEBUG("SE_SRC_B RESULT: " + icarus::util::ToHexStr(m_cInstr.mCodeI.srcB.v));
 	}
 }
 
 void Processor_8086::mcode_stackPush(CurrentInstruction::MicrocodeInformation::Cache& c) {
-	MCODE_DEBUG("Stack push of v = " + COutSys::ToHexStr(src.v) + " (bytes = " + std::to_string(c.bytes) + "), SP = " + COutSys::ToHexStr(m_registers[REGISTERS::R_SP].read()));
+	MCODE_DEBUG("Stack push of v = " + icarus::util::ToHexStr(c.v) + " (bytes = " + std::to_string(c.bytes) + "), SP = " + icarus::util::ToHexStr(m_registers[REGISTERS::R_SP].read()));
 
 	// Decrement stack pointer
 	m_registers[REGISTERS::R_SP].put(m_registers[REGISTERS::R_SP].read() - c.bytes);
@@ -403,11 +467,11 @@ void Processor_8086::mcode_stackPush(CurrentInstruction::MicrocodeInformation::C
 	else {
 		m_mmu.writeByte(m_dataBus, m_addressBus);
 	}
-	MCODE_DEBUG("Push complete. SP = " + COutSys::ToHexStr(m_registers[REGISTERS::R_SP].read()));
+	MCODE_DEBUG("Push complete. SP = " + icarus::util::ToHexStr(m_registers[REGISTERS::R_SP].read()));
 }
 
 void Processor_8086::mcode_stackPop(CurrentInstruction::MicrocodeInformation::Cache& c) {
-	MCODE_DEBUG("Stack pop, SP = " + COutSys::ToHexStr(m_registers[REGISTERS::R_SP].read()));
+	MCODE_DEBUG("Stack pop, SP = " + icarus::util::ToHexStr(m_registers[REGISTERS::R_SP].read()));
 
 	// Put the address bus to the value of SP
 	m_addressBus.putData(getSegmentedAddress(SEGMENT::S_STACK,m_registers[REGISTERS::R_SP].read()));
@@ -424,5 +488,5 @@ void Processor_8086::mcode_stackPop(CurrentInstruction::MicrocodeInformation::Ca
 	// Increment stack pointer
 	m_registers[REGISTERS::R_SP].put(m_registers[REGISTERS::R_SP].read() + c.bytes);
 
-	MCODE_DEBUG("Pop complete. SP = " + COutSys::ToHexStr(m_registers[REGISTERS::R_SP].read()) + ", v = " + COutSys::ToHexStr(m_dataBus.readData()));
+	MCODE_DEBUG("Pop complete. SP = " + icarus::util::ToHexStr(m_registers[REGISTERS::R_SP].read()) + ", v = " + icarus::util::ToHexStr(m_dataBus.readData()));
 }

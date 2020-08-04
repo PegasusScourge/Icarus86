@@ -32,9 +32,12 @@ namespace icarus {
 
 					SE_SRC_B, // Sign extends SRC_B to match the byte length of SRC_A
 
+					SEG_OVERRIDE_ES, // Sets the segment override to ES
+
 					SRC_REGOP, // A source is deduced from the REGOP
 					SRC_MODRM,  // A source is deduced from the MODRM
 					SRC_IMM, // A source is the immediate byte(s)
+					SRC_DISP, // A source is the displacement byte(s)
 
 					SRC_STACK_POP, // Pop from the stack into a SRC
 
@@ -44,8 +47,13 @@ namespace icarus {
 					SRC_R_CX, // Source is register CX, not deduced
 					SRC_R_DX, // Source is register DX, not deduced
 					SRC_R_DI, // Source is register DI, not deduced
+					SRC_R_DS, // Source is register DS, not deduced
+					SRC_R_CS, // Source is register CS, not deduced
+					SRC_R_ES, // Source is register ES, not deduced
+					SRC_R_SS, // Source is register SS, not deduced
 
 					DST_REGOP, // Destination is deduced from the REGOP
+					DST_REGOP_SREG, // Destination is deduced from the REGOP but is an Sreg
 					DST_MODRM, // Destination is deduced from the MODRM
 
 					DST_STACK_PUSH, // Destination is pushing to the stack
@@ -59,6 +67,10 @@ namespace icarus {
 					DST_R_DX, // Destination is register DX, not deduced
 					DST_R_SP, // Destination is register SP, not deduced
 					DST_R_DI, // Destination is register DI, not deduced
+					DST_R_DS, // Destination is register DS, not deduced
+					DST_R_CS, // Destination is register CS, not deduced
+					DST_R_ES, // Destination is register ES, not deduced
+					DST_R_SS, // Destination is register SS, not deduced
 
 					FN_ADD,
 					FN_ADC,
@@ -73,6 +85,8 @@ namespace icarus {
 
 					FN_CLC, // Clear carry flag
 					FN_STC, // Set carry flag
+					FN_CLI, // Clear interrupt enable flag
+					FN_STI, // Set interrupt enable flag
 
 					FN_MOV,
 					FN_XCHG,
@@ -82,6 +96,7 @@ namespace icarus {
 					FN_RETN_NEAR, // Return near. SRC_A should have the return IP 
 
 					FN_JMP, // Jump
+					FN_JMPF, // Jump far. srcA (displacement) has the IP value, srcB (immediate) has the CS value
 					FN_JZ, // Jump if Zero flag set, takes immediate byte as relative to PC for jump. Relative is SIGNED
 					FN_JNZ, // Jump is Zero flag not set, same as above otherwise
 					FN_JC, // Jump if carry flag is set

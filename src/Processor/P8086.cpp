@@ -68,6 +68,21 @@ ip::Processor_8086::Processor_8086(icarus::memory::MMU& mmu, icarus::bus::Bus& d
 }
 
 unsigned int ip::Processor_8086::fetchDecode() {
+	// Check for reset
+	if (m_isReset) {
+		m_isReset = false;
+		// The reset vector is at FFFFh:0000h (CS:IP)
+		m_registers[REGISTERS::R_CS].put(0xFFFF);
+		m_registers[REGISTERS::R_IP].put(0x0000);
+		icarus::COutSys::Println("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*");
+		icarus::COutSys::Println("PROCESSOR RESET INITIATED: CS:IP = " + icarus::util::ToHexStr(m_registers[REGISTERS::R_CS].read()) +
+			":" + icarus::util::ToHexStr(m_registers[REGISTERS::R_IP].read()));
+		icarus::COutSys::Println("Absolute address = " + icarus::util::ToHexStr(getSegmentedAddress(SEGMENT::S_CODE, m_registers[REGISTERS::R_IP].read())));
+		icarus::COutSys::Println("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*");
+	}
+	
+	DECODE8086_DEBUG("**********************---- <DECODE> ----**********************");
+
 	unsigned int cyclesToWait = 1;
 
 	// Load the address bus with the address
@@ -76,13 +91,16 @@ unsigned int ip::Processor_8086::fetchDecode() {
 	m_addressBus.putData(getSegmentedAddress(SEGMENT::S_CODE,ipVal));
 	if (!m_mmu.tryReadByte(m_dataBus, m_addressBus)) {
 		// Failed to read a byte
+		icarus::COutSys::Println("Processor8086 failed to read byte", icarus::COutSys::LEVEL_ERR);
 		triggerError();
 		return 0;
 	}
 
 	ipi::ICode& instr = m_iSet[(uint8_t)m_dataBus.readData()];
+	unsigned int attempts = 1;
 
 	while (instr.isValid() && instr.isPrefix()) {
+		attempts++;
 		m_addressBus.putData(getSegmentedAddress(SEGMENT::S_CODE,ipVal + (++increment)));
 		if (!m_mmu.tryReadByte(m_dataBus, m_addressBus)) {
 			// Failed to read a byte
@@ -94,9 +112,9 @@ unsigned int ip::Processor_8086::fetchDecode() {
 		instr = instr[(uint8_t)m_dataBus.readData()];
 	}
 
-	DECODE8086_DEBUG("**********************---- <DECODE> ----**********************");
-	DECODE8086_DEBUG("Instr code = " + icarus::COutSys::ToHexStr(instr.getCode()) + ", dBusCode = " + icarus::COutSys::ToHexStr(m_dataBus.readData()));
-	DECODE8086_DEBUG("AddressBus = " + icarus::COutSys::ToHexStr(m_addressBus.readData()));
+	DECODE8086_DEBUG("Instr code = " + icarus::util::ToHexStr(instr.getCode()) + ", dBusCode = " + icarus::util::ToHexStr(m_dataBus.readData()));
+	DECODE8086_DEBUG("AddressBus = " + icarus::util::ToHexStr(m_addressBus.readData()));
+	DECODE8086_DEBUG("(Instr attempts: " + std::to_string(attempts) + ")");
 
 	if (!instr.isValid()) {
 		// Failed to get a valid instruction
@@ -148,7 +166,7 @@ unsigned int ip::Processor_8086::fetchDecode() {
 			return 0;
 		}
 		m_cInstr.modRMByte.setByte((uint8_t)m_dataBus.readData());
-		DECODE8086_DEBUG("MODRM = " + icarus::COutSys::ToHexStr(m_dataBus.readData()));
+		DECODE8086_DEBUG("MODRM = " + icarus::util::ToHexStr(m_dataBus.readData()));
 
 		// Now we need to detect if we have a modifying value that will necessitate adding disp or imm bytes.
 		if (numDispBytes == 0) {
@@ -230,19 +248,19 @@ unsigned int ip::Processor_8086::fetchDecode() {
 		}
 	}
 	
-	DECODE8086_DEBUG("IP = " + COutSys::ToHexStr(m_registers[REGISTERS::R_IP].read()));
+	DECODE8086_DEBUG("IP = " + icarus::util::ToHexStr(m_registers[REGISTERS::R_IP].read()));
 
 	// Update the last instruction
 	LastInstruction_t lastInstr;
 	lastInstr.iCode = instr;
-	lastInstr.ip = ipVal;
+	lastInstr.ip = getSegmentedAddress(SEGMENT::S_CODE, ipVal);
 	lastInstr.disp = m_cInstr.displacement;
 	lastInstr.imm = m_cInstr.immediate;
 
 	m_state.lastInstrs.push(lastInstr);
 	m_registers[REGISTERS::R_IP].put(ipVal + increment + 1);
 
-	DECODE8086_DEBUG("IP incremented to = " + COutSys::ToHexStr(m_registers[REGISTERS::R_IP].read()));
+	DECODE8086_DEBUG("IP incremented to = " + icarus::util::ToHexStr(m_registers[REGISTERS::R_IP].read()));
 	DECODE8086_DEBUG("**********************---- </DECODE> ----**********************");
 
 	return cyclesToWait;
@@ -251,10 +269,10 @@ unsigned int ip::Processor_8086::fetchDecode() {
 void ip::Processor_8086::execute() {
 	// Print out the information
 	EXEC8086_DEBUG("**********************---- <EXECUTE> ----**********************");
-	EXEC8086_DEBUG("code = " + icarus::COutSys::ToHexStr(m_cInstr.code));
-	EXEC8086_DEBUG("immediate = " + icarus::COutSys::ToHexStr(m_cInstr.immediate));
-	EXEC8086_DEBUG("displacement = " + icarus::COutSys::ToHexStr(m_cInstr.displacement));
-	EXEC8086_DEBUG("MODRM = " + icarus::COutSys::ToHexStr(m_cInstr.modRMByte.byte()));
+	EXEC8086_DEBUG("code = " + icarus::util::ToHexStr(m_cInstr.code));
+	EXEC8086_DEBUG("immediate = " + icarus::util::ToHexStr(m_cInstr.immediate));
+	EXEC8086_DEBUG("displacement = " + icarus::util::ToHexStr(m_cInstr.displacement));
+	EXEC8086_DEBUG("MODRM = " + icarus::util::ToHexStr(m_cInstr.modRMByte.byte()));
 
 	// We now have to execute the microcode instructions
 
@@ -271,6 +289,7 @@ void ip::Processor_8086::execute() {
 
 void ip::Processor_8086::forceIP(uint64_t ip) {
 	m_registers[REGISTERS::R_IP].put(ip);
+	m_isReset = false;
 }
 
 void ip::Processor_8086::forceSP(uint64_t sp) {
@@ -296,9 +315,11 @@ uint32_t ip::Processor_8086::getSegmentedAddress(SEGMENT defaultSeg, uint16_t of
 	SEGMENT seg = defaultSeg;
 	// Handle segment overrides
 	if (m_cInstr.hasSegOverride) {
+		
 		if (defaultSeg == SEGMENT::S_DATA) {
 			// Data segment is overriden
 			seg = m_cInstr.segOverride;
+			EXEC8086_DEBUG("SEGMENT OVERRIDE DETECTED: from " + std::to_string(defaultSeg) + " to " + std::to_string(seg));
 		}
 	}
 
@@ -307,20 +328,26 @@ uint32_t ip::Processor_8086::getSegmentedAddress(SEGMENT defaultSeg, uint16_t of
 	switch (seg) {
 	case SEGMENT::S_CODE:
 		sval = m_registers[REGISTERS::R_CS].read();
+		// EXEC8086_DEBUG("SGEMENT READ CS");
 		break;
 	case SEGMENT::S_XTRA:
 		sval = m_registers[REGISTERS::R_ES].read();
+		// EXEC8086_DEBUG("SGEMENT READ ES");
 		break;
 	case SEGMENT::S_STACK:
 		sval = m_registers[REGISTERS::R_SS].read();
+		// EXEC8086_DEBUG("SGEMENT READ SS");
 		break;
 	case SEGMENT::S_DATA:	// On default, we go for the data segment as thats more than likely where we will read data from, right?
 	default:				// Better than no default
 		sval = m_registers[REGISTERS::R_DS].read();
+		// EXEC8086_DEBUG("SGEMENT READ DS");
 		break;
 	}
 	// Return the resolved address
-	return resolveAddress(sval, offset);
+	uint32_t addr = resolveAddress(sval, offset);
+	// EXEC8086_DEBUG("Resolved address to " + icarus::util::ToHexStr(addr) + " from " + icarus::util::ToHexStr(sval) + ":" + icarus::util::ToHexStr(offset));
+	return addr;
 }
 
 void ip::Processor_8086::onError() {
