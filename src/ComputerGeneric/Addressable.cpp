@@ -19,8 +19,8 @@ i86::compGeneric::Addressable::Addressable(size_t spaceStartAddress, size_t spac
 }
 
 bool i86::compGeneric::Addressable::writeByte(size_t address, uint8_t byte) {
-    std::lock_guard guard(m_mutex);
     if (address >= m_startAddress && (address - m_startAddress) < m_sizeBytes) {
+        std::lock_guard guard(m_mutex);
         performWrite(address - m_startAddress, byte);
         return true;
     }
@@ -28,8 +28,8 @@ bool i86::compGeneric::Addressable::writeByte(size_t address, uint8_t byte) {
 }
 
 bool i86::compGeneric::Addressable::readByte(size_t address, uint8_t& byte) {
-    std::lock_guard guard(m_mutex);
     if (address >= m_startAddress && (address - m_startAddress) < m_sizeBytes) {
+        std::lock_guard guard(m_mutex);
         byte = performRead(address - m_startAddress);
         return true;
     }
