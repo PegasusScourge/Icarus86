@@ -11,6 +11,7 @@
 #include "Util/LogFile.hpp"
 
 #include <iostream>
+#include <cstddef>
 
 int main(int argc, char* argv[]) {
     using namespace i86;
@@ -32,9 +33,7 @@ i86::Icarus86::Icarus86(int argc, char* argv[]) {
 }
 
 void i86::Icarus86::go() {
-    i86::util::LogFile logger("hello.txt");
+    i86::util::LogFile logger("icarus.log", true);
 
-    std::cout << "Hello World!" << std::endl;
 
-    logger.log_rawString("Hello World!");
 }

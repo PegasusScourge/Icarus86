@@ -10,15 +10,19 @@
 #include "Util/LogFile.hpp"
 
 #include <iostream>
+#include <chrono>
+#include <cstring>
 
 // ****************************************************************
 // Class LogFile
 // ****************************************************************
 
-i86::util::LogFile::LogFile(std::string file) {
+i86::util::LogFile::LogFile(std::string file, bool timePrefix) {
     m_logFile = file;
     mT_logStream.open(m_logFile);
     m_logThreadRunning = true;
+
+    mP_tPrefix = timePrefix;
 
     m_logThread = std::thread(&LogFile::loggingThread, this);
 }
@@ -32,9 +36,19 @@ i86::util::LogFile::~LogFile() {
 }
 
 void i86::util::LogFile::log(std::string& output) {
+    std::string o;
+    if (mP_tPrefix) {
+        std::time_t ct = std::time(0);
+        char* cc = ctime(&ct);
+        cc[std::strlen(cc) - 1] = '\0';
+        o = "[" + std::string(cc) + "] " + output;
+    }
+    else {
+        o = output;
+    }
+    std::cout << "[" << m_logFile << "] " << o << std::endl;
     std::lock_guard guard(m_logMutex);
-
-    m_logQueue.push_back(output);
+    m_logQueue.push_back(o);
 }
 
 void i86::util::LogFile::loggingThread() {
@@ -58,7 +72,7 @@ void i86::util::LogFile::loggingThread() {
     mT_logStream.flush();
 }
 
-void i86::util::LogFile::log_rawString(std::string str) {
+void i86::util::LogFile::log_str(std::string str) {
     log(str);
 }
 
@@ -67,6 +81,6 @@ std::stringstream& i86::util::LogFile::strs() {
 }
 
 void i86::util::LogFile::flushss() {
-    log_rawString(mP_stringQueue.str());
+    log_str(mP_stringQueue.str());
     mP_stringQueue.clear();
 }

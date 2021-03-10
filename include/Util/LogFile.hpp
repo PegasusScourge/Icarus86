@@ -36,11 +36,12 @@ private:
     std::vector<std::string> m_logQueue;
     std::thread m_logThread;
 
-    // This can only be accessed from the logging thread outside of the constructor
+    // These can only be accessed from the logging thread outside of the constructor
     std::ofstream mT_logStream;
 
-    // This can only be accessed from the main program thread outside of the constructor
+    // These can only be accessed from the main program thread outside of the constructor
     std::stringstream mP_stringQueue;
+    bool mP_tPrefix;
 
     /*
         \Function   loggingThread
@@ -66,9 +67,10 @@ public:
         \Brief      Constructs LogFile
         \Details    Constructs LogFile
         \Parameter  std::string file
+        \Parameter  bool timePrefix
         \Returns    None
     */
-    LogFile(std::string file);
+    LogFile(std::string file, bool timePrefix = false);
     ~LogFile();
 
     /*
@@ -90,13 +92,13 @@ public:
     void flushss();
 
     /*
-        \Function   log_rawString
+        \Function   log_str
         \Brief      Logs the raw string on a new line
         \Details    Logs the raw string on a new line
         \Parameter  std::string str
         \Returns    None
     */
-    void log_rawString(std::string str);
+    void log_str(std::string str);
 
 }; // end class LogFile
 
