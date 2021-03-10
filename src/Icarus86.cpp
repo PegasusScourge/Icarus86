@@ -11,6 +11,7 @@
 #include "Util/LogFile.hpp"
 #include "ComputerGeneric/MemoryController.hpp"
 #include "Intel8086/Intel86.hpp"
+#include "Intel8086/I86Consts.hpp"
 
 #include <iostream>
 #include <cstddef>
@@ -37,8 +38,8 @@ i86::Icarus86::Icarus86(int argc, char* argv[]) {
 void i86::Icarus86::go() {
     i86::util::LogFile logger("icarus.log", true);
 
-    i86::compGeneric::MemoryController memory(0, 0xFFFF);
-    i86::compGeneric::MemoryController tmpIO(0, 0);
+    i86::compGeneric::MemoryController memory(0, i86::intel86::ADDRESS_SPACE_LEN);
+    i86::compGeneric::MemoryController tmpIO(0, i86::intel86::ADDRESS_SPACE_LEN);
 
     i86::intel86::Intel86 cpu(memory, tmpIO);
 }
