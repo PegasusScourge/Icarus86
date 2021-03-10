@@ -13,22 +13,24 @@
 // Class Addressable
 // ****************************************************************
 
-i86::compGeneric::Addressable::Addressable(size_t spaceSizeBytes, size_t spaceStartAddress) {
+i86::compGeneric::Addressable::Addressable(size_t spaceStartAddress, size_t spaceSizeBytes) {
     m_sizeBytes = spaceSizeBytes;
     m_startAddress = spaceStartAddress;
 }
 
 bool i86::compGeneric::Addressable::writeByte(size_t address, uint8_t byte) {
+    std::lock_guard guard(m_mutex);
     if (address >= m_startAddress && (address - m_startAddress) < m_sizeBytes) {
-        performWrite(address, byte);
+        performWrite(address - m_startAddress, byte);
         return true;
     }
     return false;
 }
 
 bool i86::compGeneric::Addressable::readByte(size_t address, uint8_t& byte) {
+    std::lock_guard guard(m_mutex);
     if (address >= m_startAddress && (address - m_startAddress) < m_sizeBytes) {
-        byte = performRead(address);
+        byte = performRead(address - m_startAddress);
         return true;
     }
     return false;

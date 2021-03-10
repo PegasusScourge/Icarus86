@@ -2,10 +2,10 @@
 #define _intel8086_hpp
 
 /*
-    **> \File           Intel8086.hpp
+    **> \File           Intel86.hpp
     **> \Author         Matthew Clarke
     **> \Create Date    2021-03-10
-    **> \Brief          Header for Intel8086.cpp
+    **> \Brief          Header for Intel86.cpp
     **> \Details        None
     **> \Notes          None
 */
@@ -18,6 +18,7 @@ namespace intel86 {
 
 // ****************************************************************
 // Class Intel86
+// Properties: None
 // ****************************************************************
 
 class Intel86 {

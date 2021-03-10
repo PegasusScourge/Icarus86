@@ -12,6 +12,7 @@
 
 #include <cstdint>
 #include <cstddef>
+#include <mutex>
 
 namespace i86 {
 
@@ -19,6 +20,7 @@ namespace compGeneric {
 
 // ****************************************************************
 // Class Addressable
+// Properties: Thread safe (lock_guard)
 // ****************************************************************
 
 class Addressable {
@@ -27,19 +29,37 @@ private:
     size_t m_sizeBytes;
     size_t m_startAddress;
 
-    virtual void performWrite(size_t addr, uint8_t byte) = 0;
-    virtual uint8_t performRead(size_t addr) = 0;
+    std::mutex m_mutex;
+
+    /*
+        \Function   performWrite
+        \Brief      virtual performWrite
+        \Details    Performs a write to an address
+        \Parameter  size_t localAddr
+        \Parameter  uint8_t byte
+        \Returns    None
+    */
+    virtual void performWrite(size_t localAddr, uint8_t byte) = 0;
+
+    /*
+        \Function   performWrite
+        \Brief      virtual performRead
+        \Details    Performs a read from an address
+        \Parameter  size_t localAddr
+        \Returns    uint8_t byte
+    */
+    virtual uint8_t performRead(size_t localAddr) = 0;
 
 public:
     /*
         \Function   Addressable
         \Brief      Constructor
         \Details    Constructor
-        \Parameter  size_t spaceSizeBytes
         \Parameter  size_t spaceStartAddress
+        \Parameter  size_t spaceSizeBytes
         \Returns    None
     */
-    Addressable(size_t spaceSizeBytes, size_t spaceStartAddress);
+    Addressable(size_t spaceStartAddress, size_t spaceSizeBytes);
 
     /*
         \Function   writeByte
