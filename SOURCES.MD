@@ -29,4 +29,9 @@
  - [OS Dev Wiki](https://wiki.osdev.org/Expanded_Main_Page)
  - [I/O address space spec](http://bochs.sourceforge.net/techspec/PORTS.LST)
  - [OS Dev IO Port spec](https://wiki.osdev.org/I/O_Ports)
+ 
+ 
+#### Floppy Controller
+ - [ISA DMA](https://wiki.osdev.org/ISA_DMA_)
  - [Floppy controller spec](http://www.buchty.net/casio/files/82077.pdf)
+ - [More controller spec](https://www.isdaman.com/alsos/hardware/fdc/floppy.htm)
