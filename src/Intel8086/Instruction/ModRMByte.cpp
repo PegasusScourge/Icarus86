@@ -1,12 +1,11 @@
-/**************************************************************************
-
-ModRMByte.cpp
-
-Created by Matthew Clarke
-
-ModRMByte handling
-
- **************************************************************************/
+/*
+    **> \File           ModRMByte.cpp
+    **> \Author         Matthew Clarke
+    **> \Create Date    2021-03-11
+    **> \Brief          ModRMByte
+    **> \Details        None
+    **> \Notes          None
+*/
 
 #include "Intel8086/Instruction/ModRMByte.hpp"
 

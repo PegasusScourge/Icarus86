@@ -1,15 +1,14 @@
 #ifndef _instructionset_hpp
 #define _instructionset_hpp
 
-/**************************************************************************
-
-InstructionSet.hpp
-
-Created by Matthew Clarke
-
-Abstract implementation of a instruction set
-
- **************************************************************************/
+/*
+    **> \File           InstructionSet.hpp
+    **> \Author         Matthew Clarke
+    **> \Create Date    2021-03-11
+    **> \Brief          Header for InstructionSet.cpp
+    **> \Details        None
+    **> \Notes          None
+*/
 
 #include "ModRMByte.hpp"
 #include "Microcode.hpp"

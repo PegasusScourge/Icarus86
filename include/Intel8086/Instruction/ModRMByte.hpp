@@ -1,15 +1,15 @@
 #ifndef _modrm_hpp
 #define _modrm_hpp
 
-/**************************************************************************
+/*
+    **> \File           ModRMByte.hpp
+    **> \Author         Matthew Clarke
+    **> \Create Date    2021-03-11
+    **> \Brief          Header for ModRMByte.cpp
+    **> \Details        None
+    **> \Notes          None
+*/
 
-ModRMByte.hpp
-
-Created by Matthew Clarke
-
-ModRMByte handling
-
- **************************************************************************/
 
 #include <cstdint>
 

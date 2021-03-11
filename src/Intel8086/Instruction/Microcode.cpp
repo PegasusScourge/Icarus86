@@ -1,12 +1,12 @@
-/**************************************************************************
+/*
+    **> \File           Microcode.cpp
+    **> \Author         Matthew Clarke
+    **> \Create Date    2021-03-11
+    **> \Brief          Microcode
+    **> \Details        None
+    **> \Notes          None
+*/
 
-Microcode.cpp
-
-Created by Matthew Clarke
-
-A set of microcode instructions to complete
-
- **************************************************************************/
 
 #include "Intel8086/Instruction/Microcode.hpp"
 

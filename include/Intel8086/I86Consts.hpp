@@ -14,7 +14,12 @@ namespace i86 {
 
 namespace intel86 {
 
-// CPU Specifics
+// CPU Frequency
+constexpr float FREQ_kHz = 0.1f; // Actual frequency we are running at
+constexpr float FREQ_DESIGN_MIN_kHz = 5000.0f; // 5 MHz
+constexpr float FREQ_DESING_MAX_kHz = 10000.0f; // 10 MHz
+
+// CPU Registers
 constexpr unsigned int NUM_REGISTERS = 14;
 constexpr unsigned int R_AX = 0;
 constexpr unsigned int R_BX = 1;
@@ -44,6 +49,9 @@ constexpr unsigned int FG_CF_BIT = 0;
 // Memory/IO ranges
 constexpr unsigned int ADDRESS_SPACE_LEN = 0x100000;
 constexpr unsigned int ADDRESS_SPACE_MAX_ADDR = 0xFFFFF;
+
+constexpr unsigned int RESET_VECTOR_IP = 0x0;
+constexpr unsigned int RESET_VECTOR_CS = 0xFFFF;
 
 } // end namespace intel86
 

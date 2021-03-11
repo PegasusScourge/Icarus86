@@ -1,19 +1,22 @@
-/**************************************************************************
-
-InstructionSet.cpp
-
-Created by Matthew Clarke
-
-Abract implementation of a instruction set
-
- **************************************************************************/
+/*
+    **> \File           InstructionSet.cpp
+    **> \Author         Matthew Clarke
+    **> \Create Date    2021-03-11
+    **> \Brief          InstructionSet
+    **> \Details        None
+    **> \Notes          None
+*/
 
 #include "Intel8086/Instruction/InstructionSet.hpp"
+#include "Util/HexUtil.hpp"
+#include "Util/LogFile.hpp"
 
 #include <fstream>
 #include <sstream>
 
 namespace ipi = i86::intel86::instruction;
+
+inline i86::util::LogFile InstructionSetLog("ISet.log");
 
 /***********************************/
 // class ICode
@@ -35,6 +38,7 @@ ipi::ICode::ICode(nlohmann::json entry, uint64_t prefix) {
 
 void ipi::ICode::parseICodeEntry(nlohmann::json entry, uint64_t prefix) {
 	using namespace nlohmann;
+	std::stringstream& log = InstructionSetLog.strs();
 
 	// Sanity check for the important things
 	if (!entry["hexcode"].is_string()) {
@@ -42,40 +46,40 @@ void ipi::ICode::parseICodeEntry(nlohmann::json entry, uint64_t prefix) {
 		return;
 	}
 	std::string code_s = entry["hexcode"].get<std::string>();
-	// icarus::COutSys::Print("iCode: hexcode_s=" + code_s + " ", icarus::COutSys::LEVEL_INFO);
+	log << "iCode: hexcode_s=" << code_s << " ";
 
 	// Convert the code to hex number
-	m_code = (uint8_t)icarus::util::HexStrToNum(code_s);
-	// icarus::COutSys::Print("(#=" + std::to_string(m_code) + ")\t\t");
+	m_code = i86::util::HexStrToNum<uint8_t>(code_s);
+	log << "(#=" << std::to_string(m_code) << ")\t\t";
 
 	// Check for prefix
 	if (entry["isPrefix"].is_boolean() && entry["isPrefix"].get<bool>()) {
 		m_isPrefix = true;
-		// icarus::COutSys::Print("[ PREFIX] Checking for child codes: ");
+		log << "[ PREFIX] Checking for child codes: ";
 		if (entry["childCodes"].is_array()) {
 			uint64_t newPrefix = (prefix << 8) & m_code;
-			// icarus::COutSys::Println("[FOUND]. Parsing (newPrefix=" + icarus::util::ToHexStr(newPrefix) + ")");
-			// icarus::COutSys::Println("iCode: <children>", icarus::COutSys::LEVEL_INFO);
+			log << "[FOUND]. Parsing (newPrefix=" << i86::util::NumToHexStr(newPrefix) << ")";
+			log << "iCode: <children>"; InstructionSetLog.flushss();
 			for (auto& iCode : entry["childCodes"]) {
 				m_childCodes.push_back(ICode(iCode, newPrefix));
 			}
-			// icarus::COutSys::Println("iCode: </children>", icarus::COutSys::LEVEL_INFO);
+			log << "iCode: </children>"; InstructionSetLog.flushss();
 			m_valid = true;
 			return;
 		}
 		else {
-			// icarus::COutSys::Println("[NOT FOUND]. Ignoring");
+			log << "[NOT FOUND]. Ignoring"; InstructionSetLog.flushss();
 		}
 	}
 	else {
-		// icarus::COutSys::Print("[!PREFIX] ");
+		log << "[!PREFIX] ";
 		m_isPrefix = false;
 	}
 
 	// Gather other information
 	if (entry["hasModRM"].is_boolean()) {
 		m_hasModRM = entry["hasModRM"].get<bool>();
-		// icarus::COutSys::Print(m_hasModRM ? "[ MODRM] " : "[!MODRM] ");
+		log << (m_hasModRM ? "[ MODRM] " : "[!MODRM] ");
 	}
 	else {
 		m_hasModRM = false;
@@ -83,7 +87,7 @@ void ipi::ICode::parseICodeEntry(nlohmann::json entry, uint64_t prefix) {
 
 	if (entry["immediateBytes"].is_number_unsigned()) {
 		m_immediateBytes = entry["immediateBytes"].get<unsigned int>();
-		// icarus::COutSys::Print("[IMM: " + std::to_string(m_immediateBytes) + "] ");
+		log << "[IMM: " << std::to_string(m_immediateBytes) << "] ";
 	}
 	else {
 		m_immediateBytes = 0;
@@ -91,7 +95,7 @@ void ipi::ICode::parseICodeEntry(nlohmann::json entry, uint64_t prefix) {
 
 	if (entry["displacementBytes"].is_number_unsigned()) {
 		m_displacementBytes = entry["displacementBytes"].get<unsigned int>();
-		// icarus::COutSys::Print("[DISP: " + std::to_string(m_displacementBytes) + "] ");
+		log << "[DISP: " << std::to_string(m_displacementBytes) << "] ";
 	}
 	else {
 		m_displacementBytes = 0;
@@ -99,7 +103,7 @@ void ipi::ICode::parseICodeEntry(nlohmann::json entry, uint64_t prefix) {
 		
 	if (entry["clockCost"].is_number_unsigned()) {
 		m_clockCost = entry["clockCost"].get<unsigned int>();
-		// icarus::COutSys::Print("[CLK#: " + std::to_string(m_clockCost) + "] ");
+		log << "[CLK#: " << std::to_string(m_clockCost) << "] ";
 	}	
 	else {
 		m_clockCost = 0;
@@ -125,18 +129,18 @@ void ipi::ICode::parseICodeEntry(nlohmann::json entry, uint64_t prefix) {
 			m_microcode.push_back(Microcode(s, type));
 		}
 
-		// icarus::COutSys::Print("[MCODE#: " + std::to_string(microcodeAdded) + "] ");
+		log << "[MCODE#: " << std::to_string(microcodeAdded) << "] ";
 		if (microcodeAdded == 0) {
-			// icarus::COutSys::Println("[FAIL: MCODE len = 0]");
+			log << "[FAIL: MCODE len = 0]"; InstructionSetLog.flushss();
 			return;
 		}
 	}
 	else {
-		// icarus::COutSys::Println("[FAIL: MCODE missing]");
+		log << "[FAIL: MCODE missing]"; InstructionSetLog.flushss();
 		return;
 	}
 
-	// icarus::COutSys::Println("[PARSED]");
+	log << "[PARSED]"; InstructionSetLog.flushss();
 	m_valid = true;
 }
 
@@ -220,52 +224,63 @@ bool ipi::InstructionSet::isValid() {
 
 void ipi::InstructionSet::parseJSON() {
 	using namespace nlohmann;
+	std::stringstream& log = InstructionSetLog.strs();
 
-	// icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "': Opening", icarus::COutSys::LEVEL_INFO);
+	log << "InstructionSet from file '" << m_filesrc << "': Opening"; InstructionSetLog.flushss();
 
 	json j;
 	std::ifstream stream(m_filesrc);
 	if (!stream.is_open()) {
 		// ERROR
-		// icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "': Couldn't open file stream. Aborted", icarus::COutSys::LEVEL_ERR);
+		log << "InstructionSet from file '" << m_filesrc << "': Couldn't open file stream. Aborted"; InstructionSetLog.flushss();
 		m_valid = false;
 		return;
 	}
 
 	// We are clear to continue
-	// icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "': Got file. Reading", icarus::COutSys::LEVEL_INFO);
+	log << "InstructionSet from file '" << m_filesrc << "': Got file. Reading"; InstructionSetLog.flushss();
 	stream >> j;
-	// icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "': Read. Checking header", icarus::COutSys::LEVEL_INFO);
+	log << "InstructionSet from file '" << m_filesrc << "': Read. Checking header"; InstructionSetLog.flushss();
 	
 	// Check that we have the right header information
 	if (!j["icarus"].is_boolean() && j["icarus"].get<bool>()) {
 		// ERROR
-		// icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "': Couldn't find header 'icarus' bool element. Aborted", icarus::COutSys::LEVEL_ERR);
+		log << "InstructionSet from file '" << m_filesrc << "': Couldn't find header 'icarus' bool element. Aborted"; InstructionSetLog.flushss();
+		m_valid = false;
 		return;
 	}
 
 	// Now load the name
 	if (j["name"].is_string()) {
 		m_name = j["name"].get<std::string>();
-		// icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "': Loaded. Name = " + m_name, icarus::COutSys::LEVEL_INFO);
+		log << "InstructionSet from file '" << m_filesrc << "': Loaded. Name = " << m_name; InstructionSetLog.flushss();
 	}
 	else {
-		// icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "': Couldn't find header 'name' string element. Aborted", icarus::COutSys::LEVEL_ERR);
+		log << "InstructionSet from file '" << m_filesrc << "': Couldn't find header 'name' string element. Aborted"; InstructionSetLog.flushss();
+		m_valid = false;
 		return;
 	}
 
 	if (!j["icode"].is_array()) {
-		// icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "': Couldn't find header 'icode' array element. Aborted", icarus::COutSys::LEVEL_ERR);
+		log << "InstructionSet from file '" << m_filesrc << "': Couldn't find header 'icode' array element. Aborted"; InstructionSetLog.flushss();
+		m_valid = false;
 		return;
 	}
 
-	// icarus::COutSys::Println("InstructionSet from file '" + m_filesrc + "': iCode found! Parsing...", icarus::COutSys::LEVEL_INFO);
+	log << "InstructionSet from file '" << m_filesrc << "': iCode found! Parsing..."; InstructionSetLog.flushss();
 	// Now we must parse the instructions
 	auto& iCodeNode = j["icode"];
+	
+	bool failedICode = false;
 
 	for (auto& iCode : iCodeNode) {
-		m_iCodes.push_back(ICode(iCode, 0));
+		ICode i(iCode, 0);
+		if (!i.isValid())
+			failedICode = true;
+		m_iCodes.push_back(i);
 	}
+
+	m_valid = !failedICode;
 }
 
 ipi::ICode& ipi::InstructionSet::operator[](uint8_t code) {

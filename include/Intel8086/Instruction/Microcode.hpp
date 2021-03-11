@@ -1,15 +1,15 @@
 #ifndef _microcode_hpp
 #define _microcode_hpp
 
-/**************************************************************************
+/*
+    **> \File           Microcode.hpp
+    **> \Author         Matthew Clarke
+    **> \Create Date    2021-03-11
+    **> \Brief          Header for Microcode.cpp
+    **> \Details        None
+    **> \Notes          None
+*/
 
-Microcode.hpp
-
-Created by Matthew Clarke
-
-A set of microcode instructions to complete
-
- **************************************************************************/
 
 #include <string>
 

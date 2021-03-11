@@ -81,6 +81,7 @@ std::stringstream& i86::util::LogFile::strs() {
 }
 
 void i86::util::LogFile::flushss() {
+    mP_stringQueue.flush();
     log_str(mP_stringQueue.str());
-    mP_stringQueue.clear();
+    mP_stringQueue = std::stringstream();
 }

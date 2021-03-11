@@ -1,5 +1,5 @@
 {
-    "C_Cpp.default.includePath": ["include"],
+    "C_Cpp.default.includePath": ["include", "lib_include"],
     "files.exclude": {
         "**/.git": true,
         "**/.svn": true,
