@@ -13,22 +13,24 @@
 #include "Intel8086/Intel86.hpp"
 #include "Intel8086/I86Consts.hpp"
 
-#include "SFML/System.hpp"
-
 #include <iostream>
 #include <cstddef>
 
 int main(int argc, char* argv[]) {
     using namespace i86;
 
+    std::cout << "Icarus86 START" << std::endl;
+
     Icarus86 icarus(argc, argv);
 
     icarus.go();
+
+    std::cout << "Icarus86 END" << std::endl;
     return 0;
 }
 
 // ****************************************************************
-// Class Icarus86
+// Class Icarus86: Public
 // ****************************************************************
 
 i86::Icarus86::Icarus86(int argc, char* argv[]) {
@@ -38,8 +40,6 @@ i86::Icarus86::Icarus86(int argc, char* argv[]) {
 }
 
 void i86::Icarus86::go() {
-    sf::Clock clockTest;
-
     i86::util::LogFile logger("icarus.log", true);
 
     i86::intel86::instruction::InstructionSet iSet("bin/8086.json");
@@ -49,8 +49,8 @@ void i86::Icarus86::go() {
         return;
     }
 
-    i86::compGeneric::MemoryController memory(0, i86::intel86::ADDRESS_SPACE_LEN);
-    i86::compGeneric::MemoryController tmpIO(0, i86::intel86::ADDRESS_SPACE_LEN);
+    i86::compGeneric::MemoryController memory(0, i86::intel86::consts::ADDRESS_SPACE_LEN);
+    i86::compGeneric::MemoryController tmpIO(0, i86::intel86::consts::ADDRESS_SPACE_LEN);
 
     i86::intel86::Intel86 cpu(memory, tmpIO, iSet);
 }
