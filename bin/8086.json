@@ -1,0 +1,1561 @@
+{
+	"name": "InstructionSet_8086",
+	"icarus": true,
+	"version": {
+		"major": 0,
+		"minor": 1
+	},
+	"icode": [
+	
+		{
+			"mnemonic": "ADD r/m16, r/16",
+			"hexcode": "01",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_MODRM",
+				"SRC_REGOP",
+				"FN_ADD",
+				"DST_MODRM"
+			]
+		},
+		{
+			"mnemonic": "ADD AL, imm8",
+			"hexcode": "04",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_8",
+				"SRC_R_AL",
+				"SRC_IMM",
+				"FN_ADD",
+				"DST_R_AL"
+			]
+		},
+		{
+			"mnemonic": "PUSH_ES",
+			"hexcode": "06",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_ES",
+				"FN_APASS",
+				"DST_STACK_PUSH"
+			]
+		},
+		{
+			"mnemonic": "POP_ES",
+			"hexcode": "07",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_STACK_POP",
+				"FN_APASS",
+				"DST_R_ES"
+			]
+		},
+		{
+			"mnemonic": "OR r/m16, r/16",
+			"hexcode": "09",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_MODRM",
+				"SRC_REGOP",
+				"FN_OR",
+				"DST_MODRM"
+			]
+		},
+		{
+			"mnemonic": "SBB r/m16, r/16",
+			"hexcode": "19",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_MODRM",
+				"SRC_REGOP",
+				"FN_SBB",
+				"DST_MODRM"
+			]
+		},
+		{
+			"mnemonic": "PUSH_DS",
+			"hexcode": "1E",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_DS",
+				"FN_APASS",
+				"DST_STACK_PUSH"
+			]
+		},
+		{
+			"mnemonic": "POP_DS",
+			"hexcode": "1F",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_STACK_POP",
+				"FN_APASS",
+				"DST_R_DS"
+			]
+		},
+		{
+			"mnemonic": "AND r/m8, r/8",
+			"hexcode": "20",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_8",
+				"SRC_MODRM",
+				"SRC_REGOP",
+				"FN_AND",
+				"DST_MODRM"
+			]
+		},
+		{
+			"mnemonic": "AND r/m16, r/16",
+			"hexcode": "21",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_MODRM",
+				"SRC_REGOP",
+				"FN_AND",
+				"DST_MODRM"
+			]
+		},
+		{
+			"mnemonic": "SEG OVERRIDE ES",
+			"hexcode": "26",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SEG_OVERRIDE_ES"
+			]
+		},
+		{
+			"mnemonic": "SUB r/m16, r/16",
+			"hexcode": "29",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_MODRM",
+				"SRC_REGOP",
+				"FN_SUB",
+				"DST_MODRM"
+			]
+		},
+		{
+			"mnemonic": "XOR r/m16, r/16",
+			"hexcode": "31",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_MODRM",
+				"SRC_REGOP",
+				"FN_XOR",
+				"DST_MODRM"
+			]
+		},
+		{
+			"mnemonic": "CMP r/m16, r/16",
+			"hexcode": "39",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_MODRM",
+				"SRC_REGOP",
+				"FN_CMP"
+			]
+		},
+		{
+			"mnemonic": "CMP AL, imm8",
+			"hexcode": "3C",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_8",
+				"SRC_R_AL",
+				"SRC_IMM",
+				"FN_CMP"
+			]
+		},
+		{
+			"mnemonic": "INC_AX",
+			"hexcode": "40",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_AX",
+				"FN_INC",
+				"DST_R_AX"
+			]
+		},
+		{
+			"mnemonic": "INC_CX",
+			"hexcode": "41",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_CX",
+				"FN_INC",
+				"DST_R_CX"
+			]
+		},
+		{
+			"mnemonic": "INC_DX",
+			"hexcode": "42",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_DX",
+				"FN_INC",
+				"DST_R_DX"
+			]
+		},
+		{
+			"mnemonic": "INC_BX",
+			"hexcode": "43",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_BX",
+				"FN_INC",
+				"DST_R_BX"
+			]
+		},
+		{
+			"mnemonic": "INC_SP",
+			"hexcode": "44",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_SP",
+				"FN_INC",
+				"DST_R_SP"
+			]
+		},
+		{
+			"mnemonic": "INC_BP",
+			"hexcode": "45",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_BP",
+				"FN_INC",
+				"DST_R_BP"
+			]
+		},
+		{
+			"mnemonic": "INC_SI",
+			"hexcode": "46",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_SI",
+				"FN_INC",
+				"DST_R_SI"
+			]
+		},
+		{
+			"mnemonic": "INC_DI",
+			"hexcode": "47",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_DI",
+				"FN_INC",
+				"DST_R_DI"
+			]
+		},
+		{
+			"mnemonic": "DEC_AX",
+			"hexcode": "48",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_AX",
+				"FN_DEC",
+				"DST_R_AX"
+			]
+		},
+		{
+			"mnemonic": "DEC_CX",
+			"hexcode": "49",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_CX",
+				"FN_DEC",
+				"DST_R_CX"
+			]
+		},
+		{
+			"mnemonic": "DEC_DX",
+			"hexcode": "4A",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_DX",
+				"FN_DEC",
+				"DST_R_DX"
+			]
+		},
+		{
+			"mnemonic": "DEC_BX",
+			"hexcode": "4B",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_BX",
+				"FN_DEC",
+				"DST_R_BX"
+			]
+		},
+		{
+			"mnemonic": "DEC_SP",
+			"hexcode": "4C",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_SP",
+				"FN_DEC",
+				"DST_R_SP"
+			]
+		},
+		{
+			"mnemonic": "DEC_BP",
+			"hexcode": "4D",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_BP",
+				"FN_DEC",
+				"DST_R_BP"
+			]
+		},
+		{
+			"mnemonic": "DEC_SI",
+			"hexcode": "4E",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_SI",
+				"FN_DEC",
+				"DST_R_SI"
+			]
+		},
+		{
+			"mnemonic": "DEC_DI",
+			"hexcode": "4F",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_DI",
+				"FN_DEC",
+				"DST_R_DI"
+			]
+		},
+		{
+			"mnemonic": "PUSH_AX",
+			"hexcode": "50",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_AX",
+				"FN_APASS",
+				"DST_STACK_PUSH"
+			]
+		},
+		{
+			"mnemonic": "PUSH_CX",
+			"hexcode": "51",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_CX",
+				"FN_APASS",
+				"DST_STACK_PUSH"
+			]
+		},
+		{
+			"mnemonic": "PUSH_DX",
+			"hexcode": "52",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_DX",
+				"FN_APASS",
+				"DST_STACK_PUSH"
+			]
+		},
+		{
+			"mnemonic": "PUSH_BX",
+			"hexcode": "53",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_BX",
+				"FN_APASS",
+				"DST_STACK_PUSH"
+			]
+		},
+		{
+			"mnemonic": "PUSH_SP",
+			"hexcode": "54",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_SP",
+				"FN_APASS",
+				"DST_STACK_PUSH"
+			]
+		},
+		{
+			"mnemonic": "PUSH_BP",
+			"hexcode": "55",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_BP",
+				"FN_APASS",
+				"DST_STACK_PUSH"
+			]
+		},
+		{
+			"mnemonic": "PUSH_SI",
+			"hexcode": "56",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_SI",
+				"FN_APASS",
+				"DST_STACK_PUSH"
+			]
+		},
+		{
+			"mnemonic": "PUSH_DI",
+			"hexcode": "57",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_DI",
+				"FN_APASS",
+				"DST_STACK_PUSH"
+			]
+		},
+		{
+			"mnemonic": "POP_AX",
+			"hexcode": "58",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_STACK_POP",
+				"FN_APASS",
+				"DST_R_AX"
+			]
+		},
+		{
+			"mnemonic": "POP_CX",
+			"hexcode": "59",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_STACK_POP",
+				"FN_APASS",
+				"DST_R_CX"
+			]
+		},
+		{
+			"mnemonic": "POP_DX",
+			"hexcode": "5A",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_STACK_POP",
+				"FN_APASS",
+				"DST_R_DX"
+			]
+		},
+		{
+			"mnemonic": "POP_BX",
+			"hexcode": "5B",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_STACK_POP",
+				"FN_APASS",
+				"DST_R_BX"
+			]
+		},
+		{
+			"mnemonic": "POP_SP",
+			"hexcode": "5C",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_STACK_POP",
+				"FN_APASS",
+				"DST_R_SP"
+			]
+		},
+		{
+			"mnemonic": "POP_BP",
+			"hexcode": "5D",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_STACK_POP",
+				"FN_APASS",
+				"DST_R_BP"
+			]
+		},
+		{
+			"mnemonic": "POP_SI",
+			"hexcode": "5E",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_STACK_POP",
+				"FN_APASS",
+				"DST_R_SI"
+			]
+		},
+		{
+			"mnemonic": "POP_DI",
+			"hexcode": "5F",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_STACK_POP",
+				"FN_APASS",
+				"DST_R_DI"
+			]
+		},
+		{
+			"mnemonic": "JC",
+			"hexcode": "72",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_JC"
+			]
+		},
+		{
+			"mnemonic": "JNC",
+			"hexcode": "73",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_JNC"
+			]
+		},
+		{
+			"mnemonic": "JZ/JE",
+			"hexcode": "74",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_JZ"
+			]
+		},
+		{
+			"mnemonic": "JNZ/JNE",
+			"hexcode": "75",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_JNZ"
+			]
+		},
+		{
+			"mnemonic": "JBE",
+			"hexcode": "76",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_JBE"
+			]
+		},
+		{
+			"mnemonic": "JNBE",
+			"hexcode": "77",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_JNBE"
+			]
+		},
+		{
+			"mnemonic": "JS",
+			"hexcode": "78",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_JS"
+			]
+		},
+		{
+			"mnemonic": "JNS",
+			"hexcode": "79",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"SRC_IMM",
+				"FN_JNS"
+			]
+		},
+		{
+			"mnemonic": "MANY",
+			"hexcode": "80",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_8",
+				"SRC_MODRM",
+				"SRC_IMM",
+				"FN_REGOP_8X",
+				"DST_MODRM"
+			]
+		},
+		{
+			"mnemonic": "MANY",
+			"hexcode": "81",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 2,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_MODRM",
+				"SRC_IMM",
+				"FN_REGOP_8X",
+				"DST_MODRM"
+			]
+		},
+		{
+			"mnemonic": "MANY",
+			"hexcode": "83",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_MODRM",
+				"SRC_IMM",
+				"SE_SRC_B",
+				"FN_REGOP_8X",
+				"DST_MODRM"
+			]
+		},
+		{
+			"mnemonic": "XCHG r8, r/m8",
+			"hexcode": "86",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_8",
+				"SRC_REGOP",
+				"SRC_MODRM",
+				"FN_APASS",
+				"DST_MODRM",
+				"FN_BPASS",
+				"DST_REGOP"
+			]
+		},
+		{
+			"mnemonic": "XCHG r16, r/m16",
+			"hexcode": "87",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_REGOP",
+				"SRC_MODRM",
+				"FN_APASS",
+				"DST_MODRM",
+				"FN_BPASS",
+				"DST_REGOP"
+			]
+		},
+		{
+			"mnemonic": "MOV r/m8, r/8",
+			"hexcode": "88",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_8",
+				"SRC_REGOP",
+				"FN_APASS",
+				"DST_MODRM"
+			]
+		},
+		{
+			"mnemonic": "MOV r/m16, r/16",
+			"hexcode": "89",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_REGOP",
+				"FN_APASS",
+				"DST_MODRM"
+			]
+		},
+		{
+			"mnemonic": "MOV r/8, r/m8",
+			"hexcode": "8A",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_8",
+				"SRC_MODRM",
+				"FN_APASS",
+				"DST_REGOP"
+			]
+		},
+		{
+			"mnemonic": "MOV r/16, r/m16",
+			"hexcode": "8B",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_MODRM",
+				"FN_APASS",
+				"DST_REGOP"
+			]
+		},
+		{
+			"mnemonic": "MOV Sreg, r/m16",
+			"hexcode": "8E",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_MODRM",
+				"FN_APASS",
+				"DST_REGOP_SREG"
+			]
+		},
+		{
+			"mnemonic": "NOP",
+			"hexcode": "90",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"NOP"
+			]
+		},
+		{
+			"mnemonic": "XCHG CX, AX",
+			"hexcode": "91",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_CX",
+				"SRC_R_AX",
+				"FN_APASS",
+				"DST_R_AX",
+				"FN_BPASS",
+				"DST_R_CX"
+			]
+		},
+		{
+			"mnemonic": "XCHG DX, AX",
+			"hexcode": "92",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_DX",
+				"SRC_R_AX",
+				"FN_APASS",
+				"DST_R_AX",
+				"FN_BPASS",
+				"DST_R_DX"
+			]
+		},
+		{
+			"mnemonic": "XCHG BX, AX",
+			"hexcode": "93",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_R_BX",
+				"SRC_R_AX",
+				"FN_APASS",
+				"DST_R_AX",
+				"FN_BPASS",
+				"DST_R_BX"
+			]
+		},
+		{
+			"mnemonic": "MOV_AL",
+			"hexcode": "B0",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_8",
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_AL"
+			]
+		},
+		{
+			"mnemonic": "MOV_CL",
+			"hexcode": "B1",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_8",
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_CL"
+			]
+		},
+		{
+			"mnemonic": "MOV_DL",
+			"hexcode": "B2",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_8",
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_DL"
+			]
+		},
+		{
+			"mnemonic": "MOV_BL",
+			"hexcode": "B3",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_8",
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_BL"
+			]
+		},
+		{
+			"mnemonic": "MOV_AH",
+			"hexcode": "B4",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_8",
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_AH"
+			]
+		},
+		{
+			"mnemonic": "MOV_CH",
+			"hexcode": "B5",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_8",
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_CL"
+			]
+		},
+		{
+			"mnemonic": "MOV_DH",
+			"hexcode": "B6",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_8",
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_DL"
+			]
+		},
+		{
+			"mnemonic": "MOV_BH",
+			"hexcode": "B7",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_8",
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_BH"
+			]
+		},
+		{
+			"mnemonic": "MOV_AX",
+			"hexcode": "B8",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 2,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_AX"
+			]
+		},
+		{
+			"mnemonic": "MOV_CX",
+			"hexcode": "B9",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 2,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_CX"
+			]
+		},
+		{
+			"mnemonic": "MOV_DX",
+			"hexcode": "BA",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 2,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_DX"
+			]
+		},
+		{
+			"mnemonic": "MOV_BX",
+			"hexcode": "BB",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 2,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_BX"
+			]
+		},
+		{
+			"mnemonic": "MOV_SP",
+			"hexcode": "BC",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 2,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_SP"
+			]
+		},
+		{
+			"mnemonic": "MOV_BP",
+			"hexcode": "BD",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 2,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_BP"
+			]
+		},
+		{
+			"mnemonic": "MOV_SI",
+			"hexcode": "BE",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 2,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_SI"
+			]
+		},
+		{
+			"mnemonic": "MOV_DI",
+			"hexcode": "BF",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 2,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_R_DI"
+			]
+		},
+		{
+			"mnemonic": "RETN",
+			"hexcode": "C3",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_STACK_POP",
+				"FN_RETN_NEAR"
+			]
+		},
+		{
+			"mnemonic": "MOV r/m16 imm16",
+			"hexcode": "C7",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 2,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_IMM",
+				"FN_APASS",
+				"DST_MODRM"
+			]
+		},
+		{
+			"mnemonic": "INT imm8",
+			"hexcode": "CD",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"FN_INT"
+			]
+		},
+		{
+			"mnemonic": "IRET",
+			"hexcode": "CF",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"FN_IRET"
+			]
+		},
+		{
+			"mnemonic": "CALL rel16",
+			"hexcode": "E8",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 2,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_IMM",
+				"FN_CALL_REL"
+			]
+		},
+		{
+			"mnemonic": "JMPF ptr16:16",
+			"hexcode": "EA",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 2,
+			"displacementBytes": 2,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_16",
+				"SRC_DISP",
+				"SRC_IMM",
+				"FN_JMPF"
+			]
+		},
+		{
+			"mnemonic": "JMP rel8",
+			"hexcode": "EB",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 1,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_8",
+				"SRC_IMM",
+				"FN_JMP"
+			]
+		},
+		{
+			"mnemonic": "HLT",
+			"hexcode": "F4",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"HLT"
+			]
+		},
+		{
+			"mnemonic": "CLC",
+			"hexcode": "F8",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"FN_CLC"
+			]
+		},
+		{
+			"mnemonic": "STC",
+			"hexcode": "F9",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"FN_STC"
+			]
+		},
+		{
+			"mnemonic": "CLI",
+			"hexcode": "FA",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"FN_CLI"
+			]
+		},
+		{
+			"mnemonic": "STI",
+			"hexcode": "FB",
+			"isPrefix": false,
+			"hasModRM": false,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"FN_STI"
+			]
+		},
+		{
+			"mnemonic": "INC/DEC r/m8",
+			"hexcode": "FE",
+			"isPrefix": false,
+			"hasModRM": true,
+			"immediateBytes": 0,
+			"displacementBytes": 0,
+			"clockCost": 1,
+			"childCodes": [],
+			"microcode": [
+				"RMB_8",
+				"SRC_MODRM",
+				"FN_REGOP_FE",
+				"DST_MODRM"
+			]
+		}
+		
+	]
+}

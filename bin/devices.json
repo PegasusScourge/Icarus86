@@ -1,0 +1,16 @@
+{
+    "icarus": true,
+    "devices": [
+        {
+            "human": "TestDevice",
+            "serial": "000001",
+            "type": "GENERIC",
+            "memoryspace": [
+
+            ],
+            "iospace": [
+
+            ]
+        }
+    ]
+}
