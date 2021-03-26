@@ -54,7 +54,7 @@ microcode | array | A list of strings corresponding to microcode instructions th
 
 ### Microcode instructions
 
-All microcode instructions are encoded as string literals (converted internally by Icarus86 to a more efficient format) in the microcode arrays of icode elements
+All microcode instructions are encoded as string literals (converted internally by Icarus86 to a more efficient format) in the microcode arrays of icode elements. **NOTE: Case Sensitive**
 
 Microcode instruction | Purpose | Notes
  -------------------- | ------- | ----- 
