@@ -31,7 +31,8 @@ The name of the instruction set is defined at the top, with the mandatory field 
 				"FN_ADD",
 				"DST_MODRM"
 			]
-		}
+		},
+        ...
     ]
 }
 ```
