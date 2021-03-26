@@ -10,8 +10,12 @@
     **> \Notes          None
 */
 
+#include "nlohmann/json.hpp"
+#include "Device/GenericDevice.hpp"
+
 #include <vector>
 #include <string>
+#include <memory>
 
 namespace i86 {
 
@@ -23,7 +27,39 @@ namespace i86 {
 class Icarus86 {
 
 private:
+    static std::string ISetPath;
+    static std::string DevicesCfgPath;
+
     std::vector<std::string> m_cmdArgs;
+
+    nlohmann::json m_deviceConfig;
+
+    /*
+        \Function   buildDeviceConfig
+        \Brief      Constructs device config
+        \Details    Constructs device config
+        \Parameter  None
+        \Returns    bool success
+    */
+    bool buildDeviceConfig();
+
+    /*
+        \Function   validateDevice
+        \Brief      Validates device
+        \Details    Validates device
+        \Parameter  nlohmann::json& device
+        \Returns    bool valid
+    */
+    bool validateDevice(nlohmann::json& device);
+
+    /*
+        \Function   constructDevices
+        \Brief      Constructs devices
+        \Details    Constructs devices
+        \Parameter  std::vector<std::shared_ptr<i86::device::GenericDevice>>& devices
+        \Returns    bool success
+    */
+    bool constructDevices(std::vector<std::shared_ptr<i86::device::GenericDevice>>& devices);
 
 public:
     /*

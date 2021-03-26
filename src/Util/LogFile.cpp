@@ -13,6 +13,8 @@
 #include <chrono>
 #include <cstring>
 
+i86::util::LogFile i86::util::LogFile::Generic = i86::util::LogFile("Icarus86.log", true);
+
 // ****************************************************************
 // Class LogFile
 // ****************************************************************

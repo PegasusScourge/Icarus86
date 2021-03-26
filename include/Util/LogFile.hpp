@@ -101,6 +101,8 @@ public:
     */
     void log_str(std::string str);
 
+    static LogFile Generic;
+
 }; // end class LogFile
 
 } // end namespace util

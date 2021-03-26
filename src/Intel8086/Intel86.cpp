@@ -20,7 +20,7 @@ inline i86::util::LogFile Intel86Log("Intel86.log");
 // Class Intel86: Public
 // ****************************************************************
 
-i86::intel86::Intel86::Intel86(gc::Addressable& memorySpace, gc::Addressable& ioSpace, i86::intel86::instruction::InstructionSet& iSet) : 
+i86::intel86::Intel86::Intel86(gc::AddressSpace& memorySpace, gc::AddressSpace& ioSpace, i86::intel86::instruction::InstructionSet& iSet) : 
     m_memorySpace {memorySpace}, m_ioSpace {ioSpace}, m_instructions {iSet} {
     
     reset();
@@ -57,7 +57,10 @@ void i86::intel86::Intel86::tick() {
             m_ticksToIdle--;
         }
         else {
-            execute();
+            PrimeExecuteStatus result = primeExecute();
+            if(result != PrimeExecuteStatus::SUCCESS) {
+                // Handle errors
+            }
         }
     }
 }
@@ -131,7 +134,7 @@ uint32_t i86::intel86::Intel86::getSegOffsetPair(consts::R segmentReg, consts::R
     return pair;
 }
 
-void i86::intel86::Intel86::execute() {
+i86::intel86::Intel86::PrimeExecuteStatus i86::intel86::Intel86::primeExecute() {
     uint8_t code;
 
     uint32_t baseIP = getReg(consts::R::IP).X;
@@ -139,7 +142,7 @@ void i86::intel86::Intel86::execute() {
 
     if (!m_memorySpace.readByte(getSegOffsetPair(consts::R::CS, baseIP + ipInc), code)) {
         fault("Unable to read byte from memory space at CS:IP (" + i86::util::NumToHexStr(getReg(consts::R::CS).X) + ":" + i86::util::NumToHexStr(getReg(consts::R::IP).X) + ")");
-        return;
+        return PrimeExecuteStatus::MEMORY_READ_ERROR;
     }
 
     i86::intel86::instruction::ICode instr = m_instructions[code];
@@ -147,21 +150,138 @@ void i86::intel86::Intel86::execute() {
     while (instr.isValid() && instr.isPrefix()) {
         if (!m_memorySpace.readByte(getSegOffsetPair(consts::R::CS, baseIP + (++ipInc)), code)) {
             fault("Unable to read byte from memory space at CS:IP (" + i86::util::NumToHexStr(getReg(consts::R::CS).X) + ":" + i86::util::NumToHexStr(getReg(consts::R::IP).X) + ")");
-            return;
+            return PrimeExecuteStatus::MEMORY_READ_ERROR;
         }
 
         instr = instr[code];
     }
 
     if (!instr.isValid()) {
-        fault("instr invalid");
-        return;
+        fault("Instr invalid");
+        return PrimeExecuteStatus::INVALID_INSTR;
     }
 
-    // We have a valid instruction!
-    primeCurrentInstruction(instr, baseIP, ipInc);
+    m_cInstr.code = instr.getCode();
+
+    // Check for segmenet override
+    if (m_cInstr.hasSegOverride && m_cInstr.usedSegOverride) {
+        // We have used the seg override, discard it now
+        m_cInstr.hasSegOverride = false;
+        m_cInstr.usedSegOverride = false;
+    }
+    else if (m_cInstr.hasSegOverride && !m_cInstr.usedSegOverride) {
+        // We have a seg override set up from the past instruction (which was a seg override),
+        // mark as used so we can discard it next time
+        m_cInstr.usedSegOverride = true;
+    }
+
+    Intel86Log.log_str("Instr mnemonic: " + instr.getMnemonic());
+
+    // We have a valid instruction, now lets get the microcode
+    m_cInstr.microcode = instr.getMicrocode();
+    if (m_cInstr.microcode.size() == 0) {
+        // No microcode!
+        fault("Found no microcode in instr");
+        return PrimeExecuteStatus::INVALID_INSTR;
+    }
+    Intel86Log.log_str("Has microcode");
+
+    // The number of displacement and immediate bytes can be modified by the ModRM value. So we cache here in order to increment
+    unsigned int numDispBytes = instr.numDisplacementBytes();
+    unsigned int numImmBytes = instr.numImmediateBytes();
+    uint8_t b;
+
+    // Get a ModRMByte if needed
+    m_cInstr.modRMByte.setByte(0);
+    if (instr.hasModRM()) {
+        Intel86Log.log_str("Has modrm");
+        m_addressBuff = getSegOffsetPair(consts::R::CS, baseIP + (++ipInc));
+        if (m_memorySpace.readByte(m_addressBuff, b)) {
+            // Failed to read a byte
+            fault("Failed to read byte (for ModRM)");
+            return PrimeExecuteStatus::MEMORY_READ_ERROR;
+        }
+        m_cInstr.modRMByte.setByte(b);
+        Intel86Log.log_str("MODRM = " + i86::util::NumToHexStr(b));
+
+        // Now we need to detect if we have a modifying value that will necessitate adding disp or imm bytes.
+        if (numDispBytes == 0) {
+            if (m_cInstr.modRMByte.MOD() == 0b01) {
+                // We need to have one displacement byte!
+                numDispBytes++;
+                Intel86Log.log_str("MODRM indicated need for one displacement byte where instruction set doesn't, adding");
+            }
+            if (m_cInstr.modRMByte.MOD() == 0b10) {
+                // We need to have two displacement bytes!
+                numDispBytes += 2;
+                Intel86Log.log_str("MODRM indicated need for two displacement bytes where instruction set doesn't, adding");
+            }
+            if (m_cInstr.modRMByte.MOD() == 0b00 && m_cInstr.modRMByte.RM() == 0b110) {
+                // We need to have two displacement bytes!
+                numDispBytes += 2;
+                Intel86Log.log_str("MODRM indicated need for two displacement bytes where instruction set doesn't, adding");
+            }
+        }
+    }
+
+    // Get displacment bytes if needed
+    m_cInstr.displacement = 0;
+    if (numDispBytes > 0) {
+        Intel86Log.log_str("Has displacement");
+        m_addressBuff = getSegOffsetPair(consts::R::CS, baseIP + (++ipInc));
+        m_cInstr.numDisplacementBytes = numDispBytes;
+        switch (numDispBytes) {
+        case 2:
+            Intel86Log.log_str("2 Byte");
+            m_memorySpace.readByte(m_addressBuff, b);
+            m_cInstr.displacement |= b;
+            m_addressBuff = getSegOffsetPair(consts::R::CS, baseIP + (++ipInc));
+            m_memorySpace.readByte(m_addressBuff, b);
+            m_cInstr.displacement |= (b << 8);
+            break;
+        case 1:
+            Intel86Log.log_str("1 Byte");
+            m_memorySpace.readByte(m_addressBuff, b);
+            m_cInstr.displacement |= b;
+            break;
+
+        default:
+            // Error getting displacement bytes
+            fault("Failed to get displacement bytes (num=" + std::to_string(numDispBytes) + ")");
+            return PrimeExecuteStatus::EXTRA_BYTE_GET_ERR;
+        }
+    }
+
+    // Get immediate bytes if needed
+    m_cInstr.immediate = 0;
+    if (numImmBytes > 0) {
+        Intel86Log.log_str("Has immediate");
+        m_addressBuff = getSegOffsetPair(consts::R::CS, baseIP + (++ipInc));
+        m_cInstr.numImmeditateBytes = numImmBytes;
+        switch (numImmBytes) {
+        case 2:
+            Intel86Log.log_str("2 Byte");
+            m_memorySpace.readByte(m_addressBuff, b);
+            m_cInstr.immediate |= b;
+            m_addressBuff = getSegOffsetPair(consts::R::CS, baseIP + (++ipInc));
+            m_memorySpace.readByte(m_addressBuff, b);
+            m_cInstr.immediate |= (b << 8);
+            break;
+        case 1:
+            Intel86Log.log_str("1 Byte");
+            m_memorySpace.readByte(m_addressBuff, b);
+            m_cInstr.immediate |= b;
+            break;
+
+        default:
+            // Error getting displacement bytes
+            fault("Failed to get immediate bytes (num=" + std::to_string(numImmBytes) + ")");
+            return PrimeExecuteStatus::EXTRA_BYTE_GET_ERR;
+        }
+    }
+
+    Intel86Log.log_str("IP = " + i86::util::NumToHexStr(m_registers[rToI(consts::R::IP)]));
+
+    return PrimeExecuteStatus::SUCCESS;
 }
 
-void i86::intel86::Intel86::primeCurrentInstruction(i86::intel86::instruction::ICode& instr, uint32_t baseIP, uint32_t& ipInc) {
-
-}

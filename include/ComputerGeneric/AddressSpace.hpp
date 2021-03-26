@@ -1,65 +1,80 @@
-#ifndef _addressable_hpp
-#define _addressable_hpp
+#ifndef _AddressSpace_hpp
+#define _AddressSpace_hpp
 
 /*
     **> \File           Addressable.hpp
     **> \Author         Matthew Clarke
     **> \Create Date    2021-03-10
-    **> \Brief          Header for Addressable.cpp
-    **> \Details        Addressable class interface for memory/IO access
+    **> \Brief          Header for AddressSpace.cpp
+    **> \Details        AddressSpace class interface for memory/IO access
     **> \Notes          None
 */
+
+#include "Device/GenericDevice.hpp"
+#include "AddressRange.hpp"
 
 #include <cstdint>
 #include <cstddef>
 #include <mutex>
+#include <map>
+#include <memory>
 
 namespace i86 {
 
 namespace compGeneric {
 
 // ****************************************************************
-// Class Addressable
+// Class AddressSpace
 // Properties: Thread safe (lock_guard)
 // ****************************************************************
 
-class Addressable {
+class AddressSpace {
 
 private:
-    size_t m_sizeBytes;
-    size_t m_startAddress;
+    i86::compGeneric::AddressRange m_addrRange;
 
     std::mutex m_mutex;
 
+    std::map<size_t, std::shared_ptr<i86::device::GenericDevice>> m_devices; // addr, Device
+
     /*
         \Function   performWrite
-        \Brief      virtual performWrite
+        \Brief      performWrite
         \Details    Performs a write to an address
-        \Parameter  size_t localAddr
+        \Parameter  size_t addr
         \Parameter  uint8_t byte
         \Returns    None
     */
-    virtual void performWrite(size_t localAddr, uint8_t byte) = 0;
+    void performWrite(size_t addr, uint8_t byte);
 
     /*
         \Function   performWrite
-        \Brief      virtual performRead
+        \Brief      performRead
         \Details    Performs a read from an address
-        \Parameter  size_t localAddr
+        \Parameter  size_t addr
         \Returns    uint8_t byte
     */
-    virtual uint8_t performRead(size_t localAddr) = 0;
+    uint8_t performRead(size_t addr);
 
 public:
     /*
-        \Function   Addressable
+        \Function   AddressSpace
         \Brief      Constructor
         \Details    Constructor
-        \Parameter  size_t spaceStartAddress
-        \Parameter  size_t spaceSizeBytes
+        \Parameter  i86::compGeneric::AddressRange range
         \Returns    None
     */
-    Addressable(size_t spaceStartAddress, size_t spaceSizeBytes);
+    AddressSpace(i86::compGeneric::AddressRange range);
+
+    /*
+        \Function   registerDevice
+        \Brief      Registers a device
+        \Details    Registers a device
+        \Parameter  std::shared_ptr<i86::device::GenericDevice> device
+        \Parameter  std::vector<i86::compGeneric::AddressRange>& ranges
+        \Returns    None
+    */
+    void registerDevice(std::shared_ptr<i86::device::GenericDevice> device, std::vector<i86::compGeneric::AddressRange>& ranges);
 
     /*
         \Function   writeByte
@@ -99,7 +114,7 @@ public:
     */
     size_t getStartAddress();
 
-}; // end class Addressable
+}; // end class AddressSpace
 
 } // end namespace compGeneric
 

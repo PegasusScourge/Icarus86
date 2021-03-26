@@ -11,7 +11,7 @@
 */
 
 #include "Intel8086/I86Consts.hpp"
-#include "ComputerGeneric/Addressable.hpp"
+#include "ComputerGeneric/AddressSpace.hpp"
 #include "Instruction/InstructionSet.hpp"
 #include "Instruction/CurrentInstruction.hpp"
 #include "Util/HexUtil.hpp"
@@ -60,8 +60,8 @@ public:
 class Intel86 {
 
 private:
-    i86::compGeneric::Addressable& m_memorySpace;
-    i86::compGeneric::Addressable& m_ioSpace;
+    i86::compGeneric::AddressSpace& m_memorySpace;
+    i86::compGeneric::AddressSpace& m_ioSpace;
     i86::intel86::instruction::InstructionSet& m_instructions;
 
     Register16 m_registers[i86::intel86::consts::NUM_REGISTERS];
@@ -69,6 +69,8 @@ private:
     size_t m_ticksToIdle = 0;
     size_t accumulator = 0;
     sf::Clock m_timingClock;
+
+    uint32_t m_addressBuff : 24; // 24 bit address buffer as needed
 
     size_t m_numFaults = 0;
     static constexpr size_t NUM_MAX_FAULTS = 1;
@@ -85,17 +87,6 @@ private:
         \Returns    None
     */
     void fault(std::string reason = "None given");
-
-    /*
-        \Function   primeCurrentInstruction
-        \Brief      Primes m_cInstr with data
-        \Details    Primes m_cInstr with data
-        \Parameter  i86::intel86::instruction::ICode& instr
-        \Parameter  uint32_t baseIP
-        \Parameter  uint32_t& ipInc
-        \Returns    None
-    */
-    void primeCurrentInstruction(i86::intel86::instruction::ICode& instr, uint32_t baseIP, uint32_t& ipInc);
 
     /*
         \Function   getReg
@@ -127,25 +118,26 @@ private:
     uint32_t getSegOffsetPair(consts::R segmentReg, consts::R offsetReg);
 
     /*
-        \Function   execute
-        \Brief      Executes an instruction
-        \Details    Executes instruction and increments ticksToIdle
+        \Function   primeExecute
+        \Brief      Primes for execution of an instruction
+        \Details    Primes for execution of and instruction and increments ticksToIdle
         \Parameter  None
-        \Returns    None
+        \Returns    PrimeExecuteStatus status
     */
-    void execute();
+    enum class PrimeExecuteStatus { SUCCESS, GENERIC_FAIL, MEMORY_READ_ERROR, INVALID_INSTR, EXTRA_BYTE_GET_ERR };
+    PrimeExecuteStatus primeExecute();
 
 public:
     /*
         \Function   Intel86
         \Brief      Constructs Intel86
         \Details    Constructs Intel86
-        \Parameter  i86::compGeneric::Addressable& memorySpace
-        \Parameter  i86::compGeneric::Addressable& ioSpace
+        \Parameter  i86::compGeneric::AddressSpace& memorySpace
+        \Parameter  i86::compGeneric::AddressSpace& ioSpace
         \Parameter  i86::intel86::instruction::InstructionSet& iSet
         \Returns    None
     */
-    Intel86(i86::compGeneric::Addressable& memorySpace, i86::compGeneric::Addressable& ioSpace, i86::intel86::instruction::InstructionSet& iSet);
+    Intel86(i86::compGeneric::AddressSpace& memorySpace, i86::compGeneric::AddressSpace& ioSpace, i86::intel86::instruction::InstructionSet& iSet);
 
     /*
         \Function   reset
