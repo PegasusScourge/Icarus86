@@ -20,8 +20,8 @@ Icarus86 draws on configuration files to perform.
 
 File | Purpose | Specification
  --- | ------- | ------------- 
-Instruction set | List of instructions with microcode steps | [Spec](CPU_JSON.MD) [8086.json example](bin/8086.json)
-Device configuration | List of devices and their contexts/configs | [Spec](DEVICES_JSON.MD) [devices.json exmaple](bin/devices.json)
+Instruction set | List of instructions with microcode steps | [Spec](CPU_JSON.MD), [8086.json example](bin/8086.json)
+Device configuration | List of devices and their contexts/configs | [Spec](DEVICES_JSON.MD), [devices.json exmaple](bin/devices.json)
  
 ### Todo
 
