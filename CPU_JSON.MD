@@ -1,5 +1,13 @@
 # CPU JSON SPEC
 
+### Microcode Execution
+
+Microcode execution is completed in order from top to bottom of given instructions.
+
+There are two source fields that can be filled in execution of microcode. These are filled (typically) by SRC_... instructions in order A then B.
+
+There is one destination field typically filled by a FN_... operation, which can be directed to an output with DST_... ops. This value is trashed if not used.
+
 ### Example Snippet
 
 This is an example snippet from [8086.json](bin/8086.json) of a single instruction in microcode
@@ -60,5 +68,22 @@ All microcode instructions are encoded as string literals (converted internally 
 Microcode instruction | Purpose | Notes
  -------------------- | ------- | ----- 
 UDEF | None | Undefined microcode instruction. No purpose
+NOP | No operation | A valid no op instruction for NOPs
+HLT | Halt the CPU | Puts the CPU in a halt state
+RMB_8 | Interpret R/M values as 8 bit length | Affects REGOP and MOD of ModRM byte
+RMB_16 | Interpret R/M values as 16 bit length | Affects REGOP and MOD of ModRM byte
+SE_SRC_B | Sign extend SRC_B field | SRC_B field is sign extended to match length of SRC_A field (in bits, see RMB_8/16 to specify SRC size)
+SEG_OVERRIDE_ES | Set segment override to ES | ***TODO***
+SRC_REGOP | Interpret REGOP field as pointer to register source | See documentation on Intel 8086 for how REGOP encodes registers
+SRC_MODRM | Interpret MODRM field as pointer to register or memory source | See documentation on Intel 8086 for how MODRM encodes registers or memory locations
+SRC_IMM | Load a(n) immediate byte(s) | Loads immediate value
+SRC_DISP | Load a(n) displacement byte(s) | Loads displacement value
+SRC_STACK_POP | Top stack value used as source | Pops value off top of stack as a source. Not placed in register
+SRC_R_XX | Loads a register as a source | A, B, C, D (X, L, H) and BP, DI, DS, CS, ES, SS registers
+DST_REGOP | Outputs to register indicated by REGOP | See Intel 8086 documentation for how REGOP encodes registers
+DST_REGOP_SREG | Outputs to segment register indicated by REGOP | See Intel 8086 documentation for how REGOP encodes registers
+DST_MODRM | Outputs to memory/register indicated by MODRM | See Intel 8086 documentation for how MODRM encodes registers
+DST_STACK_PUSH | Pushes the output to the stack | None
+DST_R_XX | Outputs to register | A, B, C, D (X, L, H) and BP, DI, DS, CS, ES, SS registers
 
-TODO
+TODO: FN_X
