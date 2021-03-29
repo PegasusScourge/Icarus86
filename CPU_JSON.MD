@@ -1,6 +1,6 @@
 # CPU JSON SPEC
 
-### Microcode Execution
+## Microcode Execution
 
 Microcode execution is completed in order from top to bottom of given instructions.
 
@@ -8,7 +8,7 @@ There are two source fields that can be filled in execution of microcode. These 
 
 There is one destination field typically filled by a FN_... operation, which can be directed to an output with DST_... ops. This value is trashed if not used.
 
-### Example Snippet
+## Example Snippet
 
 This is an example snippet from [8086.json](bin/8086.json) of a single instruction in microcode
 
@@ -45,7 +45,7 @@ The name of the instruction set is defined at the top, with the mandatory field 
 }
 ```
 
-### icode Elements
+## icode Elements
 
 The `icode` array in the json is where all instructions are encoded.
 
@@ -61,7 +61,7 @@ clockCost | unsigned int | The number of clock cycles the instruction should tak
 childCodes | array | Another array where new icode elements can be placed for use with prefix instructions to form a "tree" structure | N/A
 microcode | array | A list of strings corresponding to microcode instructions the CPU executes in order to form the complete instruction | See above section
 
-### Microcode instructions
+## Microcode instructions
 
 All microcode instructions are encoded as string literals (converted internally by Icarus86 to a more efficient format) in the microcode arrays of icode elements. **NOTE: Case Sensitive**
 
