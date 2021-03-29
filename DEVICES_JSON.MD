@@ -16,7 +16,7 @@ Variable | Type | Purpose | Example
  ------- | ---- | ------- | ------- 
 human | string | Human-readable string name | `"human": "test123"`
 serial | string | Hexadecimal number-as-string for a serial number | `"serial": "FE55092"`
-type | string | The type of device. See headers for devices (e.g. Device **GENERIC**) | `"type": "GENERIC"`
+type | string | The type of device. See headers for devices (e.g. `Device: GENERIC`) | `"type": "GENERIC"`
 memoryspace | array | List of memory ranges | See range declarations
 iospace | array | List of io ranges | See range declarations
 
