@@ -1,6 +1,6 @@
 # Sources
 
-### Basic
+### CPU
 
  - [Inital program test](https://codegolf.stackexchange.com/questions/4732/emulate-an-intel-8086-cpu)
  - [Opcode list](http://ref.x86asm.net/coder32.html)

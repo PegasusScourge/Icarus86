@@ -18,6 +18,7 @@
 #include <map>
 #include <string>
 #include <cstdint>
+#include <tuple>
 
 namespace i86 {
 
@@ -44,23 +45,37 @@ private:
     std::string m_serial;
 
     /*
+        \Function   getRangeAndOffset
+        \Brief      Returns the range name and offset pair
+        \Details    Searches ranges for match
+        \Parameter  bool isIO
+        \Parameter  size_t addr
+        \Returns    std::tuple<std::string, size_t> value
+    */
+    std::tuple<std::string, size_t> getRangeAndOffset(bool isIO, size_t addr);
+
+    /*
         \Function   handleReadAddress
         \Brief      Handles reading an address. Override this
         \Details    Handles reading an address. Override this
-        \Parameter  size_t addr
+        \Parameter  bool isIO
+        \Parameter  std::string rangeName
+        \Parameter  size_t addrInRange
         \Returns    uint8_t value
     */
-    uint8_t handleReadAddress(size_t addr) { return 0; }
+    uint8_t handleReadAddress(bool isIO, std::string rangeName, size_t addrInRange) { return 0; }
 
     /*
         \Function   handleWriteAddress
         \Brief      Handles writing an address. Override this
         \Details    Handles writing an address. Override this
-        \Parameter  size_t addr
+        \Parameter  bool isIO
+        \Parameter  std::string rangeName
+        \Parameter  size_t addrInRange
         \Parameter  uint8_t byte
         \Returns    uint8_t value
     */
-    void handleWriteAddress(size_t addr, uint8_t byte) {}
+    void handleWriteAddress(bool isIO, std::string rangeName, size_t addrInRange, uint8_t byte) {}
 
 
 public:
@@ -117,20 +132,22 @@ public:
         \Function   readAddress
         \Brief      Handles reading an address.
         \Details    Handles reading an address.
+        \Parameter  bool isIO
         \Parameter  size_t addr
         \Returns    uint8_t value
     */
-    uint8_t readAddress(size_t addr);
+    uint8_t readAddress(bool isIO, size_t addr);
 
     /*
         \Function   writeAddress
         \Brief      Handles writing an address.
         \Details    Handles writing an address.
+        \Parameter  bool isIO
         \Parameter  size_t addr
         \Parameter  uint8_t byte
-        \Returns    uint8_t value
+        \Returns    None
     */
-    void writeAddress(size_t addr, uint8_t byte);
+    void writeAddress(bool isIO, size_t addr, uint8_t byte);
 
 }; // end class GenericDevice
 

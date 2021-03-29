@@ -10,6 +10,8 @@
 #include "Device/GenericDevice.hpp"
 #include "Util/LogFile.hpp"
 
+
+
 // ****************************************************************
 // Class GenericDevice
 // ****************************************************************
@@ -56,7 +58,7 @@ i86::device::GenericDevice::GenericDevice(size_t id, nlohmann::json& deviceConfi
         if (!memRange["startAddress"].is_number_unsigned() || !memRange["range"].is_number_unsigned() || !memRange["name"].is_string() || 
             !memRange["write"].is_boolean() || !memRange["read"].is_boolean()) {
             
-            i86::util::LogFile::Generic.log_str("Warning: Device '" + m_humanName + "' has invalid memory pace declaration");
+            i86::util::LogFile::Generic.log_str("Warning: Device '" + m_humanName + "' has invalid memoryspace declaration");
             continue;
         }
 
@@ -118,12 +120,34 @@ i86::device::DeviceType i86::device::GenericDevice::getType() {
     return m_type;
 }
 
-uint8_t i86::device::GenericDevice::readAddress(size_t addr) {
-    return handleReadAddress(addr);
+uint8_t i86::device::GenericDevice::readAddress(bool isIO, size_t addr) {
+    std::tuple<std::string, size_t> rangeInfo = getRangeAndOffset(isIO, addr);
+    return handleReadAddress(isIO, std::get<0>(rangeInfo), std::get<1>(rangeInfo));
 }
 
-void i86::device::GenericDevice::writeAddress(size_t addr, uint8_t byte) {
-    handleWriteAddress(addr, byte);
+void i86::device::GenericDevice::writeAddress(bool isIO, size_t addr, uint8_t byte) {
+    std::tuple<std::string, size_t> rangeInfo = getRangeAndOffset(isIO, addr);
+    handleWriteAddress(isIO, std::get<0>(rangeInfo), std::get<1>(rangeInfo), byte);
+}
+
+std::tuple<std::string, size_t> i86::device::GenericDevice::getRangeAndOffset(bool isIO, size_t addr) {
+    std::vector<i86::compGeneric::AddressRange>& searchVector = isIO ? m_rangesIO : m_rangesIO;
+    i86::compGeneric::AddressRange* range = nullptr;
+
+    for (size_t i = 0; i < searchVector.size(); i++) {
+        if (searchVector[i].isInThisRange(addr)) {
+            range = &searchVector[i];
+            break;
+        }
+    }
+
+    if (range == nullptr) {
+        i86::util::LogFile::Generic.log_str("Attempted to find matching range for addr " + 
+                std::to_string(addr) + (isIO ? " [ IO] " : " [!IO] ") + " but failed! (Device " + m_humanName + ")");
+        return std::tuple<std::string, size_t>("__ERROR__", 0);
+    }
+
+    return std::tuple<std::string, size_t>(range->name, addr - range->start);
 }
 
 size_t i86::device::GenericDevice::GetNextDeviceID() {

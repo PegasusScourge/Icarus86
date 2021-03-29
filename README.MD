@@ -2,6 +2,10 @@
 
 Icarus86 is an Intel x86 emulator for the 8086 processor.
 
+### Sources
+
+[Here](SOURCES.MD)
+
 ### Requirements
 
 #### Libraries
