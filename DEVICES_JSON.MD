@@ -34,7 +34,7 @@ Name | Purpose | Notes
  --- | ------- | ----- 
 RAM | RAM content | This is the R/W random access memory area
 
-#### Range Names: IO Space
+### Range Names: IO Space
 
 None
 
